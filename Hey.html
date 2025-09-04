@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Talent-Hub — Premium Dark Landing</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+
+  <!-- ===== Inline Premium Dark Styles ===== -->
+  <style>
+    :root{
+      --bg-1: #05060a;
+      --bg-2: #071027;
+      --panel: rgba(12,18,30,0.6);
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --accent: #00f5a0;
+      --accent-2: #00c2ff;
+      --accent-3: #7c3aed;
+      --muted: #9aa6b2;
+      --card: #071326;
+      --radius: 14px;
+      --shadow-sm: 0 8px 30px rgba(2,6,23,0.5);
+      --maxw: 1200px;
+      --glass-border: rgba(255,255,255,0.06);
+    }
+
+    /* Base */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:#e6eef3;background:
+      radial-gradient(900px 500px at -10% -10%, rgba(124,58,237,0.12), transparent 20%),
+      radial-gradient(900px 500px at 120% -20%, rgba(0,194,255,0.08), transparent 20%),
+      linear-gradient(180deg,var(--bg-1),var(--bg-2)) fixed;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale; }
+
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%}
+
+    /* Container / layout */
+    .wrap{max-width:var(--maxw);margin:24px auto;padding:0 16px}
+    nav{
+      display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-radius:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(8px); border:1px solid var(--glass-border); box-shadow:var(--shadow-sm);
+      position:sticky;top:14px;z-index:80;
+    }
+    .logo{font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px;color:#fff}
+    nav ul{display:flex;gap:16px;align-items:center;margin:0;padding:0;list-style:none}
+    nav a{padding:6px 8px;border-radius:8px;color:rgba(255,255,255,0.9);font-weight:600}
+    nav a:hover{background:rgba(255,255,255,0.02);transform:translateY(-2px)}
+
+    /* Hero */
+    .hero{
+      margin:28px auto; padding:36px; border-radius:16px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(10px); border:1px solid var(--glass-border); box-shadow: 0 30px 80px rgba(2,6,23,0.45);
+      text-align:center; color: #f8fbff;
+    }
+    .hero .eyebrow{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021219;font-weight:700;margin-bottom:14px}
+    .hero h1{font-size:46px;margin:8px 0 12px;line-height:1.02;background:linear-gradient(90deg,#fff,#dbeefd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{max-width:860px;margin:0 auto 18px;color:rgba(235,242,255,0.9);font-size:18px}
+    .hero .btns{display:flex;gap:12px;justify-content:center;margin-top:12px}
+    .btn{padding:12px 18px;border-radius:12px;font-weight:800;border:0;cursor:pointer;box-shadow:0 10px 30px rgba(2,6,23,0.45)}
+    .btn.client{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021219}
+    .btn.freelancer{background:linear-gradient(90deg,#7c3aed,#5b21b6);color:#fff}
+
+    /* Search bar under hero */
+    .search-wrap{display:flex;justify-content:center;margin-top:20px}
+    .search{display:flex;width:100%;max-width:920px;gap:0;box-shadow:0 12px 30px rgba(2,6,23,0.45);border-radius:12px;overflow:hidden}
+    .search input{flex:1;padding:14px 16px;border:0;background:rgba(255,255,255,0.02);color:#eaf6f2;font-size:15px;outline:none}
+    .search button{padding:14px 18px;border:0;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#021219;font-weight:800;cursor:pointer}
+
+    /* Categories */
+    .categories{margin-top:22px;padding:12px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--glass-border)}
+    .category-list{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:8px}
+    .category-item{position:relative;padding:10px 12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01));color:#eafbf5;font-weight:700;cursor:pointer;transition:all .18s}
+    .category-item:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(2,6,23,0.4)}
+    .category-item .dropdown{display:none;position:absolute;top:50px;left:0;min-width:220px;background:#071326;color:#dbe8f2;border-radius:10px;border:1px solid rgba(255,255,255,0.03);overflow:hidden;z-index:90}
+    .category-item:hover .dropdown{display:block}
+    .dropdown a{display:block;padding:10px 12px;color:#dceef9;font-weight:600}
+    .dropdown a:hover{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03));}
+
+    /* sections */
+    main{margin-top:22px;max-width:var(--maxw);margin-left:auto;margin-right:auto;padding:0 12px}
+    section{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:20px;margin:18px 0;border:1px solid var(--glass-border);box-shadow:0 14px 50px rgba(2,6,23,0.35)}
+    .section-title{font-size:20px;font-weight:800;margin-bottom:6px;color:#eaf6f2}
+    .section-subtitle{color:var(--muted);margin-bottom:12px}
+
+    /* Popular categories grid */
+    .category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+    .category-card{padding:20px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#eaf6f2;font-weight:800;display:flex;align-items:center;justify-content:center;transition:all .18s}
+    .category-card:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(2,6,23,0.45)}
+
+    /* Featured gigs grid (cards ported from dashboard + upgraded) */
+    .gigs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:12px}
+    .gig-card{
+      background:linear-gradient(180deg, rgba(14,19,27,0.9), rgba(9,14,20,0.88));
+      border-radius:14px;border:1px solid rgba(255,255,255,0.03);overflow:hidden;color:#eaf6f2;
+      display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;box-shadow:0 6px 18px rgba(2,6,23,0.5)
+    }
+    .gig-card:hover{transform:translateY(-10px);box-shadow:0 30px 80px rgba(2,6,23,0.6);z-index:5}
+
+    .gig-cover{position:relative;height:160px;background:#061026;overflow:hidden}
+    .gig-cover img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(0.98) saturate(1.05)}
+    .dot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,0.12)}
+    .dot.active{background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+
+    .top-like-btn{
+      position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:999px;display:grid;place-items:center;background:linear-gradient(180deg,rgba(0,0,0,0.35),rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.04);cursor:pointer;color:#fff;z-index:20;transition:all .14s;
+    }
+    .top-like-btn.liked{background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#021219;transform:scale(1.06);box-shadow:0 10px 30px rgba(13,211,173,0.12)}
+    .like-count{font-weight:800;color:var(--muted);font-size:13px;margin-left:auto}
+
+    .gig-body{padding:12px;display:flex;flex-direction:column;gap:8px}
+    .seller-row{display:flex;gap:10px;align-items:center}
+    .seller-avatar{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:800;color:#fff}
+    .seller-name{font-weight:800;font-size:14px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .small{color:var(--muted);font-size:13px}
+
+    .gig-title{font-weight:900;font-size:15px}
+    .metric-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .rating-chip,.projects-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:800;color:#eaf6f2}
+    .price-line{font-weight:900;color:var(--accent);margin-top:6px}
+
+    .gig-actions{display:flex;gap:8px;margin-top:8px}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;color:#eaf6f2;font-weight:700}
+
+    /* freelancers track */
+    .freelancer-track{display:flex;gap:12px;overflow-x:auto;padding:8px 2px}
+    .freelancer-card{min-width:220px;border-radius:12px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);color:#eaf6f2}
+
+    /* testimonials */
+    .testimonial-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .testimonial-card{padding:12px;border-radius:12px;background:linear-gradient(180deg,#051424,#07122a);box-shadow:0 10px 30px rgba(2,6,23,0.45);color:#eaf6f2}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.72);display:none;align-items:center;justify-content:center;z-index:9999}
+    .modal{width:min(980px,96vw);background:linear-gradient(180deg,#061426,#07112b);border-radius:12px;border:1px solid rgba(255,255,255,0.03);color:#eaf6f2;overflow:hidden;box-shadow:0 40px 120px rgba(2,6,23,0.7)}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.02)}
+    .modal-body{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+    .modal-body img{width:100%;height:280px;object-fit:cover;border-radius:10px}
+    .modal-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.02);display:flex;justify-content:flex-end;gap:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00))}
+
+    /* responsive tweaks */
+    @media (max-width:980px){
+      .hero h1{font-size:32px}
+      .gig-cover{height:140px}
+      .modal-body{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <div class="wrap">
+    <nav role="navigation" aria-label="Main">
+      <div class="logo"><span style="display:inline-block;width:36px;height:36;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:#021219;font-weight:900">TH</span> Talent-Hub</div>
+      <ul>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="contact.html">Contact-us</a></li>
+        <li><a href="register.html">Register</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="logout.html">Log-out</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- HERO -->
+  <div class="wrap">
+    <header class="hero" role="banner" aria-label="Welcome">
+      <div class="eyebrow">Trusted Marketplace</div>
+      <h1>Find top talent — fast, secure & professional</h1>
+      <p>Hire verified freelancers, browse featured gigs, and message sellers directly — all backed by secure payments and dispute resolution.</p>
+
+      <div class="btns">
+        <a id="btnClient" class="btn client" href="client-dashboard.html">I’m a Client</a>
+        <a id="btnFreelancer" class="btn freelancer" href="freelancer-dashboard.html">I’m a Freelancer</a>
+      </div>
+
+      <div class="search-wrap">
+        <div class="search" role="search" aria-label="Search">
+          <input id="searchInput" placeholder="Search gigs, categories, or freelancers (e.g., 'logo design', 'React developer')" />
+          <button id="searchBtn">Search</button>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="wrap">
+    <div class="categories" aria-label="Categories">
+      <div class="category-list">
+        <div class="category-item">Graphics & Design
+          <div class="dropdown" role="menu">
+            <a href="logo_design.html">Logo Design</a>
+            <a href="brand_style_guides.html">Brand Style Guides</a>
+            <a href="buisness_cards.html">Business Cards</a>
+            <a href="social_media_design.html">Social Media Design</a>
+            <a href="illustration.html">Illustration</a>
+            <a href="book_covers.html">Book Covers</a>
+            <a href="packging_desing.html">Packaging Design</a>
+          </div>
+        </div>
+
+        <div class="category-item">Digital Marketing
+          <div class="dropdown" role="menu">
+            <a href="social_media_marketing.html">Social Media Marketing</a>
+            <a href="seo_services.html">SEO</a>
+            <a href="content_marketing.html">Content Marketing</a>
+            <a href="email_marketing.html">Email Marketing</a>
+            <a href="influencer_marketing.html">Influencer Marketing</a>
+            <a href="video_marketing.html">Video Marketing</a>
+            <a href="affiliate_marketing.html">Affiliate Marketing</a>
+          </div>
+        </div>
+
+        <div class="category-item">Writing & Translation
+          <div class="dropdown" role="menu">
+            <a href="#">Articles & Blogs</a>
+            <a href="#">Copywriting</a>
+            <a href="#">Translation</a>
+            <a href="#">Proofreading</a>
+            <a href="#">Technical Writing</a>
+            <a href="#">Resume Writing</a>
+          </div>
+        </div>
+
+        <div class="category-item">Video & Animation
+          <div class="dropdown" role="menu">
+            <a href="#">Video Editing</a>
+            <a href="#">2D Animation</a>
+            <a href="#">3D Animation</a>
+            <a href="#">Whiteboard Animation</a>
+            <a href="#">Short Video Ads</a>
+            <a href="#">Intros & Outros</a>
+          </div>
+        </div>
+
+        <div class="category-item">Music & Audio
+          <div class="dropdown" role="menu">
+            <a href="#">Voice Over</a>
+            <a href="#">Mixing & Mastering</a>
+            <a href="#">Podcast Editing</a>
+            <a href="#">Jingles</a>
+            <a href="#">Sound Effects</a>
+          </div>
+        </div>
+
+        <div class="category-item">Programming & Tech
+          <div class="dropdown" role="menu">
+            <a href="#">Website Development</a>
+            <a href="#">App Development</a>
+            <a href="#">Game Development</a>
+            <a href="#">E-commerce Development</a>
+            <a href="#">Cybersecurity</a>
+            <a href="#">AI Development</a>
+          </div>
+        </div>
+
+        <div class="category-item">Data
+          <div class="dropdown" role="menu">
+            <a href="#">Data Entry</a>
+            <a href="#">Data Analysis</a>
+            <a href="#">Data Visualization</a>
+            <a href="#">Web Scraping</a>
+            <a href="#">Machine Learning</a>
+          </div>
+        </div>
+
+        <div class="category-item">Business
+          <div class="dropdown" role="menu">
+            <a href="#">Business Plans</a>
+            <a href="#">Market Research</a>
+            <a href="#">Project Management</a>
+            <a href="#">Virtual Assistant</a>
+            <a href="#">HR Consulting</a>
+          </div>
+        </div>
+
+        <div class="category-item">Lifestyle
+          <div class="dropdown" role="menu">
+            <a href="#">Online Lessons</a>
+            <a href="#">Fitness Coaching</a>
+            <a href="#">Cooking Lessons</a>
+            <a href="#">Relationship Advice</a>
+            <a href="#">Arts & Crafts</a>
+          </div>
+        </div>
+
+        <div class="category-item">AI Services
+          <div class="dropdown" role="menu">
+            <a href="#">AI Art</a>
+            <a href="#">AI Content Writing</a>
+            <a href="#">AI Chatbot</a>
+            <a href="#">AI Automation</a>
+            <a href="#">AI Video Creation</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="wrap" role="main">
+    <!-- FILTER SECTION -->
+    <section class="filter-section" aria-labelledby="filter-heading">
+      <h2 id="filter-heading" class="section-title">Find Services Faster</h2>
+      <p class="section-subtitle">Narrow down by category, budget, and ratings — results update instantly.</p>
+      <div class="filter-controls" style="margin-top:8px">
+        <select id="filterCategory" aria-label="Category" class="control">
+          <option value="all">All Categories</option>
+          <option>Graphics & Design</option>
+          <option>Digital Marketing</option>
+          <option>Writing & Translation</option>
+          <option>Video & Animation</option>
+          <option>Music & Audio</option>
+          <option>Programming & Tech</option>
+          <option>Data</option>
+          <option>Business</option>
+          <option>Lifestyle</option>
+          <option>AI Services</option>
+        </select>
+
+        <input id="minPrice" type="number" placeholder="Min Price" aria-label="Min Price" class="control"/>
+        <input id="maxPrice" type="number" placeholder="Max Price" aria-label="Max Price" class="control"/>
+
+        <select id="filterSort" aria-label="Sort" class="control">
+          <option value="latest">Sort: Latest</option>
+          <option value="rating_desc">Sort: Rating (High → Low)</option>
+          <option value="price_asc">Sort: Price (Low → High)</option>
+          <option value="price_desc">Sort: Price (High → Low)</option>
+        </select>
+
+        <button id="applyFilters" class="btn" style="background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021219">Apply</button>
+        <button id="resetFilters" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:#eaf6f2">Reset</button>
+      </div>
+    </section>
+
+    <!-- POPULAR CATEGORIES -->
+    <section class="categories-showcase" id="popular-categories">
+      <h2 class="section-title">Popular Categories</h2>
+      <p class="section-subtitle">Explore top picks</p>
+
+      <div class="category-grid">
+        <div class="category-card">Logo Design</div>
+        <div class="category-card">Brand Style Guides</div>
+        <div class="category-card">Business Cards</div>
+        <div class="category-card">Social Media Design</div>
+        <div class="category-card">Web Development</div>
+        <div class="category-card">App Development</div>
+        <div class="category-card">SEO Services</div>
+        <div class="category-card">Content Writing</div>
+        <div class="category-card">Video Editing</div>
+        <div class="category-card">AI Automation</div>
+        <div class="category-card">Data Analysis</div>
+        <div class="category-card">Virtual Assistant</div>
+      </div>
+    </section>
+
+    <!-- FEATURED GIGS -->
+    <section class="featured-gigs" id="featured-gigs" aria-labelledby="featured-heading">
+      <h2 id="featured-heading" class="section-title">Featured Gigs</h2>
+      <p class="section-subtitle">Hand-picked work from top rated sellers — updated in real time</p>
+
+      <!-- gigs grid (populated from Firestore) -->
+      <div class="gigs-grid"><!-- Filled from Firestore --></div>
+    </section>
+
+    <!-- TOP FREELANCERS -->
+    <section class="freelancers-slider" id="top-freelancers">
+      <h2 class="section-title">Top Freelancers</h2>
+      <p class="section-subtitle">Verified talent with great reviews</p>
+      <div class="freelancer-track" aria-live="polite"><!-- Filled from Firestore --></div>
+    </section>
+
+    <!-- TRUST BADGES -->
+    <section class="trust-badges" id="trust">
+      <h2 class="section-title">Why Choose Us?</h2>
+      <p class="section-subtitle">Designed for security, speed, and trust</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+        <div class="category-card">✅ Secure Payments</div>
+        <div class="category-card">✅ Verified Profiles</div>
+        <div class="category-card">✅ 24/7 Support</div>
+        <div class="category-card">✅ Dispute Resolution</div>
+        <div class="category-card">✅ NDA & IP Protection</div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials" id="testimonials">
+      <h2 class="section-title">What Clients Say</h2>
+      <p class="section-subtitle">Real feedback from real projects</p>
+      <div class="testimonial-row"><!-- Filled from Firestore --></div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div style="display:grid;gap:10px">
+        <div style="background:linear-gradient(180deg,#061424,#07132a);padding:12px;border-radius:10px;">
+          <div style="font-weight:800">How do I hire a freelancer?</div>
+          <div class="small">Browse categories, open a gig, and click “Continue” to proceed with payment & requirements.</div>
+        </div>
+        <div style="background:linear-gradient(180deg,#061424,#07132a);padding:12px;border-radius:10px;">
+          <div style="font-weight:800">Is my payment safe?</div>
+          <div class="small">Yes. Funds are held securely and released only after you approve the delivery.</div>
+        </div>
+        <div style="background:linear-gradient(180deg,#061424,#07132a);padding:12px;border-radius:10px;">
+          <div style="font-weight:800">Can I get a refund?</div>
+          <div class="small">If work isn’t delivered as promised, you can request revisions or open a dispute.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter" id="newsletter">
+      <h2 class="section-title">Stay Updated</h2>
+      <p class="section-subtitle">Get tips, discounts, and platform updates in your inbox</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="email" placeholder="Enter your email" aria-label="Email" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#eaf6f2"/>
+        <button class="btn" style="background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021219">Subscribe</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer style="margin-top:24px;padding:28px 16px">
+    <div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:start">
+      <div>
+        <h4 style="margin:0 0 8px;color:#eaf6f2">Categories</h4>
+        <a href="#">Graphics & Design</a><br>
+        <a href="#">Digital Marketing</a><br>
+        <a href="#">Writing & Translation</a><br>
+        <a href="#">Video & Animation</a><br>
+        <a href="#">Music & Audio</a><br>
+        <a href="#">Programming & Tech</a>
+      </div>
+      <div>
+        <h4 style="margin:0 0 8px;color:#eaf6f2">About</h4>
+        <a href="#">Careers</a><br>
+        <a href="#">Press & News</a><br>
+        <a href="#">Partnerships</a><br>
+        <a href="#">Privacy Policy</a><br>
+        <a href="#">Terms of Service</a>
+      </div>
+      <div>
+        <h4 style="margin:0 0 8px;color:#eaf6f2">Support</h4>
+        <a href="#">Help & Support</a><br>
+        <a href="#">Trust & Safety</a><br>
+        <a href="#">Buying on Talent-Hub</a><br>
+        <a href="#">Selling on Talent-Hub</a>
+      </div>
+      <div>
+        <h4 style="margin:0 0 8px;color:#eaf6f2">Community</h4>
+        <a href="#">Events</a><br>
+        <a href="#">Blog</a><br>
+        <a href="#">Forum</a><br>
+        <a href="#">Invite a Friend</a>
+      </div>
+    </div>
+    <div class="wrap" style="text-align:center;margin-top:16px;color:var(--muted)">&copy; 2025 Talent-Hub. All Rights Reserved.</div>
+  </footer>
+
+  <!-- MODAL -->
+  <div id="gigModalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="gigModalTitle">
+      <div class="modal-header">
+        <h3 id="gigModalTitle" style="margin:0;font-size:18px">Gig Details</h3>
+        <button id="gigModalClose" style="background:transparent;border:0;color:#eaf6f2;font-weight:800;cursor:pointer">✕</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <img id="gigModalImg" src="" alt="Gig image" />
+        </div>
+        <div style="text-align:left">
+          <div id="gigModalHeading" style="font-size:20px;font-weight:800;margin-bottom:6px">Title</div>
+          <div id="gigModalBy" class="small" style="margin-bottom:6px">by —</div>
+          <div id="gigModalPrice" style="font-weight:800;color:var(--accent);margin-bottom:8px">From ₹—</div>
+          <div style="margin-bottom:6px"><strong>Category:</strong> <span id="gigModalCategory">—</span></div>
+          <div style="margin-bottom:6px"><strong>Delivery:</strong> <span id="gigModalDelivery">—</span></div>
+          <div style="margin-bottom:6px"><strong>Skills:</strong> <span id="gigModalSkills">—</span></div>
+          <div id="gigModalDesc" style="margin-top:10px;color:#cfe9e1">Description…</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a id="gigModalLink" style="padding:10px 14px;border-radius:10px;font-weight:800;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#021219;text-decoration:none" href="#">Open Details Page</a>
+        <button id="gigModalClose2" style="padding:10px 14px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#eaf6f2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== Firebase + App Logic (modular v10) ====== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, collection, doc, getDoc, onSnapshot, query, orderBy, limit, getDocs, runTransaction, setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* ===== Config (same as provided) ===== */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+      measurementId: "G-TYL2XF4WZY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    /* ===== Helpers ===== */
+    const safe = (s) => (typeof s === 'string' ? s.replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])) : '');
+    const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+    const money = n => isFinite(n) ? `₹${Number(n).toLocaleString('en-IN')}` : '₹—';
+    const stars = (n=0) => { const full = Math.round(Number(n)||0); return `${'★'.repeat(Math.min(5,full))}${'☆'.repeat(Math.max(0,5-full))}`; };
+
+    /* ===== DOM refs ===== */
+    const gigsGrid = document.querySelector('.featured-gigs .gigs-grid');
+    const freeTrack = document.querySelector('.freelancer-track');
+    const testiRow = document.querySelector('.testimonial-row');
+
+    /* Show skeletons */
+    const showSkeletons = () => {
+      if (gigsGrid) gigsGrid.innerHTML = Array.from({length:6}).map(()=>`<div class="gig-card skeleton" style="height:220px;border-radius:12px"></div>`).join('');
+      if (freeTrack) freeTrack.innerHTML = Array.from({length:6}).map(()=>`<div class="freelancer-card skeleton" style="height:180px;width:220px;margin:8px;border-radius:12px"></div>`).join('');
+      if (testiRow) testiRow.innerHTML = Array.from({length:3}).map(()=>`<div class="testimonial-card skeleton" style="height:120px;border-radius:12px"></div>`).join('');
+    };
+    showSkeletons();
+
+    /* ===== Realtime gigs listener (subho_gigs) ===== */
+    const gigsCol = collection(db, 'subho_gigs');
+    const gigsQuery = query(gigsCol, orderBy('createdAt', 'desc'), limit(12));
+    let gigs = [];
+    const likesWatchers = new Map();
+    const ratingsWatchers = new Map();
+
+    onSnapshot(gigsQuery, snap => {
+      const incoming = [];
+      snap.forEach(d => incoming.push({ id: d.id, ...d.data() }));
+      // merge by id to support client-side filters
+      const byId = new Map(gigs.map(g=>[g.id,g]));
+      incoming.forEach(g => byId.set(g.id, {...byId.get(g.id), ...g}));
+      gigs = [...byId.values()];
+      renderGigs();
+    }, err => {
+      console.error('gigs onSnapshot error:', err);
+      if (gigsGrid) gigsGrid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted)">Failed to load gigs.</div>';
+    });
+
+    /* ===== Likes & Ratings logic (same pattern) ===== */
+    async function toggleLike(gid){
+      const user = auth.currentUser;
+      if(!user){ alert('Please login to like'); return; }
+      const uid = user.uid;
+      const likeDocRef = doc(db,'gig_likes_user',`${gid}_${uid}`);
+      const aggRef = doc(db,'gig_likes_agg',gid);
+      try{
+        const userSnap = await getDoc(likeDocRef);
+        const currently = userSnap.exists() && userSnap.data().liked === true;
+        await setDoc(likeDocRef,{gid,uid,liked:!currently,updatedAt:Date.now()},{merge:true});
+        await runTransaction(db, async (t)=>{
+          const aggSnap = await t.get(aggRef);
+          const cur = aggSnap.exists() ? (aggSnap.data().count||0):0;
+          const next = currently ? Math.max(0,cur-1) : cur+1;
+          t.set(aggRef,{count:next},{merge:true});
+        });
+      }catch(e){ console.error('toggleLike failed', e); }
+    }
+
+    async function watchLikesForCard(gid, cardEl){
+      const aggRef = doc(db,'gig_likes_agg',gid);
+      if(likesWatchers.get(gid)) likesWatchers.get(gid)();
+      const unsub = onSnapshot(aggRef, s=> {
+        const c = s.exists()? (s.data().count||0) : 0;
+        const el = cardEl.querySelector('.like-count');
+        if(el) el.textContent = `${c} Likes`;
+      }, err => console.warn('likes watch err', err));
+      likesWatchers.set(gid,unsub);
+
+      const user = auth.currentUser;
+      if(user){
+        const udRef = doc(db,'gig_likes_user',`${gid}_${user.uid}`);
+        try{
+          const ud = await getDoc(udRef);
+          const btn = cardEl.querySelector('.top-like-btn');
+          if(btn){
+            if(ud.exists() && ud.data().liked){ btn.classList.add('liked'); btn.innerHTML = '<i class="fa-solid fa-heart"></i>'; }
+            else { btn.classList.remove('liked'); btn.innerHTML = '<i class="fa-regular fa-heart"></i>'; }
+          }
+        }catch(e){}
+      }
+    }
+
+    function watchRatingsForCard(gid, cardEl){
+      const aggRef = doc(db,'gig_ratings_agg', gid);
+      if(ratingsWatchers.get(gid)) ratingsWatchers.get(gid)();
+      const unsub = onSnapshot(aggRef, s=>{
+        const avg = s.exists()? (s.data().avg||0) : 0;
+        const cnt = s.exists()? (s.data().count||0) : 0;
+        const rt = cardEl.querySelector('.rating-chip .val');
+        const rc = cardEl.querySelector('.rating-chip .cnt');
+        if(rt) rt.textContent = Number(avg).toFixed(1);
+        if(rc) rc.textContent = cnt;
+      }, err => console.warn('ratings watch err', err));
+      ratingsWatchers.set(gid,unsub);
+    }
+
+    /* ===== Card markup & interactions (dashboard port) ===== */
+    const palette = ['#f97316','#ef4444','#06b6d4','#3b82f6','#7c3aed','#10b981'];
+    function colorFor(t){ return palette[(t||'x').charCodeAt(0) % palette.length]; }
+    function pickAvatarLetter(name){ return (name||'U').trim().charAt(0).toUpperCase(); }
+
+    function sliderHTML(images=[]){
+      const has = Array.isArray(images) && images.length > 1;
+      const dots = (images||[]).map((_,i)=>`<span class="dot ${i===0?'active':''}" data-idx="${i}"></span>`).join('');
+      return `${has?`<button class="nav-arrow nav-left" data-dir="-1" aria-label="Prev"><i class="fa-solid fa-chevron-left"></i></button>`:''}${has?`<button class="nav-arrow nav-right" data-dir="1" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>`:''}<div class="dots">${dots}</div>`;
+    }
+
+    function attachSlider(cardEl, images){
+      const imgEl = cardEl.querySelector('.gig-cover img');
+      const left = cardEl.querySelector('.nav-left');
+      const right = cardEl.querySelector('.nav-right');
+      const dots = Array.from(cardEl.querySelectorAll('.dot'));
+      if(!imgEl) return;
+      let idx = 0;
+      function set(i){
+        idx = Math.max(0, Math.min(images.length-1, i));
+        imgEl.src = images[idx] || '';
+        dots.forEach((d,ii)=> d.classList.toggle('active', ii===idx));
+        if(left) left.disabled = idx===0;
+        if(right) right.disabled = idx===images.length-1;
+      }
+      if(left) left.addEventListener('click', e=>{ e.stopPropagation(); set(idx-1); });
+      if(right) right.addEventListener('click', e=>{ e.stopPropagation(); set(idx+1); });
+      set(0);
+    }
+
+    function buildGigCardHTML(g){
+      const id = g.id;
+      const images = Array.isArray(g.images) && g.images.length ? g.images : (g.coverURL ? [g.coverURL] : []);
+      const hasImages = images.length>0;
+      const title = g.title || 'Untitled Gig';
+      const cat = g.category || 'General';
+      const sellerName = g.sellerName || g.by || 'Freelancer';
+      const priceFrom = money(g.price || g.startingPrice || 0);
+      const sellerId = g.sellerId || '';
+      const projectsDone = g.projectsCompleted || 0;
+      const ratingAvg = Number(g.ratingAvg || g.rating || 0);
+      const ratingCount = Number(g.ratingCount || 0);
+
+      const imagesEscaped = images.map(i=>esc(i));
+
+      return `
+        <div class="gig-card" data-id="${esc(id)}" data-category="${esc(cat)}" data-price="${Number(g.price||0)}" data-date="${g.createdAt ? (g.createdAt.seconds ? new Date(g.createdAt.seconds*1000).toISOString() : new Date(g.createdAt).toISOString()) : new Date().toISOString()}">
+          <div class="gig-cover">
+            ${hasImages ? `<img src="${imagesEscaped[0]}" alt="${esc(title)}" loading="lazy">` : `<div style="width:100%;height:100%;display:grid;place-items:center;color:var(--muted)">No Image</div>`}
+            <button class="top-like-btn" data-gid="${esc(id)}" aria-label="Like" title="Like"><i class="fa-regular fa-heart"></i></button>
+            ${sliderHTML(imagesEscaped)}
+          </div>
+          <div class="gig-body">
+            <div class="seller-row">
+              <div class="seller-avatar" style="background:${colorFor(sellerName)}">${pickAvatarLetter(sellerName)}</div>
+              <div style="min-width:0">
+                <div class="seller-name">${esc(sellerName)}</div>
+                <div class="small">${esc(cat)}</div>
+              </div>
+              <div class="like-count">0 Likes</div>
+            </div>
+
+            <div class="gig-title">${esc(title)}</div>
+
+            <div class="metric-row">
+              <span class="rating-chip" title="Average rating">
+                <i class="fa-solid fa-star" style="color:#ffd166"></i>
+                <span class="val">${Number(ratingAvg).toFixed(1)}</span>
+                <span class="small">(<span class="cnt">${ratingCount}</span>)</span>
+              </span>
+              <span class="projects-chip" title="Completed projects">
+                <i class="fa-solid fa-briefcase" style="color:#60a5fa"></i>
+                <span>${projectsDone}</span>
+              </span>
+            </div>
+
+            <div class="price-line">From <span class="price">${priceFrom}</span></div>
+
+            <div class="gig-actions">
+              <a class="btn ghost" href="gig-details.html?id=${encodeURIComponent(id)}"><i class="fa-solid fa-eye"></i> View</a>
+              <a class="btn ghost" href="client-messages.html?to=${encodeURIComponent(sellerId)}"><i class="fa-solid fa-message"></i> Message</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function mountCardInteractions(cardEl, g){
+      const imgs = Array.isArray(g.images) && g.images.length ? g.images : (g.coverURL? [g.coverURL] : []);
+      if(imgs.length>1) attachSlider(cardEl, imgs);
+
+      const likeBtn = cardEl.querySelector('.top-like-btn');
+      if(likeBtn){
+        likeBtn.addEventListener('click', async (e)=>{ e.stopPropagation(); likeBtn.disabled=true; try{ await toggleLike(g.id); }catch(err){console.error(err);} finally{ likeBtn.disabled=false; } });
+        watchLikesForCard(g.id, cardEl);
+      }
+      watchRatingsForCard(g.id, cardEl);
+
+      cardEl.addEventListener('click', (e)=> { if(e.target.closest('a')||e.target.closest('button')) return; openGigModalFromCard(g.id, cardEl); });
+    }
+
+    /* ===== Modal logic (fetch doc for details) ===== */
+    const modalBackdrop = document.getElementById('gigModalBackdrop');
+    const modalClose = document.getElementById('gigModalClose');
+    const modalClose2 = document.getElementById('gigModalClose2');
+    const M = {
+      img: document.getElementById('gigModalImg'),
+      title: document.getElementById('gigModalHeading'),
+      by: document.getElementById('gigModalBy'),
+      price: document.getElementById('gigModalPrice'),
+      cat: document.getElementById('gigModalCategory'),
+      del: document.getElementById('gigModalDelivery'),
+      skills: document.getElementById('gigModalSkills'),
+      desc: document.getElementById('gigModalDesc'),
+      link: document.getElementById('gigModalLink')
+    };
+
+    async function openGigModalFromCard(id, cardEl){
+      try{
+        const dref = doc(db,'subho_gigs',id);
+        const snap = await getDoc(dref);
+        const data = snap.exists()? snap.data() : null;
+
+        const imgEl = cardEl.querySelector('img');
+        const titleEl = cardEl.querySelector('.gig-title');
+        const metaSeller = cardEl.querySelector('.seller-name');
+        const priceEl = cardEl.querySelector('.price');
+
+        M.img.src = (data && (Array.isArray(data.images) && data.images[0] || data.coverURL)) || imgEl?.src || '';
+        M.title.textContent = (data && data.title) || titleEl?.textContent || 'Gig';
+        M.by.textContent = (data && (data.sellerName || data.by)) || metaSeller?.textContent || '';
+        M.price.textContent = (data && (data.price ? money(data.price) : (data.startingPrice ? money(data.startingPrice) : '—'))) || priceEl?.textContent || '';
+        M.cat.textContent = (data && data.category) || cardEl.dataset.category || '—';
+        M.del.textContent = (data && (data.deliveryTime ? `${data.deliveryTime} days` : data.delivery || '—')) || '—';
+        M.skills.textContent = (data && Array.isArray(data.skills) ? data.skills.join(', ') : (data && data.skills) || '—');
+        M.desc.textContent = (data && (data.description || data.desc)) || 'Open the details page to see the full description, images and reviews.';
+        M.link.href = `gig-details.html?id=${encodeURIComponent(id)}`;
+      }catch(e){
+        console.warn('openGigModal error', e);
+      }
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden','false');
+    }
+
+    function closeModal(){ modalBackdrop.style.display = 'none'; modalBackdrop.setAttribute('aria-hidden','true'); }
+    modalClose?.addEventListener('click', closeModal);
+    modalClose2?.addEventListener('click', closeModal);
+    modalBackdrop?.addEventListener('click',(e)=>{ if(e.target===modalBackdrop) closeModal(); });
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeModal(); });
+
+    /* ===== Render pipeline ===== */
+    function renderGigs(){
+      if(!gigsGrid) return;
+      const published = gigs.filter(g => ((g.status||'').toLowerCase()==='published') || !g.status);
+      const html = published.map(g => buildGigCardHTML(g)).join('') || '<div style="grid-column:1/-1;color:var(--muted)">No published gigs yet.</div>';
+      gigsGrid.innerHTML = html;
+      published.forEach(g => { const el = document.querySelector(`.gig-card[data-id="${esc(g.id)}"]`); if(el) mountCardInteractions(el,g); });
+    }
+
+    /* ===== Freelancers and testimonials realtime ===== */
+    try{
+      if(freeTrack){
+        const qFree = query(collection(db,'freelancers'), orderBy('rating','desc'), limit(12));
+        onSnapshot(qFree, snap=>{
+          if(snap.empty){ freeTrack.innerHTML = '<div style="color:var(--muted)">No freelancers yet.</div>'; return; }
+          freeTrack.innerHTML = snap.docs.map(d=>{
+            const f = d.data();
+            const img = safe(f.photoUrl||'');
+            const name = safe(f.name||'Freelancer');
+            const skills = Array.isArray(f.skills)? f.skills.slice(0,3).join(', ') : safe(f.skills||'');
+            const rating = f.rating||0;
+            return `<div class="freelancer-card"><img src="${img}" onerror="this.src='https://picsum.photos/seed/freelancer/400/300'" loading="lazy" style="height:120px;border-radius:8px;object-fit:cover;margin-bottom:8px"/><div style="font-weight:800">${name}</div><div class="small" style="margin-bottom:8px">${skills} • ${stars(rating)}</div><button class="btn" style="background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#021219;padding:8px 10px;border-radius:8px">Hire</button></div>`;
+          }).join('');
+        });
+      }
+      if(testiRow){
+        const qTest = query(collection(db,'testimonials'), orderBy('createdAt','desc'), limit(6));
+        onSnapshot(qTest, snap=>{
+          if(snap.empty){ testiRow.innerHTML = '<div style="color:var(--muted)">No testimonials yet.</div>'; return; }
+          testiRow.innerHTML = snap.docs.map(d=>{
+            const t = d.data();
+            const name = safe(t.name||'Client');
+            const photo = safe(t.photoUrl||'');
+            const feedback = safe(t.feedback || t.text || '');
+            return `<div class="testimonial-card"><div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><img src="${photo}" onerror="this.src='https://picsum.photos/seed/user/64/64'" style="width:44px;height:44px;border-radius:50%;object-fit:cover"/><strong>${name}</strong></div><div style="color:var(--muted)">“${feedback}”</div></div>`;
+          }).join('');
+        });
+      }
+    }catch(e){ console.error(e); }
+
+    /* ===== Search + buttons behavior (kept) ===== */
+    document.getElementById('searchBtn')?.addEventListener('click', ()=>{
+      const q = document.getElementById('searchInput').value.trim();
+      if(q) window.location.href = `search.html?q=${encodeURIComponent(q)}`; else alert('Please enter a search term!');
+    });
+
+    const btnClient = document.getElementById('btnClient');
+    const btnFreelancer = document.getElementById('btnFreelancer');
+    function goto(h){ window.location.href=h; }
+    btnClient?.addEventListener('click',(e)=>{ e.preventDefault(); const u = auth.currentUser; if(u) goto('client-dashboard.html'); else goto('login.html?role=client'); });
+    btnFreelancer?.addEventListener('click',(e)=>{ e.preventDefault(); const u = auth.currentUser; if(u) goto('freelancer-dashboard.html'); else goto('login.html?role=freelancer'); });
+
+    /* ===== Auth seed for likes state on load ===== */
+    onAuthStateChanged(auth, user=>{
+      if(user){
+        // ensure likes shown correctly for visible cards
+        document.querySelectorAll('.gig-card').forEach(card => {
+          const gid = card.dataset.id;
+          if(gid) watchLikesForCard(gid, card);
+        });
+      }
+    });
+
+    /* accessibility: keyboard activate like buttons */
+    document.addEventListener('keydown',(e)=> {
+      if(e.key === 'Enter' || e.key === ' '){
+        const active = document.activeElement;
+        if(active && active.classList && active.classList.contains('top-like-btn')){
+          e.preventDefault(); active.click();
+        }
+      }
+    });
+
+    /* Debug hook */
+    window.TALENT_HUB = { db, auth, renderGigs };
+
+  </script>
+
+  <!-- Font Awesome JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" defer></script>
+</body>
+</html>
