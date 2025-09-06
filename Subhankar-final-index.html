@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- ===== Head ===== -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Talent-Hub | Welcome</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Inline premium styles (glassmorphic, refined spacing, animations) -->
+    <style>
+        /* ========== Root & Base ========== */
+        :root {
+            --bg-img: url('/assets/main.png.jpg');
+            --accent: #1dbf73;
+            --accent-2: #10b981;
+            --accent-blue: #4466ee;
+            --accent-blue-2: #6688ff;
+            --muted: #64748b;
+            --ink: #0f172a;
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-strong: rgba(255, 255, 255, 0.12);
+            --card-radius: 16px;
+            --shadow-soft: 0 8px 30px rgba(2, 6, 23, 0.16);
+            --shadow-strong: 0 24px 80px rgba(2, 6, 23, 0.2);
+            --max-width: 1200px;
+
+            /* Added accents for polish */
+            --accent-3: #7c5cff;
+            --glass-2: rgba(255, 255, 255, 0.03);
+            --text-weak: rgba(255, 255, 255, 0.75);
+            --card-bg-dark: rgba(6, 8, 12, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+            color: #e6eef8;
+            background: radial-gradient(1000px 500px at 10% 10%, rgba(124, 92, 255, 0.06), transparent),
+                radial-gradient(900px 400px at 90% 90%, rgba(16, 191, 131, 0.03), transparent),
+                linear-gradient(180deg, rgba(6, 10, 14, 0.6), rgba(9, 14, 20, 0.6)),
+                var(--bg-img) no-repeat center/cover fixed;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ========== Container utils ========== */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border-radius: var(--card-radius);
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ========== Top Navigation (glass) ========== */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            backdrop-filter: blur(8px) saturate(1.05);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            position: sticky;
+            top: 10px;
+            z-index: 60;
+            margin: 12px;
+            border-radius: 12px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 20px;
+            color: #fff;
+            letter-spacing: 0.2px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            white-space: nowrap;
+            /* ALWAYS one line */
+        }
+
+        nav ul {
+            display: flex;
+            gap: 12px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            align-items: center;
+        }
+
+        nav ul li a {
+            color: var(--text-weak);
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 10px;
+            transition: all .18s ease;
+            font-size: 14px;
+        }
+
+        nav ul li a:hover {
+            transform: translateY(-2px);
+            color: #dffbf0;
+            text-decoration: none;
+        }
+
+        /* small badge for CTA */
+        .nav-cta {
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent-2), var(--accent));
+            color: #04121a;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(16, 191, 131, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(16, 191, 131, 0.15);
+        }
+
+        /* ========== Hero ========== */
+        .hero {
+            max-width: var(--max-width);
+            margin: 20px auto;
+            padding: 36px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(9, 20, 30, 0.38), rgba(9, 20, 30, 0.20));
+            border-radius: 18px;
+            box-shadow: var(--shadow-strong);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: 40px;
+            color: #fff;
+            letter-spacing: -0.6px;
+        }
+
+        .hero p {
+            margin: 12px 0 20px;
+            max-width: 820px;
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 17px;
+            line-height: 1.45;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 14px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.18);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .client-btn {
+            background: linear-gradient(90deg, #34d399, #10b981);
+            color: #042018;
+        }
+
+        .client-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.25);
+        }
+
+        .freelancer-btn {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            color: #042018;
+        }
+
+        .freelancer-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
+        }
+
+        /* ========== Search Bar (below navbar) ========== */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin: 18px auto;
+            max-width: 980px;
+            padding: 0 18px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px 0 0 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            outline: none;
+            background: rgba(255, 255, 255, 0.02);
+            color: #fff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-bar button {
+            padding: 14px 18px;
+            border-radius: 0 12px 12px 0;
+            border: none;
+            background: linear-gradient(90deg, var(--accent-2), var(--accent));
+            color: #04121a;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ========== Categories Row ========== */
+        .categories {
+            margin: 16px auto;
+            max-width: var(--max-width);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005));
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .category-list {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px 6px;
+        }
+
+        .category-item {
+            position: relative;
+            cursor: pointer;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 8px 10px;
+            border-radius: 10px;
+            transition: all .18s;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005));
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .category-item:hover {
+            transform: translateY(-4px);
+            color: #eafff5;
+            box-shadow: 0 8px 30px rgba(124, 92, 255, 0.06);
+        }
+
+        .category-item .dropdown {
+            display: none;
+            position: absolute;
+            top: 36px;
+            left: 0;
+            background: #fff;
+            color: #0f172a;
+            min-width: 220px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            z-index: 90;
+        }
+
+        .category-item:hover .dropdown {
+            display: block;
+            animation: fadeIn .18s ease;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 10px 12px;
+            color: #102030;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown a:hover {
+            background: #f5fbf7;
+            padding-left: 16px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== Page Sections ========== */
+        main {
+            max-width: var(--max-width);
+            margin: 18px auto;
+            padding: 0 18px 40px;
+            color: var(--ink);
+        }
+
+        section {
+            background: rgba(255, 255, 255, 0.98);
+            margin: 20px 0;
+            border-radius: 14px;
+            padding: 20px;
+            color: #0f172a;
+            box-shadow: 0 8px 30px rgba(3, 10, 18, 0.06);
+            border: 1px solid #eef3f6;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            color: #556577;
+            margin-bottom: 14px;
+        }
+
+        /* ========== Filter controls ========== */
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .filter-controls select,
+        .filter-controls input {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #e7eef4;
+            background: #fff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-controls select:focus,
+        .filter-controls input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(29, 191, 115, 0.1);
+        }
+
+        .btn-pill {
+            padding: 10px 12px;
+            background: var(--accent);
+            color: #04121a;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(29, 191, 115, 0.2);
+        }
+
+        .btn-pill.btn-light {
+            background: transparent;
+            border: 1px solid #e6eef4;
+            color: #64748b;
+        }
+
+        .btn-pill.btn-light:hover {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* ========== Categories Grid (popular) ========== */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .category-card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(2, 8, 23, 0.04);
+            color: #0f172a;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(2, 8, 23, 0.08);
+            background: linear-gradient(135deg, #f8fafc, #fff);
+        }
+
+        /* ========== Gigs Grid (premium cards; integrated from dashboard) ========== */
+        .gigs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 12px;
+        }
+
+        .gig-card {
+            background: linear-gradient(180deg, #ffffff, #fbfdff);
+            border: 1px solid #e6eef3;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform .18s ease, box-shadow .18s ease;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+            position: relative;
+            color: #0f172a;
+        }
+
+        .gig-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-strong);
+            z-index: 5;
+        }
+
+        .gig-cover {
+            position: relative;
+            height: 170px;
+            background: #f8fafc;
+            overflow: hidden;
+            display: block;
+        }
+
+        .gig-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .gig-card:hover .gig-cover img {
+            transform: scale(1.05);
+        }
+
+        /* top-right like button */
+        .top-like-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            background: rgba(0, 0, 0, 0.45);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            z-index: 20;
+            transition: all .14s ease;
+        }
+
+        .top-like-btn:hover {
+            background: rgba(0, 0, 0, 0.6);
+            transform: scale(1.1);
+        }
+
+        .top-like-btn.liked {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-2));
+            color: #fff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 15px rgba(68, 102, 238, 0.3);
+        }
+
+        .top-like-btn.liked:hover {
+            transform: scale(1.13);
+            box-shadow: 0 6px 20px rgba(68, 102, 238, 0.4);
+        }
+
+        .dots {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            z-index: 12;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+
+        .gig-body {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .seller-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .seller-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+
+        .gig-card:hover .seller-avatar {
+            transform: scale(1.05);
+        }
+
+        .seller-name {
+            font-weight: 800;
+            font-size: 14px;
+            line-height: 1.1;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .metric-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .rating-chip,
+        .projects-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-weight: 800;
+            font-size: 13px;
+            color: #0f172a;
+            transition: all 0.3s ease;
+        }
+
+        .rating-chip:hover,
+        .projects-chip:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .price-line {
+            font-weight: 900;
+            color: var(--accent-2);
+            margin-top: 8px;
+        }
+
+        .gig-title {
+            font-weight: 900;
+            font-size: 15px;
+            margin-top: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .gig-card:hover .gig-title {
+            color: var(--accent);
+        }
+
+        .gig-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            padding: 8px 10px;
+            border-radius: 10px;
+            color: #0f172a;
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+
+        .btn.ghost:hover {
+            background: #f1f5f9;
+            border-color: rgba(15, 23, 42, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #eef2f7 0%, #fdfdfd 50%, #eef2f7 100%);
+            height: 220px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%);
+            animation: shimmer 1.2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(3, 8, 18, 0.6);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal {
+            width: min(920px, 96vw);
+            background: #fff;
+            color: #0f172a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eef3f6;
+        }
+
+        .modal-body {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .modal-body img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #f3f7fb;
+            transition: all 0.3s ease;
+        }
+
+        .modal-body img:hover {
+            transform: scale(1.02);
+        }
+
+        .modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #eef3f6;
+            background: #fbfdff;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* footer */
+        footer {
+            background: rgba(8, 12, 20, 0.6);
+            color: #cbd5e1;
+            padding: 30px;
+            margin-top: 28px;
+            backdrop-filter: blur(10px);
+        }
+
+        footer .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        footer a {
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        footer a:hover {
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        /* helpers & small text */
+        .small {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* ========== SUGGESTIONS: Styles for search suggestion dropdowns ========== */
+        /* Added minimally and non-intrusively. No existing classes overridden. */
+        .search-suggestions {
+            position: absolute;
+            z-index: 1200;
+            min-width: 260px;
+            max-width: 720px;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 10px;
+            box-shadow: 0 12px 30px rgba(2, 6, 23, 0.12);
+            border: 1px solid #eef3f6;
+            overflow: hidden;
+            display: none;
+        }
+        .search-suggestions.visible { display: block; }
+        .search-suggestions .sugg-list { list-style: none; margin: 0; padding: 8px 0; max-height: 320px; overflow: auto; }
+        .search-suggestions .sugg-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+        .search-suggestions .sugg-item .sub {
+            font-weight: 600;
+            font-size: 13px;
+            color: #475569;
+            font-weight: 600;
+        }
+        .search-suggestions .sugg-item:hover,
+        .search-suggestions .sugg-item.active {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .search-suggestions .no-sugg {
+            padding: 10px 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+        /* position helper for page search bar */
+        .search-suggestions.anchor-page { left: 18px; right: 18px; margin: 0 auto; max-width: 980px; }
+        /* position helper for compact sticky search (smaller width) */
+        .search-suggestions.anchor-mini { min-width: 220px; max-width: 520px; }
+    </style>
+
+</head>
+
+<body>
+    <!-- ===== NEW: Compact Sticky Header (hidden initially; shows after white section) ===== -->
+    <div class="sticky-compact" id="stickyCompact" aria-hidden="true">
+        <div class="inner">
+            <div class="brand-mini">TalentHub</div>
+            <div class="mini-search" role="search" aria-label="Quick Search" style="position:relative;">
+                <input type="text" id="miniSearchInput" placeholder="Search services…" />
+                <button id="miniSearchBtn">Search</button>
+
+                <!-- SUGGESTIONS: dropdown container for mini search -->
+                <div id="miniSearchSuggestions" class="search-suggestions anchor-mini" role="listbox" aria-label="Suggestions"></div>
+            </div>
+            <div class="mini-auth">
+                <a href="login.html">Login</a>
+                <a href="logout.html">Logout</a>
+            </div>
+        </div>
+        <!-- Sticky categories with hover dropdown -->
+        <div class="inner" style="grid-template-columns: 1fr; padding-top: 0;">
+            <div class="mini-cats" aria-label="Quick Categories">
+                <div class="mini-cat">
+                    <a href="#">Graphics &amp; Design</a>
+                    <div class="menu">
+                        <a href="logo_design.html">Logo Design</a>
+                        <a href="brand_style_guides.html">Brand Style Guides</a>
+                        <a href="buisness_cards.html">Business Cards</a>
+                        <a href="social_media_design.html">Social Media Design</a>
+                        <a href="illustration.html">Illustration</a>
+                        <a href="book_covers.html">Book Covers</a>
+                        <a href="packging_desing.html">Packaging Design</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Digital Marketing</a>
+                    <div class="menu">
+                        <a href="social_media_marketing.html">Social Media Marketing</a>
+                        <a href="seo_services.html">SEO</a>
+                        <a href="content_marketing.html">Content Marketing</a>
+                        <a href="email_marketing.html">Email Marketing</a>
+                        <a href="influencer_marketing.html">Influencer Marketing</a>
+                        <a href="video_marketing.html">Video Marketing</a>
+                        <a href="affiliate_marketing.html">Affiliate Marketing</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Writing &amp; Translation</a>
+                    <div class="menu">
+                        <a href="#">Articles & Blogs</a>
+                        <a href="#">Copywriting</a>
+                        <a href="#">Translation</a>
+                        <a href="#">Proofreading</a>
+                        <a href="#">Technical Writing</a>
+                        <a href="#">Resume Writing</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Video &amp; Animation</a>
+                    <div class="menu">
+                        <a href="#">Video Editing</a>
+                        <a href="#">2D Animation</a>
+                        <a href="#">3D Animation</a>
+                        <a href="#">Whiteboard Animation</a>
+                        <a href="#">Short Video Ads</a>
+                        <a href="#">Intros &amp; Outros</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Music &amp; Audio</a>
+                    <div class="menu">
+                        <a href="#">Voice Over</a>
+                        <a href="#">Mixing &amp; Mastering</a>
+                        <a href="#">Podcast Editing</a>
+                        <a href="#">Jingles</a>
+                        <a href="#">Sound Effects</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Programming &amp; Tech</a>
+                    <div class="menu">
+                        <a href="#">Website Development</a>
+                        <a href="#">App Development</a>
+                        <a href="#">Game Development</a>
+                        <a href="#">E-commerce Development</a>
+                        <a href="#">Cybersecurity</a>
+                        <a href="#">AI Development</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Data</a>
+                    <div class="menu">
+                        <a href="#">Data Entry</a>
+                        <a href="#">Data Analysis</a>
+                        <a href="#">Data Visualization</a>
+                        <a href="#">Web Scraping</a>
+                        <a href="#">Machine Learning</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Business</a>
+                    <div class="menu">
+                        <a href="#">Business Plans</a>
+                        <a href="#">Market Research</a>
+                        <a href="#">Project Management</a>
+                        <a href="#">Virtual Assistant</a>
+                        <a href="#">HR Consulting</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">Lifestyle</a>
+                    <div class="menu">
+                        <a href="#">Online Lessons</a>
+                        <a href="#">Fitness Coaching</a>
+                        <a href="#">Cooking Lessons</a>
+                        <a href="#">Relationship Advice</a>
+                        <a href="#">Arts &amp; Crafts</a>
+                    </div>
+                </div>
+                <div class="mini-cat">
+                    <a href="#">AI Services</a>
+                    <div class="menu">
+                        <a href="#">AI Art</a>
+                        <a href="#">AI Content Writing</a>
+                        <a href="#">AI Chatbot</a>
+                        <a href="#">AI Automation</a>
+                        <a href="#">AI Video Creation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- ===== Navbar (original) ===== -->
+        <nav role="navigation" aria-label="Main Navigation">
+            <div class="logo">Talent-Hub</div>
+            <ul>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="contact.html">Contact-us</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="logout.html">Log-out</a></li>
+            </ul>
+            <div style="display:flex;gap:10px;align-items:center">
+                <a class="nav-cta" href="post-gig.html">Post a Gig</a>
+            </div>
+        </nav>
+
+        <!-- ===== Search Bar (original) ===== -->
+        <div class="search-bar" role="search" aria-label="Search Services" style="position:relative;">
+            <input type="text" id="searchInput" placeholder="Search for your favorite services....." />
+            <button id="searchBtn">Search</button>
+
+            <!-- SUGGESTIONS: dropdown container for main search -->
+            <div id="pageSearchSuggestions" class="search-suggestions anchor-page" role="listbox" aria-label="Suggestions"></div>
+        </div>
+
+        <!-- ===== Categories (original - full 10 categories included) ===== -->
+        <div class="categories" aria-hidden="false" id="mainCategories">
+            <div class="category-list">
+                <div class="category-item">Graphics & Design
+                    <div class="dropdown" role="menu">
+                        <a href="logo_design.html">Logo Design</a>
+                        <a href="brand_style_guides.html">Brand Style Guides</a>
+                        <a href="buisness_cards.html">Business Cards</a>
+                        <a href="social_media_design.html">Social Media Design</a>
+                        <a href="illustration.html">Illustration</a>
+                        <a href="book_covers.html">Book Covers</a>
+                        <a href="packging_desing.html">Packaging Design</a>
+                    </div>
+                </div>
+                <div class="category-item">Digital Marketing
+                    <div class="dropdown" role="menu">
+                        <a href="social_media_marketing.html">Social Media Marketing</a>
+                        <a href="seo_services.html">SEO</a>
+                        <a href="content_marketing.html">Content Marketing</a>
+                        <a href="email_marketing.html">Email Marketing</a>
+                        <a href="influencer_marketing.html">Influencer Marketing</a>
+                        <a href="video_marketing.html">Video Marketing</a>
+                        <a href="affiliate_marketing.html">Affiliate Marketing</a>
+                    </div>
+                </div>
+                <div class="category-item">Writing & Translation
+                    <div class="dropdown" role="menu">
+                        <a href="#">Articles & Blogs</a>
+                        <a href="#">Copywriting</a>
+                        <a href="#">Translation</a>
+                        <a href="#">Proofreading</a>
+                        <a href="#">Technical Writing</a>
+                        <a href="#">Resume Writing</a>
+                    </div>
+                </div>
+                <div class="category-item">Video & Animation
+                    <div class="dropdown" role="menu">
+                        <a href="#">Video Editing</a>
+                        <a href="#">2D Animation</a>
+                        <a href="#">3D Animation</a>
+                        <a href="#">Whiteboard Animation</a>
+                        <a href="#">Short Video Ads</a>
+                        <a href="#">Intros & Outros</a>
+                    </div>
+                </div>
+                <div class="category-item">Music & Audio
+                    <div class="dropdown" role="menu">
+                        <a href="#">Voice Over</a>
+                        <a href="#">Mixing & Mastering</a>
+                        <a href="#">Podcast Editing</a>
+                        <a href="#">Jingles</a>
+                        <a href="#">Sound Effects</a>
+                    </div>
+                </div>
+                <div class="category-item">Programming & Tech
+                    <div class="dropdown" role="menu">
+                        <a href="#">Website Development</a>
+                        <a href="#">App Development</a>
+                        <a href="#">Game Development</a>
+                        <a href="#">E-commerce Development</a>
+                        <a href="#">Cybersecurity</a>
+                        <a href="#">AI Development</a>
+                    </div>
+                </div>
+                <div class="category-item">Data
+                    <div class="dropdown" role="menu">
+                        <a href="#">Data Entry</a>
+                        <a href="#">Data Analysis</a>
+                        <a href="#">Data Visualization</a>
+                        <a href="#">Web Scraping</a>
+                        <a href="#">Machine Learning</a>
+                    </div>
+                </div>
+                <div class="category-item">Business
+                    <div class="dropdown" role="menu">
+                        <a href="#">Business Plans</a>
+                        <a href="#">Market Research</a>
+                        <a href="#">Project Management</a>
+                        <a href="#">Virtual Assistant</a>
+                        <a href="#">HR Consulting</a>
+                    </div>
+                </div>
+                <div class="category-item">Lifestyle
+                    <div class="dropdown" role="menu">
+                        <a href="#">Online Lessons</a>
+                        <a href="#">Fitness Coaching</a>
+                        <a href="#">Cooking Lessons</a>
+                        <a href="#">Relationship Advice</a>
+                        <a href="#">Arts & Crafts</a>
+                    </div>
+                </div>
+                <div class="category-item">AI Services
+                    <div class="dropdown" role="menu">
+                        <a href="#">AI Art</a>
+                        <a href="#">AI Content Writing</a>
+                        <a href="#">AI Chatbot</a>
+                        <a href="#">AI Automation</a>
+                        <a href="#">AI Video Creation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Hero (original) ===== -->
+        <div class="hero" role="banner">
+            <h1>Welcome to Talent-Hub</h1>
+            <p>The best place to find top clients and freelancers — Fast, Easy & Secure.</p>
+            <div class="btn-group">
+                <a href="client-dashboard.html" class="btn client-btn" id="btnClient">I’m a Client</a>
+                <a href="#" class="btn freelancer-btn" id="btnFreelancer">I’m a Freelancer</a>
+            </div>
+        </div>
+
+        <main>
+            <!-- ===== NEW SECTIONS (kept) ===== -->
+            <section class="filter-section" id="filter" aria-labelledby="filter-heading">
+                <h2 id="filter-heading" class="section-title">Find Services Faster</h2>
+                <p class="section-subtitle">Filter by category, budget, and ratings</p>
+                <div class="filter-controls">
+                    <select aria-label="Category" class="control" id="uiFilterCategory">
+                        <option>All Categories</option>
+                        <option>Graphics & Design</option>
+                        <option>Digital Marketing</option>
+                        <option>Writing & Translation</option>
+                        <option>Video & Animation</option>
+                        <option>Music & Audio</option>
+                        <option>Programming & Tech</option>
+                        <option>Data</option>
+                        <option>Business</option>
+                        <option>Lifestyle</option>
+                        <option>AI Services</option>
+                    </select>
+                    <input type="number" placeholder="Min Price" aria-label="Min Price" class="control"
+                        id="uiMinPrice" />
+                    <input type="number" placeholder="Max Price" aria-label="Max Price" class="control"
+                        id="uiMaxPrice" />
+                    <select aria-label="Rating" class="control" id="uiRating">
+                        <option>Any Rating</option>
+                        <option>4+ Stars</option>
+                        <option>3+ Stars</option>
+                    </select>
+                    <button type="button" class="btn-pill" id="uiApply">Apply</button>
+                    <button type="button" class="btn-pill btn-light" id="uiReset">Reset</button>
+                </div>
+            </section>
+
+            <section class="categories-showcase" id="popular-categories">
+                <h2 class="section-title">Popular Categories</h2>
+                <p class="section-subtitle">Explore top picks from clients and freelancers</p>
+                <div class="category-grid">
+                    <div class="category-card">Logo Design</div>
+                    <div class="category-card">Brand Style Guides</div>
+                    <div class="category-card">Business Cards</div>
+                    <div class="category-card">Social Media Design</div>
+                    <div class="category-card">Web Development</div>
+                    <div class="category-card">App Development</div>
+                    <div class="category-card">SEO Services</div>
+                    <div class="category-card">Content Writing</div>
+                    <div class="category-card">Video Editing</div>
+                    <div class="category-card">AI Automation</div>
+                    <div class="category-card">Data Analysis</div>
+                    <div class="category-card">Virtual Assistant</div>
+                </div>
+            </section>
+
+            <section class="featured-gigs" id="featured-gigs" aria-labelledby="featured-heading">
+                <h2 id="featured-heading" class="section-title">Featured Gigs</h2>
+                <p class="section-subtitle">Hand-picked work from top-rated sellers</p>
+                <div class="gigs-grid"><!-- Filled from Firestore --></div>
+            </section>
+
+            <section class="freelancers-slider" id="top-freelancers">
+                <h2 class="section-title">Top Freelancers</h2>
+                <p class="section-subtitle">Meet pros with 5★ ratings and verified work</p>
+                <div class="freelancer-track" style="display:flex; gap:14px; overflow-x:auto; padding-bottom:6px;">
+                </div>
+            </section>
+
+            <section class="trust-badges" id="trust">
+                <h2 class="section-title">Why Choose Us?</h2>
+                <p class="section-subtitle">Built for safety, speed, and success</p>
+                <div class="badge-grid" style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap">
+                    <div class="badge-card"
+                        style="background:#fff;padding:14px;border-radius:12px;color:#0f172a;font-weight:700">✅ Secure
+                        Payments</div>
+                    <div class="badge-card"
+                        style="background:#fff;padding:14px;border-radius:12px;color:#0f172a;font-weight:700">✅ Verified
+                        Profiles</div>
+                    <div class="badge-card"
+                        style="background:#fff;padding:14px;border-radius:12px;color:#0f172a;font-weight:700">✅ 24/7
+                        Support</div>
+                    <div class="badge-card"
+                        style="background:#fff;padding:14px;border-radius:12px;color:#0f172a;font-weight:700">✅ Dispute
+                        Resolution</div>
+                    <div class="badge-card"
+                        style="background:#fff;padding:14px;border-radius:12px;color:#0f172a;font-weight:700">✅ NDA & IP
+                        Protection</div>
+                </div>
+            </section>
+
+            <section class="testimonials" id="testimonials">
+                <h2 class="section-title">What Clients Say</h2>
+                <p class="section-subtitle">Real feedback from real projects</p>
+                <div class="testimonial-row"
+                    style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px"></div>
+            </section>
+
+            <section class="faq" id="faq">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <div class="faq-item">
+                    <div class="q">How do I hire a freelancer?</div>
+                    <div class="a">Browse categories, open a gig, and click "Continue" to proceed with payment &
+                        requirements.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="q">Is my payment safe?</div>
+                    <div class="a">Yes. Funds are held securely and released only after you approve the delivery.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="q">Can I get a refund?</div>
+                    <div class="a">If work isn't delivered as promised, you can request revisions or open a dispute.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="q">Do you support custom offers?</div>
+                    <div class="a">Yes, freelancers can send custom offers tailored to your project.</div>
+                </div>
+            </section>
+
+            <section class="newsletter" id="newsletter">
+                <h2 class="section-title">Stay Updated</h2>
+                <p class="section-subtitle">Get tips, discounts, and platform updates in your inbox</p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+                    <input type="email" id="newsletterEmail" placeholder="Enter your email" aria-label="Email"
+                        style="padding:10px;border:1px solid #e7eef4;border-radius:10px;margin-right:8px" />
+                    <button id="subscribeBtn"
+                        style="padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent-2),var(--accent));border:none;color:#04121a;font-weight:800">Subscribe</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container links">
+            <div>
+                <h4 style="color:#fff">Categories</h4>
+                <a href="#">Graphics & Design</a><br />
+                <a href="#">Digital Marketing</a><br />
+                <a href="#">Writing & Translation</a><br />
+                <a href="#">Video & Animation</a><br />
+                <a href="#">Music & Audio</a><br />
+                <a href="#">Programming & Tech</a>
+            </div>
+            <div>
+                <h4 style="color:#fff">About</h4>
+                <a href="#">Careers</a><br />
+                <a href="#">Press & News</a><br />
+                <a href="#">Partnerships</a><br />
+                <a href="#">Privacy Policy</a><br />
+                <a href="#">Terms of Service</a>
+            </div>
+            <div>
+                <h4 style="color:#fff">Support</h4>
+                <a href="#">Help & Support</a><br />
+                <a href="#">Trust & Safety</a><br />
+                <a href="#">Buying on Talent-Hub</a><br />
+                <a href="#">Selling on Talent-Hub</a>
+            </div>
+            <div>
+                <h4 style="color:#fff">Community</h4>
+                <a href="#">Events</a><br />
+                <a href="#">Blog</a><br />
+                <a href="#">Forum</a><br />
+                <a href="#">Invite a Friend</a>
+            </div>
+        </div>
+        <p style="margin-top:24px;color:#94a3b8;text-align:center">© 2025 Talent-Hub. All Rights Reserved.</p>
+    </footer>
+
+    <!-- ===== Modal for Gig Details (polished) ===== -->
+    <div id="gigModalBackdrop" class="modal-backdrop" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="gigModalTitle">
+            <div class="modal-header">
+                <h3 id="gigModalTitle" style="margin:0;font-size:20px;">Gig Details</h3>
+                <button id="gigModalClose" class="btn" aria-label="Close"
+                    style="background:transparent;border:0;">✕</button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <img id="gigModalImg" src="" alt="Gig image" />
+                </div>
+                <div style="text-align:left">
+                    <div style="font-size:22px;font-weight:700;margin-bottom:6px" id="gigModalHeading">Title</div>
+                    <div style="color:#475569;margin:4px 0" id="gigModalBy">by —</div>
+                    <div style="font-weight:700;color:var(--accent-2);margin:6px 0" id="gigModalPrice">From ₹—</div>
+                    <div style="margin:6px 0"><strong>Category:</strong> <span id="gigModalCategory">—</span></div>
+                    <div style="margin:6px 0"><strong>Delivery:</strong> <span id="gigModalDelivery">—</span></div>
+                    <div style="margin:6px 0"><strong>Skills:</strong> <span id="gigModalSkills">—</span></div>
+                    <div style="margin:10px 0;color:#334155" id="gigModalDesc">Description…</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="gigModalLink" class="btn-view" href="#"
+                    style="text-decoration:none;background:var(--accent);color:#04121a;padding:8px 12px;border-radius:8px;font-weight:800">Open
+                    Details Page</a>
+                <button id="gigModalClose2" class="btn"
+                    style="background:transparent;border:1px solid #e6eef4;padding:8px 10px;border-radius:8px">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Firebase + App Logic (merged & polished) ===== -->
+    <script type="module">
+        // Firebase import (modular)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import {
+            getFirestore, collection, doc, getDoc, getDocs, onSnapshot,
+            query, orderBy, limit, startAfter, setDoc, runTransaction
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        /* ===== Firebase Config (unchanged) ===== */
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+            authDomain: "skillspot-pro.firebaseapp.com",
+            projectId: "skillspot-pro",
+            storageBucket: "skillspot-pro.appspot.com",
+            messagingSenderId: "600467343030",
+            appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+            measurementId: "G-TYL2XF4WZY"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* ===== Utility helpers (kept) ===== */
+        const safe = (s) => (typeof s === 'string' ? s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) : '');
+        const esc = s => String(s || '').replace(/[&<>\"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const money = n => isFinite(n) ? `₹${Number(n).toLocaleString('en-IN')}` : '₹—';
+        const stars = (n = 0) => { const full = Math.round(Number(n) || 0); return `${'★'.repeat(Math.min(5, full))}${'☆'.repeat(Math.max(0, 5 - full))}`; };
+
+        /* ===== DOM refs ===== */
+        const gigsGrid = document.querySelector('.featured-gigs .gigs-grid') || document.querySelector('.gigs-grid');
+        const freeTrack = document.querySelector('.freelancer-track');
+        const testiRow = document.querySelector('.testimonial-row');
+
+        /* ===== Skeleton while loading ===== */
+        function showSkeletons() {
+            if (gigsGrid) gigsGrid.innerHTML = Array.from({ length: 6 }).map(() => `<div class="skeleton"></div>`).join('');
+            if (freeTrack) freeTrack.innerHTML = Array.from({ length: 6 }).map(() => `<div class="skeleton" style="height:200px;width:220px;display:inline-block;margin:8px;"></div>`).join('');
+            if (testiRow) testiRow.innerHTML = Array.from({ length: 3 }).map(() => `<div class="skeleton" style="height:120px"></div>`).join('');
+        }
+        showSkeletons();
+
+        /* ===== Realtime Gigs (keeps original collection name) ===== */
+        const gigsCol = collection(db, 'subho_gigs');
+        const gigsQuery = query(gigsCol, orderBy('createdAt', 'desc'), limit(12));
+        let gigs = [];
+        const likesWatchers = new Map();
+        const ratingsWatchers = new Map();
+
+        onSnapshot(gigsQuery, snap => {
+            const incoming = [];
+            snap.forEach(d => incoming.push({ id: d.id, ...d.data() }));
+            const byId = new Map(gigs.map(g => [g.id, g]));
+            incoming.forEach(g => byId.set(g.id, { ...byId.get(g.id), ...g }));
+            gigs = [...byId.values()];
+            renderGigs();
+        }, err => {
+            console.error('gigs snapshot error', err);
+            if (gigsGrid) gigsGrid.innerHTML = '<div style="grid-column:1/-1;color:#64748b">Failed to load gigs.</div>';
+        });
+
+        /* ===== Likes & Ratings logic (from dashboard) ===== */
+        async function toggleLike(gid) {
+            try {
+                const user = auth.currentUser;
+                if (!user) { alert('Please sign in to like'); return; }
+                const uid = user.uid;
+                const likeDocRef = doc(db, 'gig_likes_user', `${gid}_${uid}`);
+                const aggRef = doc(db, 'gig_likes_agg', gid);
+
+                const userSnap = await getDoc(likeDocRef);
+                const currentlyLiked = userSnap.exists() && userSnap.data().liked === true;
+
+                await setDoc(likeDocRef, { gid, uid, liked: !currentlyLiked, updatedAt: Date.now() }, { merge: true });
+
+                await runTransaction(db, async (t) => {
+                    const aggSnap = await t.get(aggRef);
+                    const currentCount = aggSnap.exists() ? (aggSnap.data().count || 0) : 0;
+                    const newCount = currentlyLiked ? Math.max(0, currentCount - 1) : currentCount + 1;
+                    t.set(aggRef, { count: newCount }, { merge: true });
+                });
+            } catch (e) { console.error('toggleLike failed', e); }
+        }
+
+        async function watchLikesForCard(gid, cardEl) {
+            const aggRef = doc(db, 'gig_likes_agg', gid);
+            if (likesWatchers.get(gid)) likesWatchers.get(gid)();
+            const unsub = onSnapshot(aggRef, s => {
+                const c = s.exists() ? (s.data().count || 0) : 0;
+                const el = cardEl.querySelector('.like-count');
+                if (el) el.textContent = `${c} Likes`;
+            }, err => console.warn('likes watch err', err));
+            likesWatchers.set(gid, unsub);
+
+            const user = auth.currentUser;
+            if (user) {
+                const userDocRef = doc(db, 'gig_likes_user', `${gid}_${user.uid}`);
+                try {
+                    const ud = await getDoc(userDocRef);
+                    const btn = cardEl.querySelector('.top-like-btn');
+                    if (btn) {
+                        if (ud.exists() && ud.data().liked) {
+                            btn.classList.add('liked');
+                            btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+                        } else {
+                            btn.classList.remove('liked');
+                            btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+                        }
+                    }
+                } catch (e) { }
+            }
+        }
+
+        function watchRatingsForCard(gid, cardEl) {
+            const aggRef = doc(db, 'gig_ratings_agg', gid);
+            if (ratingsWatchers.get(gid)) ratingsWatchers.get(gid)();
+            const unsub = onSnapshot(aggRef, s => {
+                const avg = s.exists() ? (s.data().avg || 0) : 0;
+                const cnt = s.exists() ? (s.data().count || 0) : 0;
+                const rt = cardEl.querySelector('.rating-chip .val');
+                const rc = cardEl.querySelector('.rating-chip .cnt');
+                if (rt) rt.textContent = Number(avg).toFixed(1);
+                if (rc) rc.textContent = cnt;
+            }, err => console.warn('ratings watch err', err));
+            ratingsWatchers.set(gid, unsub);
+        }
+
+        const pc = ['#f97316', '#ef4444', '#06b6d4', '#3b82f6', '#7c3aed', '#10b981'];
+        function colorFor(t) { return pc[(t || 'x').charCodeAt(0) % pc.length]; }
+        function pickAvatarLetter(name) { return (name || 'U').trim().charAt(0).toUpperCase(); }
+
+        function sliderHTML(images = []) {
+            const hasMany = Array.isArray(images) && images.length > 1;
+            const dots = (images || []).map((_, i) => `<span class="dot ${i === 0 ? 'active' : ''}" data-idx="${i}"></span>`).join('');
+            return `${hasMany ? `<button class="nav-arrow nav-left" data-dir="-1" aria-label="Prev"><i class="fa-solid fa-chevron-left"></i></button>` : ''}${hasMany ? `<button class="nav-arrow nav-right" data-dir="1" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>` : ''}<div class="dots">${dots}</div>`;
+        }
+
+        function attachSlider(cardEl, images) {
+            const imgEl = cardEl.querySelector('.gig-cover img');
+            const left = cardEl.querySelector('.nav-left');
+            const right = cardEl.querySelector('.nav-right');
+            const dots = Array.from(cardEl.querySelectorAll('.dot'));
+            if (!imgEl) return;
+            let idx = 0;
+            function setIdx(n) {
+                idx = Math.max(0, Math.min(images.length - 1, n));
+                imgEl.src = images[idx] || '';
+                dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                if (left) left.disabled = idx === 0;
+                if (right) right.disabled = idx === images.length - 1;
+            }
+            if (left) left.addEventListener('click', e => { e.stopPropagation(); setIdx(idx - 1); });
+            if (right) right.addEventListener('click', e => { e.stopPropagation(); setIdx(idx + 1); });
+            setIdx(0);
+        }
+
+        function buildGigCardHTML(g) {
+            const id = g.id;
+            const images = Array.isArray(g.images) && g.images.length ? g.images : (g.coverURL ? [g.coverURL] : []);
+            const hasImages = images.length > 0;
+            const title = g.title || 'Untitled Gig';
+            const cat = g.category || 'General';
+            const sellerName = g.sellerName || g.by || 'Freelancer';
+            const priceFrom = money(g.price || g.startingPrice || 0);
+            const sellerId = g.sellerId || '';
+            const projectsDone = g.projectsCompleted || 0;
+            const ratingAvg = Number(g.ratingAvg || g.rating || 0);
+            const ratingCount = Number(g.ratingCount || 0);
+
+            const imagesEscaped = images.map(i => esc(i));
+
+            return `
+            <div class="gig-card" data-id="${esc(id)}" data-category="${esc(cat)}" data-price="${Number(g.price || 0)}" data-date="${g.createdAt ? (g.createdAt.seconds ? new Date(g.createdAt.seconds * 1000).toISOString() : new Date(g.createdAt).toISOString()) : new Date().toISOString()}">
+                <div class="gig-cover">
+                    ${hasImages ? `<img src="${imagesEscaped[0]}" alt="${esc(title)}" loading="lazy">` : `<div style="width:100%;height:100%;display:grid;place-items:center;color:#64748b">No Image</div>`}
+                    <button class="top-like-btn" data-gid="${esc(id)}" aria-label="Like" title="Like"><i class="fa-regular fa-heart"></i></button>
+                    ${sliderHTML(imagesEscaped)}
+                </div>
+                <div class="gig-body">
+                    <div class="seller-row">
+                        <div class="seller-avatar" style="background:${colorFor(sellerName)}">${pickAvatarLetter(sellerName)}</div>
+                        <div style="min-width:0">
+                            <div class="seller-name">${esc(sellerName)}</div>
+                            <div class="small">${esc(cat)}</div>
+                        </div>
+                        <div class="like-count" style="margin-left:auto">0 Likes</div>
+                    </div>
+
+                    <div class="gig-title">${esc(title)}</div>
+
+                    <div class="metric-row">
+                        <span class="rating-chip" title="Average rating">
+                            <i class="fa-solid fa-star"></i>
+                            <span class="val">${Number(ratingAvg).toFixed(1)}</span>
+                            <span class="small">(<span class="cnt">${ratingCount}</span>)</span>
+                        </span>
+                        <span class="projects-chip" title="Completed projects">
+                            <i class="fa-solid fa-briefcase"></i>
+                            <span>${projectsDone}</span>
+                        </span>
+                    </div>
+
+                    <div class="price-line">From <span class="price">${priceFrom}</span></div>
+
+                    <div class="gig-actions">
+                        <a class="btn ghost" href="gig-details.html?id=${encodeURIComponent(id)}"><i class="fa-solid fa-eye"></i> View</a>
+                        <a class="btn ghost" href="client-messages.html?to=${encodeURIComponent(sellerId)}"><i class="fa-solid fa-message"></i> Message</a>
+                    </div>
+                </div>
+            </div>
+        `;
+        }
+
+        function mountCardInteractions(cardEl, g) {
+            const imgs = Array.isArray(g.images) && g.images.length ? g.images : (g.coverURL ? [g.coverURL] : []);
+            if (imgs.length > 1) attachSlider(cardEl, imgs);
+
+            const likeBtn = cardEl.querySelector('.top-like-btn');
+            if (likeBtn) {
+                likeBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    likeBtn.disabled = true;
+                    try { await toggleLike(g.id); } catch (err) { console.error(err); } finally { likeBtn.disabled = false; }
+                });
+                watchLikesForCard(g.id, cardEl);
+            }
+
+            watchRatingsForCard(g.id, cardEl);
+
+            cardEl.addEventListener('click', (e) => {
+                if (e.target.closest('a') || e.target.closest('button')) return;
+                openGigModalFromCard(g.id, cardEl);
+            });
+        }
+
+        /* ===== Modal logic (fetch full doc for details) ===== */
+        const modalBackdrop = document.getElementById('gigModalBackdrop');
+        const modalClose = document.getElementById('gigModalClose');
+        const modalClose2 = document.getElementById('gigModalClose2');
+        const M = {
+            img: document.getElementById('gigModalImg'),
+            title: document.getElementById('gigModalHeading'),
+            by: document.getElementById('gigModalBy'),
+            price: document.getElementById('gigModalPrice'),
+            cat: document.getElementById('gigModalCategory'),
+            del: document.getElementById('gigModalDelivery'),
+            skills: document.getElementById('gigModalSkills'),
+            desc: document.getElementById('gigModalDesc'),
+            link: document.getElementById('gigModalLink')
+        };
+
+        async function openGigModalFromCard(id, cardEl) {
+            try {
+                const dref = doc(db, 'subho_gigs', id);
+                const snap = await getDoc(dref);
+                const data = snap.exists() ? snap.data() : null;
+
+                const imgEl = cardEl.querySelector('img');
+                const titleEl = cardEl.querySelector('.gig-title');
+                const metaSeller = cardEl.querySelector('.seller-name');
+                const priceEl = cardEl.querySelector('.price');
+
+                M.img.src = (data && (Array.isArray(data.images) && data.images[0] || data.coverURL)) || imgEl?.src || '';
+                M.title.textContent = (data && data.title) || titleEl?.textContent || 'Gig';
+                M.by.textContent = (data && (data.sellerName || data.by)) || metaSeller?.textContent || '';
+                M.price.textContent = (data && (data.price ? money(data.price) : (data.startingPrice ? money(data.startingPrice) : '—'))) || priceEl?.textContent || '';
+                M.cat.textContent = (data && data.category) || cardEl.dataset.category || '—';
+                M.del.textContent = (data && (data.deliveryTime ? `${data.deliveryTime} days` : data.delivery || '—')) || '—';
+                M.skills.textContent = (data && Array.isArray(data.skills) ? data.skills.join(', ') : (data && data.skills) || '—');
+                M.desc.textContent = (data && (data.description || data.desc)) || 'Open the details page to see the full description, images, and reviews.';
+                M.link.href = `gig-details.html?id=${encodeURIComponent(id)}`;
+            } catch (e) {
+                console.warn('openGigModal error', e);
+            }
+            modalBackdrop.style.display = 'flex';
+            modalBackdrop.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModal() {
+            modalBackdrop.style.display = 'none';
+            modalBackdrop.setAttribute('aria-hidden', 'true');
+        }
+        modalClose.addEventListener('click', closeModal);
+        modalClose2.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        /* ===== Render pipeline ===== */
+        function renderGigs() {
+            if (!gigsGrid) return;
+            const published = gigs.filter(g => ((g.status || '').toLowerCase() === 'published') || !g.status);
+            const html = published.map(g => buildGigCardHTML(g)).join('') || '<div style="grid-column:1/-1;color:#64748b">No published gigs yet.</div>';
+            gigsGrid.innerHTML = html;
+
+            published.forEach(g => {
+                const el = document.querySelector(`.gig-card[data-id="${esc(g.id)}"]`);
+                if (el) mountCardInteractions(el, g);
+            });
+        }
+
+        /* ===== Freelancers & Testimonials (real-time) ===== */
+        try {
+            const qFree = query(collection(db, 'freelancers'), orderBy('rating', 'desc'), limit(12));
+            onSnapshot(qFree, snap => {
+                if (freeTrack) {
+                    if (snap.empty) { freeTrack.innerHTML = '<p style="padding:8px 12px; color:#64748b">No freelancers yet.</p>'; return; }
+                    freeTrack.innerHTML = snap.docs.map(d => {
+                        const f = d.data();
+                        const img = safe(f.photoUrl || '');
+                        const name = safe(f.name || 'Freelancer');
+                        const skills = Array.isArray(f.skills) ? f.skills.slice(0, 3).join(', ') : safe(f.skills || '');
+                        const rating = f.rating || 0;
+                        return `<div class="freelancer-card" style="background:#fff;color:#0f172a;border:1px solid #e6eef3;border-radius:12px;padding:12px;margin:8px;min-width:220px"><img alt="Freelancer" src="${img}" onerror="this.src='https://picsum.photos/seed/freelancer/400/300'" loading="lazy" style="height:120px;border-radius:8px;object-fit:cover" /><h4 style="margin:8px 0 6px">${name}</h4><p style="color:#475569">${skills} • ${stars(rating)}</p><button class="btn" style="background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#04121a;border-radius:8px;padding:8px 10px">Hire Me</button></div>`;
+                    }).join('');
+                }
+            });
+
+            const qTest = query(collection(db, 'testimonials'), orderBy('createdAt', 'desc'), limit(6));
+            onSnapshot(qTest, snap => {
+                if (testiRow) {
+                    if (snap.empty) { testiRow.innerHTML = '<p style="grid-column:1/-1;color:#64748b">No testimonials yet.</p>'; return; }
+                    testiRow.innerHTML = snap.docs.map(d => {
+                        const t = d.data();
+                        const name = safe(t.name || 'Client');
+                        const photo = safe(t.photoUrl || '');
+                        const feedback = safe(t.feedback || t.text || '');
+                        return `<div class="testimonial-card" style="background:#fff;padding:14px;border-radius:12px;color:#0f172a"><div style="display:flex;gap:12px;align-items:center;margin-bottom:8px"><img src="${photo}" onerror="this.src='https://picsum.photos/seed/user/64/64'" alt="${name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover" /><strong>${name}</strong></div><p style="color:#334155">"${feedback}"</p></div>`;
+                    }).join('');
+                }
+            });
+        } catch (e) { console.error(e); }
+
+        /* ===== SEARCH BEHAVIOUR — Live filter (Option B) ===== */
+        const searchBtn = document.getElementById("searchBtn");
+        const searchInput = document.getElementById("searchInput");
+        const miniSearchBtn = document.getElementById('miniSearchBtn');
+        const miniSearchInput = document.getElementById('miniSearchInput');
+
+        function filterCategoryBlocks(query) {
+            const q = (query || '').trim().toLowerCase();
+
+            // MAIN dark categories (category-item)
+            const mainWrap = document.getElementById('mainCategories');
+            if (mainWrap) {
+                const items = Array.from(mainWrap.querySelectorAll('.category-list .category-item'));
+                let visibleCount = 0;
+                items.forEach(item => {
+                    const title = (item.firstChild && item.firstChild.textContent ? item.firstChild.textContent : item.childNodes[0].textContent) || '';
+                    const titleMatch = title.toLowerCase().includes(q);
+                    const subs = Array.from(item.querySelectorAll('.dropdown a'));
+                    const anySubMatch = subs.some(a => a.textContent.toLowerCase().includes(q));
+                    const show = q === '' ? true : (titleMatch || anySubMatch);
+                    item.style.display = show ? '' : 'none';
+                    if (show) visibleCount++;
+                });
+                let noRes = mainWrap.querySelector('.no-result');
+                if (!noRes) { noRes = document.createElement('div'); noRes.className = 'no-result'; noRes.style.color = '#ef4444'; noRes.style.fontWeight = '700'; noRes.style.textAlign = 'center'; noRes.style.marginTop = '8px'; mainWrap.appendChild(noRes); }
+                noRes.textContent = (q !== '' && visibleCount === 0) ? 'No results found' : '';
+            }
+
+            // STICKY white categories (mini-cat)
+            const miniCats = Array.from(document.querySelectorAll('.sticky-compact .mini-cat'));
+            if (miniCats.length) {
+                let count = 0;
+                miniCats.forEach(cat => {
+                    const head = cat.querySelector('> a');
+                    const headText = head ? head.textContent.toLowerCase() : '';
+                    const subLinks = Array.from(cat.querySelectorAll('.menu a'));
+                    const subMatch = subLinks.some(a => a.textContent.toLowerCase().includes(q));
+                    const show = q === '' ? true : (headText.includes(q) || subMatch);
+                    cat.style.display = show ? '' : 'none';
+                    if (show) count++;
+                });
+            }
+        }
+
+        function bindSearchEl(inputEl, btnEl) {
+            if (!inputEl || !btnEl) return;
+            btnEl.addEventListener('click', () => filterCategoryBlocks(inputEl.value));
+            inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); filterCategoryBlocks(inputEl.value); } });
+        }
+
+        bindSearchEl(searchInput, searchBtn);
+        bindSearchEl(miniSearchInput, miniSearchBtn);
+
+        /* ===== Buttons (kept) ===== */
+        const btnClient = document.getElementById('btnClient');
+        const btnFreelancer = document.getElementById('btnFreelancer');
+        function goto(href) { window.location.href = href; }
+        btnClient?.addEventListener('click', (e) => { e.preventDefault(); const user = auth.currentUser; if (user) goto('client-dashboard.html'); else goto('login.html?role=client'); });
+        btnFreelancer?.addEventListener('click', (e) => { e.preventDefault(); const user = auth.currentUser; if (user) goto('freelancer-dashboard.html'); else goto('login.html?role=freelancer'); });
+
+        /* ===== Auth watcher to seed per-user likes ===== */
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.querySelectorAll('.gig-card').forEach(card => {
+                    const gid = card.dataset.id;
+                    if (!gid) return;
+                    watchLikesForCard(gid, card);
+                });
+            }
+        });
+
+        /* ===== Keyboard accessibility for like buttons ===== */
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const active = document.activeElement;
+                if (active && active.classList && active.classList.contains('top-like-btn')) {
+                    e.preventDefault();
+                    active.click();
+                }
+            }
+        });
+
+        /* ===== Debug helpers ===== */
+        window.TALENT_HUB = { db, auth, renderGigs };
+
+        // Small UI: quick subscribe interaction (keeps logic simple)
+        document.getElementById('subscribeBtn')?.addEventListener('click', () => {
+            const em = document.getElementById('newsletterEmail')?.value || '';
+            if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { alert('Please enter a valid email'); return; }
+            alert('Thanks — subscribed: ' + em);
+            document.getElementById('newsletterEmail').value = '';
+        });
+
+        // Optional: reset filter UI to defaults
+        document.getElementById('uiReset')?.addEventListener('click', () => {
+            document.getElementById('uiFilterCategory').value = 'All Categories';
+            document.getElementById('uiMinPrice').value = '';
+            document.getElementById('uiMaxPrice').value = '';
+            document.getElementById('uiRating').value = 'Any Rating';
+        });
+
+        /* ===== Show compact sticky header ONLY after white section starts ===== */
+        const stickyCompact = document.getElementById('stickyCompact');
+        const mainEl = document.querySelector('main');
+        const triggerY = () => (mainEl ? mainEl.offsetTop : 400);
+
+        function updateStickyVisibility() {
+            const y = window.scrollY || window.pageYOffset || 0;
+            if (y >= triggerY()) {
+                stickyCompact.classList.add('visible');
+                stickyCompact.setAttribute('aria-hidden', 'false');
+            } else {
+                stickyCompact.classList.remove('visible');
+                stickyCompact.setAttribute('aria-hidden', 'true');
+            }
+        }
+        updateStickyVisibility();
+        window.addEventListener('scroll', updateStickyVisibility, { passive: true });
+        window.addEventListener('resize', updateStickyVisibility);
+    </script>
+
+    <!-- Font Awesome icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" defer></script>
+
+    <!-- Quick floating action -->
+    <button class="quick-post" onclick="window.location.href='create-gig.html'">+ Create ur 1st Gig</button>
+
+    <!-- ========== DROP-IN SEARCH LOGIC (no design change) ========== -->
+    <script>
+        (function () {
+            const d = document;
+            const $ = (sel, root = d) => root.querySelector(sel);
+            const $$ = (sel, root = d) => Array.from(root.querySelectorAll(sel));
+            const on = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
+            const debounce = (fn, ms = 180) => { let t = 0; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); } };
+
+            function filterCategoryBlocks(query) {
+                const q = (query || '').trim().toLowerCase();
+                const mainWrap = d.getElementById('mainCategories');
+                if (mainWrap) {
+                    const items = $$('.category-list .category-item', mainWrap);
+                    let visible = 0;
+                    items.forEach(item => {
+                        const raw = (item.firstChild && item.firstChild.textContent) || (item.childNodes[0] && item.childNodes[0].textContent) || '';
+                        const title = String(raw).trim();
+                        const titleMatch = title.toLowerCase().includes(q);
+                        const subs = $$('.dropdown a', item);
+                        const anySubMatch = subs.some(a => a.textContent.toLowerCase().includes(q));
+                        const show = q === '' ? true : (titleMatch || anySubMatch);
+                        item.style.display = show ? '' : 'none';
+                        if (show) visible++;
+                    });
+                    let noRes = $('.no-result', mainWrap);
+                    if (!noRes) { noRes = d.createElement('div'); noRes.className = 'no-result'; noRes.style.cssText = 'color:#ef4444;font-weight:700;text-align:center;margin-top:8px'; mainWrap.appendChild(noRes); }
+                    noRes.textContent = (q !== '' && visible === 0) ? 'No results found' : '';
+                }
+
+                const miniCats = $$('.sticky-compact .mini-cat');
+                if (miniCats.length) {
+                    miniCats.forEach(cat => {
+                        const head = $('> a', cat) || cat.querySelector(':scope > a');
+                        const headText = head ? head.textContent.toLowerCase() : '';
+                        const subLinks = $$('.menu a', cat);
+                        const subMatch = subLinks.some(a => a.textContent.toLowerCase().includes(q));
+                        const show = q === '' ? true : (headText.includes(q) || subMatch);
+                        cat.style.display = show ? '' : 'none';
+                    });
+                }
+            }
+
+            function bindSearchEl(inputEl, btnEl) {
+                if (!inputEl || !btnEl) return;
+                const doFilter = () => filterCategoryBlocks(inputEl.value);
+                const deb = debounce(doFilter, 180);
+                on(btnEl, 'click', doFilter);
+                on(inputEl, 'input', deb);
+                on(inputEl, 'keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doFilter(); } });
+                on(inputEl, 'keydown', (e) => { if (e.key === 'Escape') { inputEl.value = ''; doFilter(); } });
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                bindSearchEl(document.getElementById('searchInput'), document.getElementById('searchBtn'));
+                bindSearchEl(document.getElementById('miniSearchInput'), document.getElementById('miniSearchBtn'));
+                window.TALENT_HUB_SEARCH = { filter: filterCategoryBlocks, bind: bindSearchEl };
+            });
+        })();
+    </script>
+
+    <!-- ========== SUGGESTIONS: New script (adds suggestion dropdown + keyboard nav + redirect) ========== -->
+    <script>
+        (function () {
+            // Minimal, self-contained suggestion system
+            // Uses categories already present in DOM (mainCategories and sticky mini-cats)
+            // Only adds DOM nodes and event listeners; does not modify existing nodes.
+
+            const doc = document;
+            const pageInput = doc.getElementById('searchInput');
+            const pageBtn = doc.getElementById('searchBtn');
+            const miniInput = doc.getElementById('miniSearchInput');
+            const miniBtn = doc.getElementById('miniSearchBtn');
+
+            const pageBox = doc.getElementById('pageSearchSuggestions');
+            const miniBox = doc.getElementById('miniSearchSuggestions');
+
+            // Helper: slugify -> "Logo Design" -> "logo-design.html"
+            function slugifyToFile(name) {
+                if (!name) return '#';
+                return name.toString().trim().toLowerCase()
+                    .replace(/&/g, 'and')
+                    .replace(/[\s\_]+/g, '-')
+                    .replace(/[^\w\-]+/g, '') // remove non-word except hyphen
+                    .replace(/\-\-+/g, '-') // collapse
+                    .replace(/^\-+|\-+$/g, '') + '.html';
+            }
+
+            // Collect categories & subcategories into suggestions list
+            function collectSuggestions() {
+                const set = new Map(); // label -> {label, href (if found), parent}
+                // 1) main categories: category-item titles
+                const mainWrap = doc.getElementById('mainCategories');
+                if (mainWrap) {
+                    const items = Array.from(mainWrap.querySelectorAll('.category-list .category-item'));
+                    items.forEach(item => {
+                        // title
+                        let rawTitle = (item.firstChild && item.firstChild.textContent) || (item.childNodes[0] && item.childNodes[0].textContent) || '';
+                        rawTitle = rawTitle.toString().trim();
+                        if (rawTitle) {
+                            // try find an explicit link target from dropdown first sub link that is meaningful
+                            const subs = Array.from(item.querySelectorAll('.dropdown a'));
+                            const firstHref = subs.find(a => a && a.getAttribute('href') && a.getAttribute('href') !== '#')?.getAttribute('href') || null;
+                            if (!set.has(rawTitle)) set.set(rawTitle, { label: rawTitle, href: firstHref });
+                        }
+                        // subs
+                        const subs = Array.from(item.querySelectorAll('.dropdown a'));
+                        subs.forEach(a => {
+                            const txt = (a.textContent || '').toString().trim();
+                            const href = a.getAttribute('href') || null;
+                            if (txt) {
+                                if (!set.has(txt)) set.set(txt, { label: txt, href: (href && href !== '#') ? href : null, parent: rawTitle });
+                            }
+                        });
+                    });
+                }
+
+                // 2) sticky mini categories
+                const miniCats = Array.from(doc.querySelectorAll('.sticky-compact .mini-cat'));
+                miniCats.forEach(cat => {
+                    const head = cat.querySelector(':scope > a');
+                    const headText = head ? head.textContent.trim() : '';
+                    if (headText && !set.has(headText)) {
+                        // try find sub link href if exists
+                        const first = cat.querySelector('.menu a[href]:not([href="#"])');
+                        const firstHref = first ? first.getAttribute('href') : null;
+                        set.set(headText, { label: headText, href: firstHref });
+                    }
+                    const subs = Array.from(cat.querySelectorAll('.menu a'));
+                    subs.forEach(a => {
+                        const txt = (a.textContent || '').toString().trim();
+                        const href = a.getAttribute('href') || null;
+                        if (txt && !set.has(txt)) set.set(txt, { label: txt, href: (href && href !== '#') ? href : null, parent: headText });
+                    });
+                });
+
+                // Return array of suggestions
+                return Array.from(set.values());
+            }
+
+            // Matching: tokenized prefix matching (case-insensitive)
+            function matchesSuggestion(query, suggestion) {
+                if (!query) return true; // show all when empty
+                const q = query.trim().toLowerCase();
+                if (!q) return true;
+                const label = (suggestion.label || '').toLowerCase();
+                // direct prefix
+                if (label.startsWith(q)) return true;
+                // token prefix: split query into tokens; every token must be a prefix of some token in label
+                const qTokens = q.split(/\s+/).filter(Boolean);
+                const labelTokens = label.split(/\s+/).filter(Boolean);
+                const allMatch = qTokens.every(qt => labelTokens.some(lt => lt.startsWith(qt)));
+                if (allMatch) return true;
+                // also allow substring (less priority)
+                if (label.includes(q)) return true;
+                return false;
+            }
+
+            // Render suggestions into a box (boxEl: DOM node, suggestions: array)
+            function renderSuggestions(boxEl, suggestions, query, opts = {}) {
+                if (!boxEl) return;
+                const list = suggestions.filter(s => matchesSuggestion(query, s)).slice(0, 12); // limit 12
+                boxEl.innerHTML = '';
+                if (!list.length) {
+                    const no = doc.createElement('div');
+                    no.className = 'no-sugg';
+                    no.textContent = query && query.trim() ? 'No matching categories' : 'Type to see categories';
+                    boxEl.appendChild(no);
+                    boxEl.classList.add('visible');
+                    boxEl.setAttribute('aria-hidden', 'false');
+                    return;
+                }
+                const ul = doc.createElement('ul');
+                ul.className = 'sugg-list';
+                list.forEach((s, idx) => {
+                    const li = doc.createElement('li');
+                    li.className = 'sugg-item';
+                    li.setAttribute('role', 'option');
+                    li.setAttribute('data-label', s.label);
+                    if (s.href) li.setAttribute('data-href', s.href);
+                    if (s.parent) li.setAttribute('data-parent', s.parent);
+
+                    // main label & small parent if present
+                    const spanL = doc.createElement('div');
+                    spanL.style.display = 'flex';
+                    spanL.style.flexDirection = 'column';
+                    const head = doc.createElement('span');
+                    head.textContent = s.label;
+                    head.style.fontWeight = '800';
+                    const sub = doc.createElement('span');
+                    sub.className = 'sub';
+                    sub.textContent = s.parent ? `in ${s.parent}` : '';
+                    spanL.appendChild(head);
+                    if (s.parent) spanL.appendChild(sub);
+
+                    li.appendChild(spanL);
+
+                    li.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        selectSuggestion(s, boxEl);
+                    });
+
+                    ul.appendChild(li);
+                });
+                boxEl.appendChild(ul);
+                // set first as active by default
+                setActiveIndex(boxEl, 0);
+                boxEl.classList.add('visible');
+                boxEl.setAttribute('aria-hidden', 'false');
+            }
+
+            // Helper: compute target URL and navigate
+            function selectSuggestion(suggestion, boxEl) {
+                if (!suggestion) return;
+                // 1) if suggestion has explicit href (from DOM and not "#"), use it (relative)
+                if (suggestion.href) {
+                    window.location.href = suggestion.href;
+                    return;
+                }
+                // 2) else compute slugified file name from label
+                const url = slugifyToFile(suggestion.label);
+                window.location.href = url;
+            }
+
+            // active item keyboard navigation in box
+            function setActiveIndex(boxEl, idx) {
+                if (!boxEl) return;
+                const items = Array.from(boxEl.querySelectorAll('.sugg-item'));
+                items.forEach((it, i) => {
+                    if (i === idx) it.classList.add('active');
+                    else it.classList.remove('active');
+                });
+                // store
+                boxEl._activeIndex = idx;
+            }
+            function moveActive(boxEl, delta) {
+                if (!boxEl) return;
+                const items = Array.from(boxEl.querySelectorAll('.sugg-item'));
+                if (!items.length) return;
+                let idx = (boxEl._activeIndex || 0) + delta;
+                if (idx < 0) idx = items.length - 1;
+                if (idx >= items.length) idx = 0;
+                setActiveIndex(boxEl, idx);
+                // ensure visible
+                const el = items[idx];
+                if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+            }
+            function chooseActive(boxEl) {
+                if (!boxEl) return;
+                const item = boxEl.querySelector('.sugg-item.active') || boxEl.querySelector('.sugg-item');
+                if (!item) return;
+                const label = item.getAttribute('data-label');
+                const href = item.getAttribute('data-href');
+                const parent = item.getAttribute('data-parent');
+                selectSuggestion({ label, href, parent }, boxEl);
+            }
+
+            // hook inputs
+            function wire(inputEl, boxEl) {
+                if (!inputEl || !boxEl) return;
+                // show suggestions on input
+                inputEl.addEventListener('input', (e) => {
+                    const q = inputEl.value || '';
+                    const all = collectSuggestions();
+                    renderSuggestions(boxEl, all, q);
+                    positionBox(inputEl, boxEl);
+                });
+                // focus -> show default suggestions
+                inputEl.addEventListener('focus', (e) => {
+                    const q = inputEl.value || '';
+                    const all = collectSuggestions();
+                    renderSuggestions(boxEl, all, q);
+                    positionBox(inputEl, boxEl);
+                });
+                // keyboard navigation
+                inputEl.addEventListener('keydown', (e) => {
+                    if (boxEl.classList.contains('visible')) {
+                        if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(boxEl, 1); }
+                        else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(boxEl, -1); }
+                        else if (e.key === 'Enter') { e.preventDefault(); chooseActive(boxEl); }
+                        else if (e.key === 'Escape') { boxEl.classList.remove('visible'); boxEl.setAttribute('aria-hidden', 'true'); }
+                    }
+                });
+                // blur -> hide (with small delay to allow clicks)
+                inputEl.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        if (document.activeElement && boxEl.contains(document.activeElement)) return;
+                        boxEl.classList.remove('visible');
+                        boxEl.setAttribute('aria-hidden', 'true');
+                    }, 180);
+                });
+                // clicking outside hides
+                document.addEventListener('click', (e) => {
+                    if (!boxEl.contains(e.target) && e.target !== inputEl) {
+                        boxEl.classList.remove('visible');
+                        boxEl.setAttribute('aria-hidden', 'true');
+                    }
+                });
+            }
+
+            // position suggestion box under input (for page input we center it)
+            function positionBox(inputEl, boxEl) {
+                if (!inputEl || !boxEl) return;
+                // If box has helper class anchor-page -> center it under page search bar
+                if (boxEl.classList.contains('anchor-page')) {
+                    // anchored by CSS (left/right margins) so no extra work
+                    // ensure top position just below input
+                    const rect = inputEl.getBoundingClientRect();
+                    const top = rect.bottom + window.scrollY + 8;
+                    boxEl.style.position = 'absolute';
+                    boxEl.style.top = top + 'px';
+                    boxEl.style.left = '';
+                    boxEl.style.right = '';
+                    return;
+                }
+                // else anchor-mini: place below input (relative parent used)
+                const rect = inputEl.getBoundingClientRect();
+                const parentRect = inputEl.offsetParent ? inputEl.offsetParent.getBoundingClientRect() : { top: 0, left: 0 };
+                const top = rect.bottom - parentRect.top + 6; // relative to offsetParent
+                let left = rect.left - (inputEl.offsetParent ? inputEl.offsetParent.getBoundingClientRect().left : 0);
+                boxEl.style.position = 'absolute';
+                boxEl.style.top = top + 'px';
+                boxEl.style.left = left + 'px';
+            }
+
+            // init
+            document.addEventListener('DOMContentLoaded', () => {
+                try {
+                    // Build box content on load (empty)
+                    wire(pageInput, pageBox);
+                    wire(miniInput, miniBox);
+
+                    // If user clicks the search button, and there is a visible suggestion active, choose it.
+                    pageBtn?.addEventListener('click', (e) => {
+                        if (pageBox && pageBox.classList.contains('visible')) {
+                            e.preventDefault();
+                            chooseActive(pageBox);
+                        } else {
+                            // fallback to existing behavior: filter blocks
+                            // leave to existing handlers
+                        }
+                    });
+                    miniBtn?.addEventListener('click', (e) => {
+                        if (miniBox && miniBox.classList.contains('visible')) {
+                            e.preventDefault();
+                            chooseActive(miniBox);
+                        }
+                    });
+
+                    // On window resize reposition visible boxes
+                    window.addEventListener('resize', () => {
+                        if (pageBox && pageBox.classList.contains('visible')) positionBox(pageInput, pageBox);
+                        if (miniBox && miniBox.classList.contains('visible')) positionBox(miniInput, miniBox);
+                    });
+
+                } catch (err) {
+                    console.warn('Search suggestions init failed', err);
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
