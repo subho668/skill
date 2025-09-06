@@ -1074,7 +1074,7 @@
                 <div class="mini-cat">
                     <a href="#">Writing &amp; Translation</a>
                     <div class="menu">
-                        <a href="#">Articles &amp; Blogs</a>
+                        <a href="#">Articles & Blogs</a>
                         <a href="#">Copywriting</a>
                         <a href="#">Translation</a>
                         <a href="#">Proofreading</a>
@@ -1457,7 +1457,7 @@
                 <a href="#">Invite a Friend</a>
             </div>
         </div>
-        <p style="margin-top:24px;color:#94a3b8;text-align:center">&copy; 2025 Talent-Hub. All Rights Reserved.</p>
+        <p style="margin-top:24px;color:#94a3b8;text-align:center">© 2025 Talent-Hub. All Rights Reserved.</p>
     </footer>
 
     <!-- ===== Modal for Gig Details (polished) ===== -->
@@ -1519,7 +1519,7 @@
 
         /* ===== Utility helpers (kept) ===== */
         const safe = (s) => (typeof s === 'string' ? s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) : '');
-        const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const esc = s => String(s || '').replace(/[&<>\"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
         const money = n => isFinite(n) ? `₹${Number(n).toLocaleString('en-IN')}` : '₹—';
         const stars = (n = 0) => { const full = Math.round(Number(n) || 0); return `${'★'.repeat(Math.min(5, full))}${'☆'.repeat(Math.max(0, 5 - full))}`; };
 
@@ -1867,7 +1867,6 @@
                     cat.style.display = show ? '' : 'none';
                     if (show) count++;
                 });
-                // optional no-result for sticky bar is skipped to keep it clean
             }
         }
 
@@ -1953,6 +1952,67 @@
 
     <!-- Quick floating action -->
     <button class="quick-post" onclick="window.location.href='create-gig.html'">+ Create ur 1st Gig</button>
+
+    <!-- ========== DROP-IN SEARCH LOGIC (no design change) ========== -->
+    <script>
+        (function () {
+            const d = document;
+            const $ = (sel, root = d) => root.querySelector(sel);
+            const $$ = (sel, root = d) => Array.from(root.querySelectorAll(sel));
+            const on = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
+            const debounce = (fn, ms = 180) => { let t = 0; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); } };
+
+            function filterCategoryBlocks(query) {
+                const q = (query || '').trim().toLowerCase();
+                const mainWrap = d.getElementById('mainCategories');
+                if (mainWrap) {
+                    const items = $$('.category-list .category-item', mainWrap);
+                    let visible = 0;
+                    items.forEach(item => {
+                        const raw = (item.firstChild && item.firstChild.textContent) || (item.childNodes[0] && item.childNodes[0].textContent) || '';
+                        const title = String(raw).trim();
+                        const titleMatch = title.toLowerCase().includes(q);
+                        const subs = $$('.dropdown a', item);
+                        const anySubMatch = subs.some(a => a.textContent.toLowerCase().includes(q));
+                        const show = q === '' ? true : (titleMatch || anySubMatch);
+                        item.style.display = show ? '' : 'none';
+                        if (show) visible++;
+                    });
+                    let noRes = $('.no-result', mainWrap);
+                    if (!noRes) { noRes = d.createElement('div'); noRes.className = 'no-result'; noRes.style.cssText = 'color:#ef4444;font-weight:700;text-align:center;margin-top:8px'; mainWrap.appendChild(noRes); }
+                    noRes.textContent = (q !== '' && visible === 0) ? 'No results found' : '';
+                }
+
+                const miniCats = $$('.sticky-compact .mini-cat');
+                if (miniCats.length) {
+                    miniCats.forEach(cat => {
+                        const head = $('> a', cat) || cat.querySelector(':scope > a');
+                        const headText = head ? head.textContent.toLowerCase() : '';
+                        const subLinks = $$('.menu a', cat);
+                        const subMatch = subLinks.some(a => a.textContent.toLowerCase().includes(q));
+                        const show = q === '' ? true : (headText.includes(q) || subMatch);
+                        cat.style.display = show ? '' : 'none';
+                    });
+                }
+            }
+
+            function bindSearchEl(inputEl, btnEl) {
+                if (!inputEl || !btnEl) return;
+                const doFilter = () => filterCategoryBlocks(inputEl.value);
+                const deb = debounce(doFilter, 180);
+                on(btnEl, 'click', doFilter);
+                on(inputEl, 'input', deb);
+                on(inputEl, 'keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doFilter(); } });
+                on(inputEl, 'keydown', (e) => { if (e.key === 'Escape') { inputEl.value = ''; doFilter(); } });
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                bindSearchEl(document.getElementById('searchInput'), document.getElementById('searchBtn'));
+                bindSearchEl(document.getElementById('miniSearchInput'), document.getElementById('miniSearchBtn'));
+                window.TALENT_HUB_SEARCH = { filter: filterCategoryBlocks, bind: bindSearchEl };
+            });
+        })();
+    </script>
 
 </body>
 
