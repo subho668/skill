@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Talent-Hub — Messages (Pro)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------------------------
+       Premium Messaging UI Styles
+       --------------------------- */
+    :root {
+      --bg: #0f1724;
+      --panel: #0b1220;
+      --muted: #94a3b8;
+      --card: #0f172a;
+      --accent1: #06b6d4;
+      --accent2: #3b82f6;
+      --glass: rgba(255, 255, 255, 0.03);
+      --white: #e6eef8;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background: linear-gradient(180deg, #07101a, #071827);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      /* Prevent page from scrolling — we will make internal panels scroll */
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit
+    }
+
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: 100vh;
+      gap: 18px;
+    }
+
+    @media (max-width:920px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .mobile-toggle {
+        display: flex;
+      }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, #071827, #061226);
+      border-right: 1px solid rgba(255, 255, 255, 0.02);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+      /* inner scroll only on conv-list */
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      display: grid;
+      place-items: center;
+      font-weight: 800
+    }
+
+    .brand .title {
+      font-weight: 800;
+      font-size: 16px
+    }
+
+    .sidebar .search {
+      margin-top: 0px;
+      display: flex;
+      gap: 8px
+    }
+
+    .search input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #efefef;
+      background: transparent;
+      color: var(--white);
+      outline: none
+    }
+
+    .search button {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      background: transparent;
+      color: var(--white);
+      cursor: pointer
+    }
+
+    .conv-list {
+      margin-top: 10px;
+      overflow: auto;
+      padding-bottom: 30px;
+      /* make sure conversation list scrolls within sidebar */
+      height: calc(100vh - 180px);
+    }
+
+    .conv {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      align-items: center;
+      cursor: pointer;
+      border: 1px solid transparent
+    }
+
+    .conv:hover {
+      background: rgba(109, 35, 81, 0.856);
+      border-color: rgba(255, 255, 255, 0.015)
+    }
+
+    .conv.active {
+      background: linear-gradient(90deg, rgba(6, 182, 212, 0.08), rgba(59, 130, 246, 0.06));
+      border-color: rgba(59, 130, 246, 0.12)
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-weight: 700
+    }
+
+    .conv-body {
+      flex: 1;
+      min-width: 0
+    }
+
+    .conv-title {
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .conv-sub {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .conv-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px
+    }
+
+    .time {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .badge {
+      background: #ef4444;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: white
+    }
+
+    /* Main chat area */
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      min-height: 100vh;
+      height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: linear-gradient(180deg, #071827, #07101a);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02)
+    }
+
+    .top-left {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    .top-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      background: linear-gradient(135deg, #f97316, #ef4444)
+    }
+
+    .top-meta {
+      display: flex;
+      flex-direction: column
+    }
+
+    .top-meta .name {
+      font-weight: 800
+    }
+
+    .top-meta .sub {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid #efefef;
+      background: transparent;
+      color: var(--white);
+      cursor: pointer
+    }
+
+    .btn.primary {
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      border: 0;
+      color: white
+    }
+
+    .chat-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #0c1624, #07101a);
+      position: relative;
+      height: calc(100vh - 68px);
+      /* subtract topbar + compose height approx */
+      overflow: hidden;
+    }
+
+    /* position relative for absolute emoji popup */
+    .messages {
+      flex: 1;
+      padding: 20px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      /* ensure messages area is scrollable independently */
+      height: calc(100% - 0px);
+    }
+
+    .msg-row {
+      display: flex;
+      max-width: 75%;
+      gap: 8px;
+      position: relative;
+      align-items: flex-end;
+    }
+
+    .msg {
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 15px;
+      line-height: 1.4;
+      position: relative;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .msg.me {
+      margin-left: auto;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color: white;
+      border-bottom-right-radius: 4px
+    }
+
+    .msg.other {
+      margin-right: auto;
+      background: linear-gradient(180deg, #0f172a, #0b1220);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      color: var(--white)
+    }
+
+    .msg .meta {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    .msg img.attachment {
+      max-width: 320px;
+      border-radius: 8px;
+      display: block;
+      margin-top: 8px
+    }
+
+    /* 3-dot menu button & menu */
+    .menu-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 16px;
+    }
+
+    .msg .menu-wrap {
+      position: relative;
+    }
+
+    .msg-menu {
+      position: absolute;
+      top: 34px;
+      right: 6px;
+      min-width: 140px;
+      background: rgba(6, 12, 20, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      overflow: hidden;
+      z-index: 9999;
+      display: none;
+    }
+
+    .msg-menu.show {
+      display: block;
+    }
+
+    .msg-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border: 0;
+      background: transparent;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .msg-menu button:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .compose {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      background: linear-gradient(180deg, #07101a, #081622);
+      border-top: 1px solid rgba(255, 255, 255, 0.02);
+      align-items: center;
+      min-height: 70px;
+    }
+
+    /* textarea styling instead of single-line input */
+    .compose textarea {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #efefef;
+      background: transparent;
+      color: var(--white);
+      outline: none;
+      resize: none;
+      min-height: 44px;
+      max-height: 160px;
+      line-height: 1.3;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      border: 1px solid #d31f52;
+      cursor: pointer
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9ca3af;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center
+    }
+
+    .empty-state {
+      padding: 40px;
+      text-align: center;
+      color: var(--muted)
+    }
+
+    /* small screens adjustments */
+    @media (max-width:920px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 60;
+        width: 78%;
+        transform: translateX(-110%);
+        transition: transform .25s
+      }
+
+      .sidebar.open {
+        transform: translateX(0)
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 50;
+        display: none
+      }
+
+      .overlay.show {
+        display: block
+      }
+
+      /* emoji popup mobile full width */
+      #emojiContainer {
+        right: 8px !important;
+        left: 8px !important;
+        bottom: 78px !important;
+      }
+
+      emoji-picker {
+        width: 100% !important;
+      }
+
+      .msg-menu {
+        right: 8px;
+        left: 8px;
+      }
+    }
+
+    /* Emoji popup styles */
+    #emojiContainer {
+      display: none;
+      position: absolute;
+      bottom: 72px;
+      /* above compose area */
+      right: 18px;
+      z-index: 9999;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      width: 360px;
+      max-width: calc(100% - 40px);
+      height: 420px;
+    }
+
+    /* small tweak for emoji-picker internals if supported */
+    emoji-picker {
+      width: 100%;
+      height: 100%;
+      --background: #07101a;
+      --color: #e6eef8;
+      --indicator-color: var(--accent1);
+      --search-background: #0b1220;
+      --category-background: transparent;
+      --category-color: var(--muted);
+    }
+
+    /* simple file preview container */
+    .file-preview {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.02)
+    }
+
+    .file-link {
+      font-size: 13px;
+      color: var(--white);
+      text-decoration: underline
+    }
+
+    /* helper */
+    .muted {
+      color: var(--muted);
+      font-size: 13px
+    }
+    
+    /* Search suggestions */
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0 0 10px 10px;
+      z-index: 1000;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .suggestion-item {
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .suggestion-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .suggestion-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    
+    .suggestion-info {
+      flex: 1;
+    }
+    
+    .suggestion-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .suggestion-uid {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="overlay" class="overlay" onclick="toggleSidebar(false)"></div>
+
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo">TH</div>
+        <div>
+          <div class="title">Talent-Hub</div>
+          <div class="muted">Messages</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;position:relative;">
+        <div style="flex:1" class="search">
+          <input id="searchInput" placeholder="Search chats or users..." />
+          <div id="searchSuggestions" class="search-suggestions"></div>
+        </div>
+        <button class="btn" id="newChatBtn" title="New conversation">＋</button>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+        <div class="muted" id="presenceSummary">Online: <strong id="onlineCount">0</strong></div>
+        <div style="flex:1"></div>
+        <div class="muted">Saved: <strong id="savedCount">0</strong></div>
+      </div>
+
+      <div class="conv-list" id="conversationsList" role="list">
+        <!-- conversations rendered here -->
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div class="top-left">
+          <button class="icon-btn mobile-toggle" onclick="toggleSidebar(true)" style="display:none">☰</button>
+          <div id="topAvatar" class="top-avatar">C</div>
+          <div class="top-meta">
+            <div class="name" id="topUserName">Client</div>
+            <div class="sub" id="topUserEmail">client@example.com</div>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          
+          <a href="client-dashboard.html" class="hover:text-green-600 font-medium">client-dashboard</a>
+          <a href="index.html" class="hover:text-green-600 font-medium">Home</a>
+          
+        </div>
+      </div>
+
+      <div class="chat-wrap">
+        <div id="chatHeader" class="chat-header"
+          style="padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.02)">
+          <div id="chatHeaderAvatar" class="avatar"
+            style="background:linear-gradient(135deg,#06b6d4,#3b82f6);width:44px;height:44px;border-radius:10px">
+            F</div>
+          <div style="flex:1">
+            <div id="chatHeaderName" style="font-weight:800">Select a conversation</div>
+            <div id="chatHeaderMeta" class="muted">Start a conversation or open an existing one.</div>
+          </div>
+          <div id="chatHeaderActions" style="display:flex;gap:8px;align-items:center">
+            <div id="convStatus" class="muted">Offline</div>
+          </div>
+        </div>
+
+        <div id="messages" class="messages">
+          <div class="empty-state">No conversation selected — pick someone from the left or create a new
+            conversation.</div>
+        </div>
+
+        <!-- Emoji container (hidden by default) -->
+        <div id="emojiContainer" aria-hidden="true">
+          <!-- header with manual close -->
+          <div id="emojiHeader"
+            style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <div style="font-weight:700">Emoji</div>
+            <button id="emojiCloseBtn" class="btn">✕</button>
+          </div>
+          <div id="emojiInner" style="height:calc(100% - 42px);overflow:auto">
+            <!-- emoji-picker will be mounted here or fallback small set -->
+          </div>
+        </div>
+
+        <div
+          style="padding:8px 12px;border-top:1px solid rgba(255, 255, 255, 0.02);background:linear-gradient(180deg,#07101a,#06101a)">
+          <div class="compose">
+            <button class="icon-btn" id="attachBtn" title="Attach file">📁</button>
+            <input type="file" id="fileInput" style="display:none" multiple />
+            <!-- switched to textarea for multi-line support (Shift+Enter newline) -->
+            <textarea id="messageInput" placeholder="Write a message... (Enter=send, Shift+Enter=new line)"
+              rows="2"></textarea>
+            <button class="icon-btn" id="emojiBtn" title="Emoji">😊</button>
+            <button class="btn primary" id="sendBtn">Send</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- emoji-picker-element CDN (module) -->
+  <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script>
+
+  <!-- ==================== Firebase (modular v10) ==================== -->
+  <script type="module">
+    /* -----------------------------
+       Firebase modular imports
+       ----------------------------- */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, collection, query, where, orderBy, onSnapshot,
+      doc, getDoc, setDoc, updateDoc, addDoc, serverTimestamp, deleteDoc, getDocs, limit, orderBy as fbOrderBy
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    /* ======== Replace with your Firebase config (or keep the one below) ======== */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817"
+    };
+    /* ========================================================================== */
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // -----------------------------
+    // UI refs
+    // -----------------------------
+    const conversationsList = document.getElementById('conversationsList');
+    const messagesEl = document.getElementById('messages');
+    const chatHeaderName = document.getElementById('chatHeaderName');
+    const chatHeaderMeta = document.getElementById('chatHeaderMeta');
+    const chatHeaderAvatar = document.getElementById('chatHeaderAvatar');
+    const convStatus = document.getElementById('convStatus');
+    const presenceSummary = document.getElementById('presenceSummary');
+    const onlineCountEl = document.getElementById('onlineCount');
+    const savedCountEl = document.getElementById('savedCount');
+    const searchInput = document.getElementById('searchInput');
+    const searchSuggestions = document.getElementById('searchSuggestions');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const messageInput = document.getElementById('messageInput');
+    const attachBtn = document.getElementById('attachBtn');
+    const fileInput = document.getElementById('fileInput');
+    const emojiBtn = document.getElementById('emojiBtn');
+    const emojiContainer = document.getElementById('emojiContainer');
+    const emojiInner = document.getElementById('emojiInner');
+    const emojiCloseBtn = document.getElementById('emojiCloseBtn');
+    const btnLogout = document.getElementById('btnLogout');
+
+    let currentUser = null;           // firebase uid string
+    let currentUserDoc = null;        // user doc data (name, email)
+    let activeConvId = null;          // currently opened conversation DOC id
+    let activePartnerId = null;       // other user's uid
+    let messagesUnsub = null;         // unsubscribe function for current msgs
+    let convsUnsub = null;            // unsubscribe for conversations list
+    let presenceUnsub = null;         // optional: presence listener for users
+    let convDocUnsub = null;
+    let globalUnread = 0;
+    let searchTimeout = null;
+
+    // -----------------------------
+    // Local persistence (so sidebar keeps chats even if conv not created)
+    // NOTE: make the LS key user-specific to avoid global leakage
+    // -----------------------------
+    let LS_CHAT_KEY = null;
+    function getLsKey() {
+      return LS_CHAT_KEY;
+    }
+
+    function loadSavedChats() {
+      try {
+        const key = getLsKey();
+        if (!key) return {};
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+    function saveSavedChats(obj) {
+      try {
+        const key = getLsKey();
+        if (!key) return; // no-op if no authenticated user
+        localStorage.setItem(key, JSON.stringify(obj));
+        savedCountEl.innerText = Object.keys(obj).length;
+      } catch (e) { }
+    }
+    let localSaved = {}; // will be hydrated after auth
+
+    // -----------------------------
+    // Helper utilities
+    // -----------------------------
+    const fmtTime = (ts) => {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+    const avatarColor = (s) => {
+      const colors = ['#f97316', '#ef4444', '#06b6d4', '#7c3aed', '#f59e0b', '#10b981'];
+      const idx = (s || 'x').charCodeAt(0) % colors.length;
+      return colors[idx];
+    };
+    const sanitize = (s) => String(s || '').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
+    // user profile cache
+    const userProfileCache = new Map();
+    async function getUserProfile(uid) {
+      if (!uid) return { uid, displayName: uid };
+      if (userProfileCache.has(uid)) return userProfileCache.get(uid);
+      try {
+        const snap = await getDoc(doc(db, 'users', uid));
+        if (snap.exists()) {
+          const d = snap.data();
+          const p = { uid, displayName: d.displayName || d.name || uid, email: d.email || '' };
+          userProfileCache.set(uid, p);
+          return p;
+        }
+        const fallback = { uid, displayName: uid };
+        userProfileCache.set(uid, fallback);
+        return fallback;
+      } catch (e) {
+        const fallback = { uid, displayName: uid };
+        userProfileCache.set(uid, fallback);
+        return fallback;
+      }
+    }
+
+    // -----------------------------
+    // User Search Implementation
+    // -----------------------------
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.trim();
+      
+      // Clear previous timeout
+      if (searchTimeout) clearTimeout(searchTimeout);
+      
+      // Hide suggestions if search is empty
+      if (!searchTerm) {
+        searchSuggestions.style.display = 'none';
+        return;
+      }
+      
+      // Set timeout to debounce search
+      searchTimeout = setTimeout(async () => {
+        try {
+          // Query Firestore for matching users
+          const usersRef = collection(db, 'users');
+          const q = query(
+            usersRef, 
+            where('displayName', '>=', searchTerm),
+            where('displayName', '<=', searchTerm + '\uf8ff'),
+            limit(10)
+          );
+          
+          const querySnapshot = await getDocs(q);
+          const results = [];
+          
+          querySnapshot.forEach((doc) => {
+            if (doc.id !== currentUser) { // Exclude current user
+              results.push({ id: doc.id, ...doc.data() });
+            }
+          });
+          
+          // Display results
+          displaySearchResults(results);
+        } catch (error) {
+          console.error('Error searching users:', error);
+          searchSuggestions.innerHTML = '<div class="suggestion-item"><div class="muted">Error searching users</div></div>';
+          searchSuggestions.style.display = 'block';
+        }
+      }, 300);
+    });
+
+    function displaySearchResults(users) {
+      if (users.length === 0) {
+        searchSuggestions.innerHTML = '<div class="suggestion-item"><div class="muted">No users found</div></div>';
+        searchSuggestions.style.display = 'block';
+        return;
+      }
+      
+      searchSuggestions.innerHTML = '';
+      users.forEach(user => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+        item.innerHTML = `
+          <div class="suggestion-avatar" style="background: ${avatarColor(user.displayName)}">
+            ${(user.displayName || 'U').charAt(0).toUpperCase()}
+          </div>
+          <div class="suggestion-info">
+            <div class="suggestion-name">${sanitize(user.displayName || user.id)}</div>
+            <div class="suggestion-uid">UID: ${user.id}</div>
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          // Start a conversation with this user
+          searchInput.value = '';
+          searchSuggestions.style.display = 'none';
+          startNewConversation(user.id, user.displayName || user.id);
+        });
+        
+        searchSuggestions.appendChild(item);
+      });
+      
+      searchSuggestions.style.display = 'block';
+    }
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+        searchSuggestions.style.display = 'none';
+      }
+    });
+
+    function startNewConversation(partnerId, displayName) {
+      localSaved[partnerId] = localSaved[partnerId] || { 
+        displayName: displayName, 
+        lastMessage: '', 
+        convId: null 
+      };
+      saveSavedChats(localSaved);
+      renderSidebar();
+      openConversation(localSaved[partnerId].convId || null, partnerId);
+    }
+
+    // -----------------------------
+    // MIGRATION: Try to fix older conversation docs missing `participants`
+    // This runs once per login, scans recent conversation docs (limit 500) and
+    // attempts to infer participants from fields like senderId/receiverId or
+    // by checking first message in subcollection.
+    // -----------------------------
+    async function migrateRecentConversationsForUser() {
+      try {
+        // Safety: limit scans to avoid cost. Increase if needed.
+        const recentQ = query(collection(db, 'conversations'), fbOrderBy('updatedAt', 'desc'), limit(500));
+        const snap = await getDocs(recentQ);
+        const ops = [];
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          const id = docSnap.id;
+          // If participants already exist and include currentUser skip
+          if (d.participants && Array.isArray(d.participants)) return;
+          // Try to infer from explicit fields
+          if (d.senderId && d.receiverId) {
+            const p = [d.senderId, d.receiverId];
+            ops.push({ id, p });
+            return;
+          }
+          // fallback: we will try to peek into first message in messages subcollection
+          // but do that lazily below
+          ops.push({ id, p: null });
+        });
+
+        // For ops with p === null, attempt to read first message to infer
+        for (const op of ops) {
+          if (op.p) {
+            // patch doc participants
+            await setDoc(doc(db, 'conversations', op.id), { participants: op.p }, { merge: true }).catch(() => { });
+            continue;
+          }
+          // read first message doc
+          try {
+            const msgsRef = collection(db, 'conversations', op.id, 'messages');
+            const mSnap = await getDocs(query(msgsRef, fbOrderBy('timestamp', 'asc'), limit(1)));
+            if (!mSnap.empty) {
+              let s = null;
+              mSnap.forEach(md => {
+                const mm = md.data();
+                if (mm.sender && mm.receiver) {
+                  s = [mm.sender, mm.receiver];
+                } else if (mm.sender && mm.to) {
+                  s = [mm.sender, mm.to];
+                } else if (mm.sender) {
+                  // cannot infer receiver reliably
+                  s = null;
+                }
+              });
+              if (s) {
+                await setDoc(doc(db, 'conversations', op.id), { participants: s }, { merge: true }).catch(() => { });
+              }
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      } catch (e) {
+        console.warn('migration err', e);
+      }
+    }
+
+    // -----------------------------
+    // Auth state
+    // -----------------------------
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // no user -> clear local session state so next visitor doesn't see previous user's chats
+        currentUser = null;
+        currentUserDoc = null;
+        activeConvId = null;
+        activePartnerId = null;
+        if (messagesUnsub) messagesUnsub();
+        if (convsUnsub) convsUnsub();
+        if (presenceUnsub) presenceUnsub();
+        if (convDocUnsub) convDocUnsub();
+        LS_CHAT_KEY = null;
+        localSaved = {};
+        renderSidebar();
+        messagesEl.innerHTML = `<div class="empty-state">No conversation selected — pick someone from the left or create a new conversation.</div>`;
+        document.getElementById('topUserName').innerText = 'Guest';
+        document.getElementById('topUserEmail').innerText = '';
+        document.getElementById('topAvatar').innerText = 'G';
+        return;
+      }
+      currentUser = user.uid;
+
+      // Make localStorage key user-specific to prevent leakage across different logged-in accounts
+      LS_CHAT_KEY = `th_saved_chats_${currentUser}`;
+
+      // hydrate user-specific localSaved
+      localSaved = loadSavedChats();
+      savedCountEl.innerText = Object.keys(localSaved).length;
+
+      // fetch basic user doc
+      try {
+        const ud = await getDoc(doc(db, 'users', currentUser));
+        currentUserDoc = ud.exists() ? ud.data() : { displayName: user.displayName || user.email || 'Client', email: user.email };
+        document.getElementById('topUserName').innerText = currentUserDoc.displayName || 'Client';
+        document.getElementById('topUserEmail').innerText = currentUserDoc.email || '';
+        document.getElementById('topAvatar').innerText = (currentUserDoc.displayName || 'C')[0].toUpperCase();
+        userProfileCache.set(currentUser, { uid: currentUser, displayName: currentUserDoc.displayName || 'You' });
+      } catch (e) { console.error('user doc error', e); }
+
+      // set presence = online
+      try {
+        await setDoc(doc(db, 'presence', currentUser), { online: true, lastSeen: serverTimestamp(), uid: currentUser }, { merge: true });
+      } catch (e) { console.warn('presence set error', e); }
+
+      // run lightweight migration to try to fix missing participants in recent conversation docs
+      migrateRecentConversationsForUser().catch(() => { });
+
+      // start listeners & hydrate
+      listenConversations();
+      listenPresenceCounts();
+      renderSidebar(); // initial from localSaved
+    });
+
+    // -----------------------------
+    // Listen conversations (realtime)
+    // - conversations collection doc structure:
+    //   { participants: [uid1, uid2], lastMessage: "...", updatedAt: Timestamp, unread: { uid1: 0, uid2: 1 }, projectId: optional }
+    // - fallback: include conversation docs where participants missing but messages subcollection indicates currentUser participation
+    // -----------------------------
+    async function listenConversations() {
+      if (convsUnsub) convsUnsub();
+      if (!currentUser) return;
+      // primary query for properly structured conversations
+      const q = query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser), fbOrderBy('updatedAt', 'desc'));
+      convsUnsub = onSnapshot(q, async (snapshot) => {
+        // Merge firestore conversations into localSaved so sidebar shows them persistently
+        snapshot.forEach(docSnap => {
+          const id = docSnap.id;
+          const d = docSnap.data();
+          const partner = (Array.isArray(d.participants) ? d.participants.find(p => p !== currentUser) : null) || d.partner || 'Unknown';
+          localSaved[partner] = localSaved[partner] || {};
+          localSaved[partner].displayName = localSaved[partner].displayName || partner;
+          localSaved[partner].lastMessage = d.lastMessage || localSaved[partner].lastMessage || '';
+          localSaved[partner].convId = id;
+          if (d.updatedAt) localSaved[partner].lastSeen = fmtTime(d.updatedAt);
+          if (d.unread) localSaved[partner].unread = d.unread;
+        });
+        // Additionally: attempt to find any conversation docs where participants are missing but messages subcollection contains messages sent/received by currentUser.
+        // This helps catch legacy/incorrect docs.
+        try {
+          const allSnap = await getDocs(query(collection(db, 'conversations'), fbOrderBy('updatedAt', 'desc'), limit(200)));
+          allSnap.forEach(async ds => {
+            const d = ds.data();
+            const id = ds.id;
+            if (d.participants && Array.isArray(d.participants)) return; // already handled
+            // peek into messages subcollection for recent message involving currentUser
+            try {
+              const msgsRef = collection(db, 'conversations', id, 'messages');
+              const mSnap = await getDocs(query(msgsRef, fbOrderBy('timestamp', 'desc'), limit(6)));
+              let involved = false;
+              let other = null;
+              mSnap.forEach(md => {
+                const mm = md.data();
+                if (mm.sender === currentUser) {
+                  involved = true;
+                  if (mm.receiver) other = mm.receiver;
+                } else if (mm.receiver === currentUser) {
+                  involved = true;
+                  if (mm.sender) other = mm.sender;
+                }
+              });
+              if (involved) {
+                const partner = other || ('user_' + id);
+                localSaved[partner] = localSaved[partner] || {};
+                localSaved[partner].displayName = localSaved[partner].displayName || partner;
+                localSaved[partner].lastMessage = d.lastMessage || localSaved[partner].lastMessage || '';
+                localSaved[partner].convId = id;
+                saveSavedChats(localSaved);
+                renderSidebar();
+              }
+            } catch (e) { /* ignore */ }
+          });
+        } catch (e) {
+          // ignore heavy scan errors
+        }
+
+        // persist
+        saveSavedChats(localSaved);
+        renderSidebar();
+      }, err => console.error('conversations listen err', err));
+    }
+
+    // -----------------------------
+    // Presence counts (online users)
+    // Simple: count presence docs where online==true
+    // -----------------------------
+    function listenPresenceCounts() {
+      if (presenceUnsub) presenceUnsub();
+      const q = query(collection(db, 'presence'));
+      presenceUnsub = onSnapshot(q, snap => {
+        let onlineCount = 0;
+        snap.forEach(s => {
+          const d = s.data();
+          if (d.online) onlineCount++;
+        });
+        onlineCountEl.innerText = onlineCount;
+      });
+    }
+
+    // -----------------------------
+    // Sidebar render (from localSaved)
+    // -----------------------------
+    function renderSidebar() {
+      conversationsList.innerHTML = '';
+      const keys = Object.keys(localSaved || {});
+      // simple ordering: most recent lastMessage presence first (could be improved)
+      keys.forEach(partner => {
+        const info = localSaved[partner] || {};
+        const el = document.createElement('div');
+        el.className = 'conv';
+        if (activePartnerId === partner) el.classList.add('active');
+        el.dataset.partner = partner;
+        el.innerHTML = `
+            <div class="avatar" style="background:${avatarColor(partner)}">${(info.displayName || partner || 'U').charAt(0).toUpperCase()}</div>
+            <div class="conv-body">
+              <div class="conv-title">${sanitize(info.displayName || partner)}</div>
+              <div class="conv-sub">${sanitize(info.lastMessage || '')}</div>
+            </div>
+            <div class="conv-meta">
+              <div class="time">${info.lastSeen ? info.lastSeen : ''}</div>
+              ${info.unread && info.unread[currentUser] ? `<div class="badge">${info.unread[currentUser]}</div>` : ''}
+            </div>
+          `;
+        el.onclick = () => openConversation(info.convId || null, partner);
+        // right-click to delete saved chat (user asked it persist until delete)
+        el.addEventListener('contextmenu', (ev) => {
+          ev.preventDefault();
+          if (confirm('Delete saved chat for ' + partner + ' ?')) {
+            delete localSaved[partner];
+            saveSavedChats(localSaved);
+            renderSidebar();
+            // if currently open, clear
+            if (activePartnerId === partner) {
+              activePartnerId = null;
+              activeConvId = null;
+              if (messagesUnsub) messagesUnsub();
+              messagesEl.innerHTML = `<div class="empty-state">No conversation selected — pick someone from the left or create a new conversation.</div>`;
+              chatHeaderName.innerText = 'Select a conversation';
+              chatHeaderAvatar.innerText = 'F';
+            }
+          }
+        });
+        conversationsList.appendChild(el);
+      });
+      savedCountEl.innerText = keys.length;
+    }
+
+    // -----------------------------
+    // Utility: try to find conversation id by participants (both orderings)
+    // -----------------------------
+    async function findConversationBetween(a, b) {
+      try {
+        // Try the canonical query (participants array-contains a) then check includes b
+        const qA = query(collection(db, 'conversations'), where('participants', 'array-contains', a), fbOrderBy('updatedAt', 'desc'));
+        const snap = await getDocs(qA);
+        let found = null;
+        snap.forEach(s => {
+          const d = s.data();
+          if (Array.isArray(d.participants) && d.participants.includes(b)) found = s.id;
+        });
+        if (found) return found;
+        // As fallback, scan some recent conversations and attempt to match inferred participants
+        const recent = await getDocs(query(collection(db, 'conversations'), fbOrderBy('updatedAt', 'desc'), limit(200)));
+        let f2 = null;
+        recent.forEach(s => {
+          const d = s.data();
+          if (!Array.isArray(d.participants)) return;
+          if (d.participants.includes(a) && d.participants.includes(b)) f2 = s.id;
+        });
+        return f2;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // -----------------------------
+    // Open conversation (subscribe to messages)
+    // - if convId is not provided, attempt to find existing conversation by participants
+    // - if conversation doc lacks participants or not found, we still allow localSaved chats and sendMessage will create a conv
+    // -----------------------------
+    async function openConversation(convId, partnerId) {
+      activeConvId = convId;
+      activePartnerId = partnerId;
+      chatHeaderName.innerText = partnerId;
+      chatHeaderMeta.innerText = 'Loading messages...';
+      chatHeaderAvatar.innerText = (partnerId || 'U')[0].toUpperCase();
+      messagesEl.innerHTML = '';
+
+      // add to localSaved if not present
+      if (!localSaved[partnerId]) {
+        try {
+          const u = await getUserProfile(partnerId);
+          localSaved[partnerId] = { displayName: u.displayName || partnerId, lastMessage: '', convId: convId || null };
+        } catch (e) {
+          localSaved[partnerId] = { displayName: partnerId, lastMessage: '', convId: convId || null };
+        }
+        saveSavedChats(localSaved);
+        renderSidebar();
+      } else {
+        localSaved[partnerId].convId = convId || localSaved[partnerId].convId || null;
+        saveSavedChats(localSaved);
+        renderSidebar();
+      }
+
+      // If convId not provided, try to find an existing conversation document
+      if (!activeConvId) {
+        const found = await findConversationBetween(currentUser, partnerId);
+        if (found) {
+          activeConvId = found;
+          localSaved[partnerId].convId = found;
+          saveSavedChats(localSaved);
+          renderSidebar();
+        }
+      }
+
+      // mark unread to 0 for current user (if conversation doc exists)
+      if (activeConvId) {
+        try {
+          const convRef = doc(db, 'conversations', activeConvId);
+          await updateDoc(convRef, { ['unread.' + currentUser]: 0 }).catch(() => { });
+        } catch (e) { /* ignore */ }
+      }
+
+      // detach previous
+      if (messagesUnsub) messagesUnsub();
+      if (convDocUnsub) convDocUnsub();
+
+      if (activeConvId) {
+        // subscribe to messages subcollection
+        const msgsRef = collection(db, 'conversations', activeConvId, 'messages');
+        const msgsQuery = query(msgsRef, fbOrderBy('timestamp'));
+        messagesUnsub = onSnapshot(msgsQuery, snap => {
+          messagesEl.innerHTML = '';
+          if (snap.empty) {
+            messagesEl.innerHTML = `<div class="empty-state muted">No messages yet — say hi 👋</div>`;
+          } else {
+            snap.forEach(mDoc => {
+              const m = mDoc.data();
+              renderMessage(m, mDoc.id); // pass doc id for actions
+            });
+            // auto scroll to bottom
+            setTimeout(() => {
+              messagesEl.scrollTop = messagesEl.scrollHeight;
+            }, 50);
+          }
+          updateConversationHeader(activeConvId, partnerId);
+        }, err => console.error('messages listen err', err));
+
+        // attach conversation doc listener (typing/presence)
+        attachConvDocListener(activeConvId);
+      } else {
+        // no conversation yet — show empty state but allow messages to create conv
+        messagesEl.innerHTML = `<div class="empty-state muted">No messages yet — this chat is saved locally. Send a message to create it in Firestore.</div>`;
+        updateConversationHeader(null, partnerId);
+      }
+    }
+
+    // -----------------------------
+    // Render a single message (bubble)
+    // accepts message object `m` and optional `docId` when message exists in Firestore
+    // -----------------------------
+    function renderMessage(m, docId = null) {
+      const wrapper = document.createElement('div');
+      const isMe = (m.sender === currentUser || m.sender === currentUser || m.senderId === currentUser);
+      wrapper.className = 'msg-row';
+      wrapper.style.justifyContent = isMe ? 'flex-end' : 'flex-start';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg ' + (isMe ? 'me' : 'other');
+      bubble.dataset.msgId = docId || `optimistic-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      bubble.dataset.sender = m.sender || m.senderId || '';
+
+      if (m.text) {
+        const div = document.createElement('div');
+        div.innerHTML = sanitize(m.text).replaceAll('\n', '<br>');
+        bubble.appendChild(div);
+      }
+
+      if (m.file) {
+        const f = m.file;
+        if (f.type && f.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = f.url;
+          img.alt = f.name;
+          img.className = 'attachment';
+          bubble.appendChild(img);
+        } else {
+          const a = document.createElement('a');
+          a.href = f.url;
+          a.target = '_blank';
+          a.className = 'file-link';
+          a.innerText = '📎 ' + f.name;
+          bubble.appendChild(a);
+        }
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.innerText = m.timestamp ? (m.timestamp.toDate ? m.timestamp.toDate().toLocaleString() : new Date(m.timestamp).toLocaleString()) : (new Date()).toLocaleString();
+      bubble.appendChild(meta);
+
+      const menuWrap = document.createElement('div');
+      menuWrap.className = 'menu-wrap';
+      const menuBtn = document.createElement('button');
+      menuBtn.className = 'menu-btn';
+      menuBtn.title = 'Options';
+      menuBtn.innerText = '⋯';
+      menuWrap.appendChild(menuBtn);
+
+      const menu = document.createElement('div');
+      menu.className = 'msg-menu';
+      menu.innerHTML = `
+        <button type="button" data-action="copy">Copy</button>
+        <button type="button" data-action="forward">Forward</button>
+        <button type="button" data-action="delete">Delete</button>
+      `;
+      menuWrap.appendChild(menu);
+      bubble.appendChild(menuWrap);
+
+      menuBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        document.querySelectorAll('.msg-menu.show').forEach(el => {
+          if (el !== menu) el.classList.remove('show');
+        });
+        menu.classList.toggle('show');
+      });
+
+      document.addEventListener('click', (ev) => {
+        if (!menu.contains(ev.target) && ev.target !== menuBtn) {
+          menu.classList.remove('show');
+        }
+      });
+
+      // menu actions
+      menu.addEventListener('click', async (ev) => {
+        const actionBtn = ev.target.closest('button[data-action]');
+        if (!actionBtn) return;
+        const action = actionBtn.dataset.action;
+        const msgText = m.text || '';
+        const fileObj = m.file || null;
+        if (action === 'copy') {
+          try {
+            if (msgText && msgText.trim().length > 0) {
+              await navigator.clipboard.writeText(msgText);
+              toast('Message copied to clipboard');
+            } else if (fileObj && fileObj.url) {
+              await navigator.clipboard.writeText(fileObj.url);
+              toast('File URL copied to clipboard');
+            } else {
+              toast('Nothing to copy');
+            }
+          } catch (e) {
+            console.warn('clipboard err', e);
+            alert('Unable to copy (browser may block).');
+          }
+          menu.classList.remove('show');
+        } else if (action === 'forward') {
+          menu.classList.remove('show');
+          const available = Object.keys(localSaved);
+          const pickList = available.length ? `Existing: ${available.join(', ')}\n\n` : '';
+          const partner = prompt(pickList + 'Enter UID/email to forward to:');
+          if (!partner) return;
+          try {
+            let convIdForForward = localSaved[partner]?.convId || null;
+            if (!convIdForForward) {
+              const convPayload = {
+                participants: [currentUser, partner],
+                lastMessage: msgText ? (msgText.length > 80 ? msgText.slice(0, 80) + '…' : msgText) : (fileObj ? `📎 ${fileObj.name || 'file'}` : ''),
+                updatedAt: serverTimestamp(),
+                createdAt: serverTimestamp(),
+                unread: { [currentUser]: 0, [partner]: 0 }
+              };
+              const newRef = await addDoc(collection(db, 'conversations'), convPayload);
+              convIdForForward = newRef.id;
+              localSaved[partner] = localSaved[partner] || { displayName: partner, lastMessage: convPayload.lastMessage, convId: convIdForForward };
+              saveSavedChats(localSaved);
+              renderSidebar();
+            }
+            const payloadBase = { sender: currentUser || 'anon', timestamp: serverTimestamp() };
+            if (fileObj && fileObj.url) {
+              await addDoc(collection(db, 'conversations', convIdForForward, 'messages'), { ...payloadBase, text: `[Forwarded file] ${fileObj.name || ''}`, file: { url: fileObj.url, name: fileObj.name || 'file', type: fileObj.type || '' }, sender: currentUser, receiver: partner });
+            } else if (msgText) {
+              await addDoc(collection(db, 'conversations', convIdForForward, 'messages'), { ...payloadBase, text: `[Forwarded] ${msgText}`, sender: currentUser, receiver: partner });
+            } else {
+              alert('Nothing to forward');
+            }
+            toast('Message forwarded');
+          } catch (e) {
+            console.error('forward err', e);
+            alert('Forward failed: ' + (e?.message || e));
+          }
+        } else if (action === 'delete') {
+          menu.classList.remove('show');
+          if (!docId) {
+            bubble.remove();
+            toast('Message removed locally');
+            return;
+          }
+          if (!confirm('Delete this message? This will remove it from the conversation (if permitted).')) return;
+          try {
+            await deleteDoc(doc(db, 'conversations', activeConvId, 'messages', docId));
+            toast('Message deleted');
+          } catch (e) {
+            console.error('delete msg err', e);
+            alert('Delete failed: ' + (e?.message || e));
+          }
+        }
+      });
+
+      wrapper.appendChild(bubble);
+      messagesEl.appendChild(wrapper);
+    }
+
+    // -----------------------------
+    // Update conversation header with partner presence or project link
+    // -----------------------------
+    async function updateConversationHeader(convId, partnerId) {
+      try {
+        if (convId) {
+          const pSnap = await getDoc(doc(db, 'presence', partnerId));
+          if (pSnap.exists()) {
+            const d = pSnap.data();
+            if (d.online) {
+              convStatus.innerText = 'Online';
+              convStatus.style.color = '#34d399';
+            } else {
+              convStatus.innerText = 'Last seen: ' + (d.lastSeen ? (d.lastSeen.toDate ? d.lastSeen.toDate().toLocaleString() : new Date(d.lastSeen).toLocaleString()) : '—');
+              convStatus.style.color = 'var(--muted)';
+            }
+          } else {
+            convStatus.innerText = 'Offline';
+            convStatus.style.color = 'var(--muted)';
+          }
+        } else {
+          convStatus.innerText = 'Saved (local)';
+          convStatus.style.color = 'var(--muted)';
+        }
+      } catch (e) { console.warn('presence fetch err', e); convStatus.innerText = 'Offline' }
+      chatHeaderMeta.innerText = 'Conversation with ' + partnerId;
+    }
+
+    // -----------------------------
+    // Ensure conversation doc exists with proper participants, return convId
+    // -----------------------------
+    async function ensureConversationDoc(partnerId) {
+      // if already known
+      if (localSaved[partnerId] && localSaved[partnerId].convId) return localSaved[partnerId].convId;
+      // try find
+      const found = await findConversationBetween(currentUser, partnerId);
+      if (found) {
+        localSaved[partnerId] = localSaved[partnerId] || {};
+        localSaved[partnerId].convId = found;
+        saveSavedChats(localSaved);
+        return found;
+      }
+      // create new conversation
+      const payload = {
+        participants: [currentUser, partnerId],
+        lastMessage: '',
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        unread: { [currentUser]: 0, [partnerId]: 0 }
+      };
+      const newRef = await addDoc(collection(db, 'conversations'), payload);
+      localSaved[partnerId] = localSaved[partnerId] || {};
+      localSaved[partnerId].convId = newRef.id;
+      saveSavedChats(localSaved);
+      return newRef.id;
+    }
+
+    // -----------------------------
+    // Send message (text + optional attachments)
+    // - ensures localSaved is updated so sidebar persists
+    // - DOES optimistic UI render so message appears immediately even if conv not created yet
+    // - ALWAYS writes participants sender/receiver where possible to be backward-compatible
+    // -----------------------------
+    async function sendMessage() {
+      const textRaw = messageInput.value;
+      const text = textRaw.trim();
+      if (!activePartnerId) {
+        alert('Select or create a conversation first.');
+        return;
+      }
+      const payloadBase = {
+        sender: currentUser || 'anon',
+        senderId: currentUser || 'anon',
+        receiver: activePartnerId,
+        receiverId: activePartnerId,
+        timestamp: serverTimestamp()
+      };
+
+      // ensure localSaved entry exists
+      localSaved[activePartnerId] = localSaved[activePartnerId] || { displayName: activePartnerId, lastMessage: '' };
+      localSaved[activePartnerId].lastMessage = text || localSaved[activePartnerId].lastMessage;
+      saveSavedChats(localSaved);
+      renderSidebar();
+
+      // optimistic UI
+      const optimisticMsg = {
+        sender: currentUser || 'anon',
+        text: textRaw,
+        timestamp: new Date()
+      };
+      const files = fileInput.files;
+      if ((!text || text.length === 0) && (!files || files.length === 0)) {
+        return;
+      }
+      renderMessage(optimisticMsg);
+      messagesEl.scrollTop = messagesEl.scrollHeight + 1000;
+
+      // Ensure conversation doc exists
+      try {
+        if (!activeConvId) {
+          activeConvId = await ensureConversationDoc(activePartnerId);
+          localSaved[activePartnerId].convId = activeConvId;
+          saveSavedChats(localSaved);
+          renderSidebar();
+        } else {
+          // ensure the conversation doc has participants (patch if missing)
+          try {
+            const convRef = doc(db, 'conversations', activeConvId);
+            const convSnap = await getDoc(convRef);
+            if (convSnap.exists()) {
+              const d = convSnap.data();
+              if (!d.participants || !Array.isArray(d.participants)) {
+                await setDoc(convRef, { participants: [currentUser, activePartnerId] }, { merge: true }).catch(() => { });
+              } else if (!d.participants.includes(currentUser) || !d.participants.includes(activePartnerId)) {
+                const merged = Array.from(new Set([...(d.participants || []), currentUser, activePartnerId]));
+                await setDoc(convRef, { participants: merged }, { merge: true }).catch(() => { });
+              }
+            }
+          } catch (e) { /* ignore */ }
+        }
+      } catch (e) {
+        console.error('ensure conv err', e);
+      }
+
+      // If files attached -> upload and send for each file
+      if (files && files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+          const f = files[i];
+          const path = `chat_files/${activeConvId}/${Date.now()}_${f.name}`;
+          const sRef = storageRef(storage, path);
+          await new Promise((resolve, reject) => {
+            const task = uploadBytesResumable(sRef, f);
+            task.on('state_changed', null, err => reject(err), async () => {
+              const url = await getDownloadURL(task.snapshot.ref);
+              const m = {
+                ...payloadBase,
+                text: (text && i === 0) ? textRaw : '',
+                file: { name: f.name, url, type: f.type || '' }
+              };
+              await addDoc(collection(db, 'conversations', activeConvId, 'messages'), m);
+              // bump conversation metadata
+              try {
+                const convRef = doc(db, 'conversations', activeConvId);
+                const convSnap = await getDoc(convRef);
+                const prevUnread = convSnap.exists() ? (convSnap.data().unread?.[activePartnerId] || 0) : 0;
+                await updateDoc(convRef, {
+                  lastMessage: text ? textRaw : `📎 ${f.name}`,
+                  updatedAt: serverTimestamp(),
+                  ['unread.' + activePartnerId]: prevUnread + 1,
+                  participants: [currentUser, activePartnerId]
+                });
+              } catch (e) {
+                await setDoc(doc(db, 'conversations', activeConvId), { lastMessage: text ? textRaw : `📎 ${f.name}`, updatedAt: serverTimestamp(), unread: { [activePartnerId]: ((await getDoc(doc(db, 'conversations', activeConvId))).data()?.unread?.[activePartnerId] || 0) + 1 }, participants: [currentUser, activePartnerId] }, { merge: true }).catch(() => { });
+              }
+              resolve();
+            });
+          });
+        }
+        fileInput.value = '';
+        messageInput.value = '';
+        return;
+      }
+
+      // plain text: add message doc to firestore (but UI already shows optimistic entry)
+      try {
+        await addDoc(collection(db, 'conversations', activeConvId, 'messages'), { ...payloadBase, text: textRaw });
+        // update conversation doc last message & unread
+        try {
+          const convRef = doc(db, 'conversations', activeConvId);
+          const docSnap = await getDoc(convRef);
+          const prevUnread = docSnap.exists() ? (docSnap.data().unread?.[activePartnerId] || 0) : 0;
+          await updateDoc(convRef, { lastMessage: textRaw, updatedAt: serverTimestamp(), ['unread.' + activePartnerId]: prevUnread + 1, participants: [currentUser, activePartnerId] });
+        } catch (e) {
+          await setDoc(doc(db, 'conversations', activeConvId), { lastMessage: textRaw, updatedAt: serverTimestamp(), unread: { [activePartnerId]: 1 }, participants: [currentUser, activePartnerId] }, { merge: true });
+        }
+      } catch (e) {
+        console.error('send text err', e);
+      }
+
+      // update localSaved
+      localSaved[activePartnerId].lastMessage = textRaw;
+      saveSavedChats(localSaved);
+      renderSidebar();
+      messageInput.value = '';
+    }
+
+    // -----------------------------
+    // New conversation flow (via button)
+    // -----------------------------
+    newChatBtn.addEventListener('click', async () => {
+      const partnerId = prompt('Enter freelancer UID or email (for demo use uid):');
+      if (!partnerId) return;
+      if (partnerId === currentUser) { alert('Cannot create chat with yourself'); return; }
+
+      try {
+        const ud = await getDoc(doc(db, 'users', partnerId));
+        const display = ud.exists() ? (ud.data().displayName || ud.data().name || partnerId) : partnerId;
+        localSaved[partnerId] = localSaved[partnerId] || { displayName: display, lastMessage: '', convId: null };
+      } catch (e) {
+        localSaved[partnerId] = localSaved[partnerId] || { displayName: partnerId, lastMessage: '', convId: null };
+      }
+      saveSavedChats(localSaved);
+      renderSidebar();
+      openConversation(localSaved[partnerId].convId || null, partnerId);
+    });
+
+    // -----------------------------
+    // Search filter + create chat on enter if not exists
+    // -----------------------------
+    searchInput.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        const val = e.target.value.trim();
+        if (!val) return;
+        const match = Object.keys(localSaved).find(k => (localSaved[k].displayName || k).toLowerCase().includes(val.toLowerCase()) || k.toLowerCase().includes(val.toLowerCase()));
+        if (match) {
+          openConversation(localSaved[match].convId || null, match);
+          e.target.value = '';
+          return;
+        }
+        localSaved[val] = localSaved[val] || { displayName: val, lastMessage: '', convId: null };
+        saveSavedChats(localSaved);
+        renderSidebar();
+        openConversation(null, val);
+        e.target.value = '';
+      }
+    });
+
+    // simple client-side filter for sidebar
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const convs = Array.from(conversationsList.children);
+      convs.forEach(c => {
+        const title = (c.querySelector('.conv-title')?.innerText || '');
+        const partner = c.dataset.partner || '';
+        c.style.display = (title.toLowerCase().includes(q) || partner.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+
+    // -----------------------------
+    // Attach file button
+    // -----------------------------
+    attachBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // -----------------------------
+    // Keyboard: Enter = send, Shift+Enter newline
+    // -----------------------------
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendBtn.click();
+      }
+    });
+
+    // send btn
+    sendBtn.addEventListener('click', sendMessage);
+
+    // -----------------------------
+    // Typing indicator implementation
+    // -----------------------------
+    let typingTimer = null;
+    messageInput.addEventListener('input', async () => {
+      if (!activeConvId) return;
+      const convRef = doc(db, 'conversations', activeConvId);
+      await updateDoc(convRef, { ['typing.' + currentUser]: true }).catch(_ => { });
+      if (typingTimer) clearTimeout(typingTimer);
+      typingTimer = setTimeout(async () => {
+        await updateDoc(convRef, { ['typing.' + currentUser]: false }).catch(_ => { });
+      }, 1500);
+    });
+
+    // watch typing field when conversation opened
+    async function attachConvDocListener(convId) {
+      if (convDocUnsub) convDocUnsub();
+      if (!convId) return;
+      const convRef = doc(db, 'conversations', convId);
+      convDocUnsub = onSnapshot(convRef, snap => {
+        if (!snap.exists()) return;
+        const d = snap.data();
+        const typing = d.typing && d.typing[activePartnerId];
+        if (typing) {
+          if (!document.getElementById('typingIndicatorSmall')) {
+            const el = document.createElement('div');
+            el.id = 'typingIndicatorSmall';
+            el.className = 'muted';
+            el.style.marginLeft = '8px';
+            el.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#9ca3af;margin-right:6px"></span>Typing...`;
+            document.getElementById('chatHeader').appendChild(el);
+          }
+        } else {
+          const tEl = document.getElementById('typingIndicatorSmall');
+          if (tEl) tEl.remove();
+        }
+      });
+    }
+
+    // -----------------------------
+    // Utility: toast
+    // -----------------------------
+    function toast(msg, ms = 1800) {
+      const t = document.createElement('div');
+      t.innerText = msg;
+      t.style.position = 'fixed';
+      t.style.right = '20px';
+      t.style.bottom = '90px';
+      t.style.background = 'rgba(0,0,0,0.6)';
+      t.style.color = 'white';
+      t.style.padding = '8px 12px';
+      t.style.borderRadius = '8px';
+      t.style.zIndex = '99999';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), ms);
+    }
+
+    // -----------------------------
+    // Cleanup handlers on unload
+    // -----------------------------
+    window.addEventListener('beforeunload', async () => {
+      try {
+        if (currentUser) await updateDoc(doc(db, 'presence', currentUser), { online: false, lastSeen: serverTimestamp() }, { merge: true });
+      } catch (e) { }
+    });
+
+    // -----------------------------
+    // Emoji picker integration (stable - multi-pick)
+    // -----------------------------
+    (function setupEmojiPicker() {
+      const pickContainer = emojiContainer;
+      const inner = emojiInner;
+      const btn = emojiBtn;
+      const closeBtn = emojiCloseBtn;
+
+      function insertAtCursor(input, textToInsert) {
+        try {
+          const start = input.selectionStart || 0;
+          const end = input.selectionEnd || 0;
+          const value = input.value || '';
+          input.value = value.slice(0, start) + textToInsert + value.slice(end);
+          const pos = start + textToInsert.length;
+          input.setSelectionRange(pos, pos);
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        } catch (err) {
+          input.value = (input.value || '') + textToInsert;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+
+      function showEmoji() {
+        pickContainer.style.display = 'block';
+        pickContainer.setAttribute('aria-hidden', 'false');
+      }
+      function hideEmoji() {
+        pickContainer.style.display = 'none';
+        pickContainer.setAttribute('aria-hidden', 'true');
+      }
+      function isOpen() {
+        return pickContainer.style.display === 'block';
+      }
+
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        if (isOpen()) hideEmoji();
+        else showEmoji();
+      });
+
+      closeBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        hideEmoji();
+      });
+
+      if (window.customElements && customElements.whenDefined) {
+        customElements.whenDefined('emoji-picker').then(() => {
+          let picker = pickContainer.querySelector('emoji-picker');
+          if (!picker) {
+            inner.innerHTML = '';
+            picker = document.createElement('emoji-picker');
+            inner.appendChild(picker);
+            picker.style.width = '100%';
+            picker.style.height = '100%';
+          }
+          picker.addEventListener('emoji-click', (e) => {
+            const emoji = e.detail?.unicode || e.detail?.emoji || '';
+            if (emoji) {
+              insertAtCursor(messageInput, emoji);
+              messageInput.focus();
+            }
+          });
+          pickContainer.addEventListener('click', (e) => e.stopPropagation());
+          pickContainer.addEventListener('pointerdown', (e) => e.stopPropagation());
+        }).catch((err) => {
+          renderSmallEmojiFallback();
+        });
+      } else {
+        setTimeout(() => {
+          const picker = pickContainer.querySelector('emoji-picker');
+          if (picker) {
+            picker.addEventListener('emoji-click', (e) => {
+              const emoji = e.detail?.unicode || e.detail?.emoji || '';
+              if (emoji) {
+                insertAtCursor(messageInput, emoji);
+                messageInput.focus();
+              }
+            });
+            pickContainer.addEventListener('click', (e) => e.stopPropagation());
+            pickContainer.addEventListener('pointerdown', (e) => e.stopPropagation());
+          } else {
+            renderSmallEmojiFallback();
+          }
+        }, 300);
+      }
+
+      function renderSmallEmojiFallback() {
+        const fallback = ["😀", "😁", "😂", "🤣", "😊", "😍", "😘", "👍", "🙏", "🔥", "💯", "🙌", "🥳", "😎", "🤔"];
+        inner.innerHTML = '';
+        const wrap = document.createElement('div');
+        wrap.style.padding = '8px';
+        wrap.style.display = 'flex';
+        wrap.style.flexWrap = 'wrap';
+        wrap.style.gap = '6px';
+        fallback.forEach(e => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'icon-btn';
+          b.style.padding = '6px';
+          b.style.width = '44px';
+          b.style.height = '44px';
+          b.style.fontSize = '18px';
+          b.textContent = e;
+          b.addEventListener('click', ev => {
+            ev.stopPropagation();
+            insertAtCursor(messageInput, e);
+            messageInput.focus();
+          });
+          wrap.appendChild(b);
+        });
+        inner.appendChild(wrap);
+      }
+
+      document.addEventListener('mousedown', (ev) => {
+        const t = ev.target;
+        if (!pickContainer.contains(t) && t !== btn) hideEmoji();
+      });
+
+      document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape') hideEmoji();
+      });
+    })();
+
+    // -----------------------------
+    // Sidebar / Mobile toggle helpers
+    // -----------------------------
+    function toggleSidebar(show) {
+      const sb = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      if (show) { sb.classList.add('open'); overlay.classList.add('show'); }
+      else { sb.classList.remove('open'); overlay.classList.remove('show'); }
+    }
+
+    // -----------------------------
+    // Logout button behavior
+    // -----------------------------
+    btnLogout.addEventListener('click', async () => {
+      try {
+        if (currentUser) {
+          await updateDoc(doc(db, 'presence', currentUser), { online: false, lastSeen: serverTimestamp() }, { merge: true }).catch(() => { });
+        }
+      } catch (e) { /* ignore */ }
+      try {
+        await signOut(auth);
+        toast('Signed out');
+      } catch (e) {
+        console.error('signout err', e);
+        alert('Logout failed: ' + (e?.message || e));
+      }
+    });
+
+  </script>
+</body>
+
+</html>
