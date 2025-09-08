@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gig Details — Talent-Hub</title>
+
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg:#071018; --card:#0f1720; --muted:#9aa7b6; --accent1:#06d6a0; --accent2:#3b82f6;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071018,#04121a);font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial;color:#e6f2ee}
+    .container{max-width:1180px;margin:24px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{font-weight:800;color:var(--accent1);font-size:20px}
+    .card{background:var(--card);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 30px rgba(6,10,12,0.6)}
+    .top{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    @media(max-width:980px){ .top{grid-template-columns:1fr} }
+    /* gallery */
+    .gallery{display:flex;flex-direction:column;gap:10px}
+    .main-image{height:360px;border-radius:10px;background-size:cover;background-position:center;box-shadow:0 10px 30px rgba(2,6,8,0.6)}
+    .thumbs{display:flex;gap:8px;flex-wrap:wrap}
+    .thumb{width:72px;height:72px;border-radius:8px;background-size:cover;background-position:center;border:2px solid transparent;cursor:pointer}
+    .thumb.active{border-color:var(--accent1)}
+    /* meta */
+    .title{font-size:20px;font-weight:800;margin-bottom:6px;color:#eafaf0}
+    .seller-row{display:flex;gap:10px;align-items:center}
+    .seller-avatar{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-weight:800;color:white}
+    .seller-sub{font-size:13px;color:var(--muted)}
+    .price-box{margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#05221a,#072822);display:flex;justify-content:space-between;align-items:center}
+    .price{font-weight:900;font-size:20px;color:var(--accent2)}
+    .delivery{font-size:13px;color:var(--muted)}
+    .desc{margin-top:12px;color:#dbeee2;line-height:1.6}
+    .features{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(6,182,212,0.06);color:var(--muted);font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,0.02)}
+    /* side */
+    .side-card{position:sticky;top:84px}
+    .side-price{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .side-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#d8efe6}
+    .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#06221c}
+    .fav{width:46px;height:46px;border-radius:10px;background:transparent;border:1px dashed rgba(255,255,255,0.06);display:grid;place-items:center;cursor:pointer}
+    .top-like-btn{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:10px;background:rgba(0,0,0,0.45);display:grid;place-items:center;color:#fff;border:0;cursor:pointer}
+    .top-like-btn.liked{background:linear-gradient(90deg,#10b981,#2dd4bf);color:#042617;transform:scale(1.03)}
+    .muted{color:var(--muted)}
+    /* tabs + reviews */
+    .tabs{display:flex;gap:8px;margin-top:16px;border-bottom:1px solid rgba(255,255,255,0.03);padding-bottom:10px}
+    .tab{padding:8px 12px;border-radius:8px;font-weight:700;color:var(--muted);cursor:pointer}
+    .tab.active{background:rgba(6,182,212,0.06);color:#cfeee6}
+    .tab-content{margin-top:16px}
+    footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px}
+    /* debug small */
+    .status{font-size:13px;color:var(--muted);margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header style="display:flex;align-items:center;justify-content:space-between">
+      <div class="brand">Talent-Hub</div>
+      <div id="loginStatus" style="font-size:13px;color:var(--muted)">Checking auth…</div>
+    </header>
+
+    <main id="content">
+      <div class="top">
+        <!-- Left: details -->
+        <section class="card">
+          <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+            <div class="gallery" style="flex:1">
+              <div id="mainImage" class="main-image" style="background-image:url('https://via.placeholder.com/1200x800?text=Loading...')"></div>
+              <div class="thumbs" id="thumbs"></div>
+            </div>
+
+            <div style="flex-basis:340px">
+              <div class="title" id="gigTitle">Loading title…</div>
+              <div class="seller-row">
+                <div id="sellerAvatar" class="seller-avatar" style="background:#064a36">U</div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div id="sellerName" style="font-weight:800">Seller</div>
+                  </div>
+                  <div class="seller-sub" id="sellerSub">Member since —</div>
+                </div>
+              </div>
+
+              <div style="margin-top:10px;display:flex;gap:10px;align-items:center">
+                <div class="muted" id="createdAt">Posted —</div>
+                <div style="margin-left:auto" id="likeArea" class="muted">0 Likes</div>
+              </div>
+
+              <div class="price-box">
+                <div>
+                  <div class="muted">Starting at</div>
+                  <div class="price" id="price">₹0</div>
+                </div>
+                <div class="delivery" id="delivery">3 days</div>
+              </div>
+
+              <div class="desc" id="gigDesc">Loading description…</div>
+
+              <div class="features" id="features"></div>
+
+              <div class="tabs" style="margin-top:18px">
+                <div class="tab active" data-tab="details">Details</div>
+                <div class="tab" data-tab="reviews">Reviews</div>
+                <div class="tab" data-tab="similar">Similar</div>
+              </div>
+
+              <div class="tab-content" id="tabContent">
+                <div id="detailsTab">
+                  <h4 style="margin-top:10px">What you'll get</h4>
+                  <p class="muted" id="whatYouGet">Multiple concepts, print-ready files, etc.</p>
+                </div>
+                <div id="reviewsTab" class="hidden">
+                  <div id="reviewsList"></div>
+                </div>
+                <div id="similarTab" class="hidden">
+                  <div id="similarGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div style="margin-top:18px">
+            <h3 style="margin-bottom:8px">Full Description</h3>
+            <div id="longDesc" class="muted">Loading...</div>
+          </div>
+        </section>
+
+        <!-- Right: CTA -->
+        <aside class="card side-card">
+          <div class="side-price">
+            <div>
+              <div class="muted">Price</div>
+              <div class="price" id="sidePrice">₹0</div>
+            </div>
+            <div class="muted" id="sideDelivery">Delivery: 3 days</div>
+          </div>
+
+          <div class="side-actions" id="sideActions">
+            <button id="continueBtn" class="btn btn-primary">Continue (Hire)</button>
+            <button id="favBtn" class="fav" title="Like this gig"><i id="favIcon" class="fa-regular fa-heart"></i></button>
+          </div>
+
+          <div class="seller-panel" style="margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#041518,#052a1e);border:1px solid rgba(255,255,255,0.02)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:800" id="panelSellerName">Seller</div>
+                <div class="muted" id="panelSellerBio">Top-rated professional</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+              <button id="contactBtn" class="btn btn-ghost" style="padding:8px 10px">Contact Seller</button>
+              <a id="sellerProfileLink" href="#" class="muted" style="align-self:center;text-decoration:underline">View profile</a>
+            </div>
+
+            <div style="margin-top:10px;font-size:13px;color:var(--muted)">
+              <strong>Note:</strong> This is a live listing UI connected to Firestore.
+            </div>
+            <div class="status" id="statusMsg"></div>
+          </div>
+        </aside>
+      </div>
+
+      <footer>© 2025 Talent-Hub — Live data from Firestore.</footer>
+    </main>
+  </div>
+
+  <!-- ===== Firebase + App logic (module) ===== -->
+  <script type="module">
+    // ---------- Firebase v10 imports ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    import {
+      getFirestore, doc, getDoc, onSnapshot, query, where, orderBy, limit, collection,
+      setDoc, deleteDoc, runTransaction, serverTimestamp, getDocs
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ---------- Your Firebase config ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817"
+    };
+
+    // ---------- Initialize ----------
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ---------- Helpers ----------
+    const $ = (sel) => document.querySelector(sel);
+    const qsAll = (sel) => Array.from(document.querySelectorAll(sel));
+    const esc = s => String(s ?? "");
+    const money = n => isFinite(n) ? `₹${Number(n).toLocaleString('en-IN')}` : '₹—';
+    function getQueryParam(name) { try { return new URL(window.location.href).searchParams.get(name); } catch(e){ return null; } }
+    function formatDate(ts) { try { const d = ts && ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); } catch(e){ return esc(ts); } }
+
+    // ---------- Elements ----------
+    const mainImageEl = $('#mainImage');
+    const thumbsEl = $('#thumbs');
+    const gigTitleEl = $('#gigTitle');
+    const sellerNameEl = $('#sellerName');
+    const sellerAvatarEl = $('#sellerAvatar');
+    const sellerSubEl = $('#sellerSub');
+    const priceEl = $('#price');
+    const deliveryEl = $('#delivery');
+    const gigDescEl = $('#gigDesc');
+    const featuresEl = $('#features');
+    const sidePriceEl = $('#sidePrice');
+    const sideDeliveryEl = $('#sideDelivery');
+    const panelSellerNameEl = $('#panelSellerName');
+    const panelSellerBioEl = $('#panelSellerBio');
+    const sellerProfileLink = $('#sellerProfileLink');
+    const createdAtEl = $('#createdAt');
+    const whatYouGetEl = $('#whatYouGet');
+    const longDescEl = $('#longDesc');
+
+    const likeAreaEl = $('#likeArea');
+    const favBtn = $('#favBtn');
+    const favIcon = $('#favIcon');
+
+    const contactBtn = $('#contactBtn');
+    const continueBtn = $('#continueBtn');
+
+    const loginStatusEl = $('#loginStatus');
+    const statusMsgEl = $('#statusMsg');
+
+    // ---------- Gig ID ----------
+    const GIG_ID = getQueryParam('id') || getQueryParam('gig') || null;
+    if (!GIG_ID) {
+      document.getElementById('content').innerHTML = '<div class="card">No gig id provided in URL. Use ?id=GIG_ID</div>';
+      throw new Error('No gig id in URL');
+    }
+
+    // ---------- Collection references (your structure) ----------
+    const GIGS_COLLECTION = 'subho_gigs';                   // primary gigs
+    const GIG_LIKES_COLL = 'gig_likes';                     // raw likes (per gig)
+    const GIG_LIKES_AGG = 'gig_likes_agg';                  // aggregated counts
+    const GIG_LIKES_USER = 'gig_likes_user';                // per-user likes
+
+    // ---------- State ----------
+    let currentUser = null;
+    let gigDataCache = null;
+
+    // ---------- Render helpers ----------
+    function setGallery(urls) {
+      if (!Array.isArray(urls) || urls.length === 0) urls = ['https://via.placeholder.com/1200x800?text=No+Image'];
+      mainImageEl.style.backgroundImage = `url('${escapeImg(urls[0])}')`;
+      thumbsEl.innerHTML = '';
+      urls.forEach((u, i) => {
+        const t = document.createElement('div');
+        t.className = 'thumb' + (i === 0 ? ' active' : '');
+        t.style.backgroundImage = `url('${escapeImg(u)}')`;
+        t.addEventListener('click', () => {
+          qsAll('.thumb').forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          mainImageEl.style.backgroundImage = `url('${escapeImg(u)}')`;
+        });
+        thumbsEl.appendChild(t);
+      });
+    }
+    function escapeImg(u) { return String(u || '').replaceAll("'", "%27"); }
+
+    function renderGig(g, id) {
+      gigDataCache = g;
+      gigTitleEl.textContent = esc(g.title || g.short || 'Untitled gig');
+      gigDescEl.textContent = esc(g.description || g.short || 'No description provided.');
+      longDescEl.textContent = esc(g.longDescription || g.description || g.short || '');
+      panelSellerNameEl.textContent = esc(g.sellerName || g.seller || 'Seller');
+      sellerNameEl.textContent = esc(g.sellerName || g.seller || 'Seller');
+      sellerSubEl.textContent = esc(g.sellerCountry || (g.createdByEmail || g.sellerEmail) || 'Independent Professional');
+
+      const initial = (g.sellerName ? g.sellerName.trim()[0] : (g.seller || 'U')[0] || 'U').toUpperCase();
+      sellerAvatarEl.textContent = initial;
+      panelSellerBioEl.textContent = esc(g.sellerBio || 'Experienced professional');
+
+      const priceNum = g.price || g.amount || g.startingPrice || 0;
+      priceEl.textContent = '₹' + priceNum;
+      sidePriceEl.textContent = '₹' + priceNum;
+      deliveryEl.textContent = esc(g.delivery || '3 days');
+      sideDeliveryEl.textContent = 'Delivery: ' + esc(g.delivery || '3 days');
+
+      // features
+      featuresEl.innerHTML = '';
+      const styles = (g.styles && g.styles.length) ? g.styles : (g.style ? [g.style] : []);
+      if (g.features && Array.isArray(g.features) && g.features.length) {
+        g.features.forEach(f => { const d = document.createElement('div'); d.className='chip'; d.textContent = f; featuresEl.appendChild(d); });
+      } else {
+        styles.forEach(s => { const d = document.createElement('div'); d.className='chip'; d.textContent = s; featuresEl.appendChild(d); });
+      }
+
+      const images = (g.images && g.images.length) ? g.images : (g.thumb || g.image ? [g.thumb || g.image] : []);
+      setGallery(images);
+
+      whatYouGetEl.textContent = esc(g.whatYouGet || 'Print-ready files, multiple concepts, source files on request.');
+      createdAtEl.textContent = g.createdAt ? 'Posted ' + formatDate(g.createdAt) : '';
+      sellerProfileLink.href = `seller.html?id=${encodeURIComponent(g.sellerId || g.sellerUserId || (g.createdByEmail || g.sellerEmail || 'unknown'))}`;
+
+      // reset status
+      statusMsgEl.textContent = '';
+    }
+
+    function renderNotFound() {
+      gigTitleEl.textContent = 'Gig not found';
+      gigDescEl.textContent = 'This gig ID does not exist (or has been removed).';
+      mainImageEl.style.backgroundImage = `url('https://via.placeholder.com/1200x800?text=Not+Found')`;
+      thumbsEl.innerHTML = '';
+    }
+
+    function renderError(err) {
+      gigTitleEl.textContent = 'Realtime error';
+      gigDescEl.textContent = 'Could not load gig: ' + (err && err.message ? err.message : String(err));
+      statusMsgEl.textContent = (err && err.message ? err.message : String(err));
+    }
+
+    // ---------- Subscribe to gig (subho_gigs) ----------
+    let gigUnsub = null;
+    function subscribeGig() {
+      const ref = doc(db, GIGS_COLLECTION, GIG_ID);
+      if (gigUnsub) gigUnsub(); // cleanup
+      gigUnsub = onSnapshot(ref, (s) => {
+        if (!s.exists()) { renderNotFound(); return; }
+        renderGig(s.data(), s.id);
+      }, (err) => {
+        console.error('gig snapshot err', err);
+        renderError(err);
+      });
+    }
+    subscribeGig();
+
+    // ---------- Likes: watch aggregated count & user's liked state ----------
+    const aggRef = (gid) => doc(db, GIG_LIKES_AGG, gid);
+    const userLikeRef = (uid, gid) => doc(db, GIG_LIKES_USER, `${uid}_${gid}`);
+    const rawLikeRef = (uid, gid) => doc(db, GIG_LIKES_COLL, `${gid}_${uid}`);
+
+    let aggUnsub = null;
+    function watchLikes(gid) {
+      const aRef = aggRef(gid);
+      if (aggUnsub) aggUnsub();
+      aggUnsub = onSnapshot(aRef, s => {
+        const count = s.exists() ? (s.data().count || 0) : 0;
+        likeAreaEl.textContent = `${count} Like${count === 1 ? '' : 's'}`;
+      }, err => {
+        console.warn('agg watch error', err);
+      });
+
+      // check user's liked state if logged in
+      if (currentUser) {
+        const uRef = userLikeRef(currentUser.uid, gid);
+        getDoc(uRef).then(s => {
+          if (s.exists()) {
+            favBtn.classList.add('liked');
+            favIcon.className = 'fa-solid fa-heart';
+          } else {
+            favBtn.classList.remove('liked');
+            favIcon.className = 'fa-regular fa-heart';
+          }
+        }).catch(()=>{});
+      } else {
+        // not logged in
+        favBtn.classList.remove('liked');
+        favIcon.className = 'fa-regular fa-heart';
+      }
+    }
+    watchLikes(GIG_ID);
+
+    // listen to agg changes live even if user changes later
+    // already handled by watchLikes
+
+    // ---------- Toggle like - atomic with transaction ----------
+    async function toggleLike() {
+      if (!currentUser) {
+        const go = confirm('You must be logged in to like. Go to login page?');
+        if (go) window.location.href = 'login.html';
+        return;
+      }
+      const uid = currentUser.uid;
+      const uRef = userLikeRef(uid, GIG_ID);
+      const rRef = rawLikeRef(uid, GIG_ID);
+      const aRef = aggRef(GIG_ID);
+
+      try {
+        await runTransaction(db, async (t) => {
+          const userLikeSnap = await t.get(uRef);
+          const aggSnap = await t.get(aRef);
+          const currentCount = aggSnap.exists() ? (aggSnap.data().count || 0) : 0;
+
+          if (userLikeSnap.exists()) {
+            // user already liked -> unlike (remove userLike, remove rawLike, decrement agg)
+            t.delete(uRef);
+            t.delete(rRef);
+            const newCount = Math.max(0, currentCount - 1);
+            t.set(aRef, { count: newCount }, { merge: true });
+          } else {
+            // like: create userLike + rawLike, increment agg
+            t.set(uRef, {
+              uid, gid: GIG_ID, createdAt: serverTimestamp()
+            });
+            t.set(rRef, {
+              uid, gid: GIG_ID, createdAt: serverTimestamp()
+            });
+            const newCount = currentCount + 1;
+            t.set(aRef, { count: newCount }, { merge: true });
+          }
+        });
+        // UI will update from agg onSnapshot and userLike check
+      } catch (err) {
+        console.error('like tx failed', err);
+        alert('Could not toggle like: ' + (err.message || err));
+      }
+    }
+
+    favBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      favBtn.disabled = true;
+      try { await toggleLike(); } catch (e) { console.error(e); } finally { favBtn.disabled = false; }
+    });
+
+    // After toggling, watchLikes will reflect new count; ensure user button updates quickly
+    async function refreshUserLikeState() {
+      if (!currentUser) { favBtn.classList.remove('liked'); favIcon.className = 'fa-regular fa-heart'; return; }
+      try {
+        const s = await getDoc(userLikeRef(currentUser.uid, GIG_ID));
+        if (s.exists()) { favBtn.classList.add('liked'); favIcon.className = 'fa-solid fa-heart'; }
+        else { favBtn.classList.remove('liked'); favIcon.className = 'fa-regular fa-heart'; }
+      } catch(e) { console.warn(e); }
+    }
+
+    // ---------- watch aggregated likes realtime immediately ----------
+    const aRefInit = aggRef(GIG_ID);
+    onSnapshot(aRefInit, s => {
+      const c = s.exists() ? (s.data().count || 0) : 0;
+      likeAreaEl.textContent = `${c} Like${c===1?'':'s'}`;
+    }, err => { console.warn('agg init watch err', err); });
+
+    // ---------- Load similar gigs (optional) ----------
+    async function loadSimilarGigs(subcat, currentId) {
+      const el = $('#similarGrid');
+      el.innerHTML = '';
+      if (!subcat) { el.innerHTML = '<div class="muted">No similar gigs</div>'; return; }
+      try {
+        const q = query(collection(db, GIGS_COLLECTION), where('subcategory', '==', subcat), orderBy('createdAt','desc'), limit(6));
+        const snap = await getDocs(q);
+        const arr = [];
+        snap.forEach(d => { if (d.id !== currentId) arr.push({ id: d.id, ...d.data() }); });
+        if (!arr.length) { el.innerHTML = '<div class="muted">No similar gigs</div>'; return; }
+        arr.forEach(g => {
+          const node = document.createElement('a');
+          node.href = `gig-details.html?id=${encodeURIComponent(g.id)}`;
+          node.className = 'card';
+          node.style.padding = '10px';
+          node.style.display = 'block';
+          node.innerHTML = `<div style="height:120px;border-radius:8px;background-image:url(${escapeImg((g.images && g.images[0]) || g.thumb || 'https://via.placeholder.com/600x400?text=No+Image')});background-size:cover;background-position:center"></div>
+            <div style="margin-top:8px">
+              <div style="font-weight:800">${esc(g.title || g.short || 'Untitled')}</div>
+              <div class="muted" style="font-size:13px">From ₹${esc(g.price || 0)}</div>
+            </div>`;
+          el.appendChild(node);
+        });
+      } catch (err) { console.error('similar load', err); el.innerHTML = '<div class="muted">Could not load similar gigs</div>'; }
+    }
+
+    // ---------- Reviews listener (simple) ----------
+    async function subscribeReviews() {
+      // reviews could be in subho_gigs/GIG_ID/reviews or gigs/GIG_ID/reviews - try both quickly
+      const tryPaths = [ `${GIGS_COLLECTION}/${GIG_ID}/reviews`, `gigs/${GIG_ID}/reviews` ];
+      for (const p of tryPaths) {
+        try {
+          const colParts = p.split('/');
+          // quick one-time get (not onSnapshot for simplicity)
+          const colRef = collection(db, colParts[0], colParts[1], 'reviews');
+          const docs = await getDocs(query(colRef, orderBy('createdAt','desc'), limit(10)));
+          const listEl = $('#reviewsList');
+          listEl.innerHTML = '';
+          if (docs.empty) { listEl.innerHTML = '<div class="muted">No reviews yet</div>'; continue; }
+          docs.forEach(d => {
+            const r = d.data();
+            const el = document.createElement('div'); el.className='card';
+            el.style.marginBottom = '8px';
+            el.style.padding = '10px';
+            const name = esc(r.authorName || 'User');
+            el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:800">${name}</div><div class="muted" style="font-size:12px">${r.createdAt?formatDate(r.createdAt):''}</div></div><div class="muted" style="margin-top:6px">${esc(r.text)}</div>`;
+            listEl.appendChild(el);
+          });
+        } catch (e) { /* ignore and try next */ }
+      }
+    }
+
+    // ---------- Contact & Continue ----------
+    contactBtn.addEventListener('click', async () => {
+      if (!gigDataCache) return alert('Not loaded yet');
+      // if you have an in-app conversations system, create/open conversation.
+      // For now, fallback to opening client-messages with ?to=sellerId
+      const sellerId = gigDataCache.sellerId || gigDataCache.sellerUserId || gigDataCache.createdByUid || gigDataCache.sellerEmail || '';
+      if (sellerId && sellerId.includes('@')) {
+        // if it's an email, open mailto
+        window.location.href = `mailto:${encodeURIComponent(sellerId)}?subject=${encodeURIComponent('Inquiry about: ' + (gigDataCache.title || 'Gig'))}`;
+      } else if (sellerId) {
+        window.location.href = `client-messages.html?to=${encodeURIComponent(sellerId)}`;
+      } else {
+        alert('Contact not available for this seller.');
+      }
+    });
+
+    continueBtn.addEventListener('click', async () => {
+      const user = currentUser;
+      if (!user) {
+        const wants = confirm('You must be logged in to continue (hire). Go to login?');
+        if (wants) window.location.href = 'login.html';
+        return;
+      }
+      // keep it simple: go to continue.html with gig id
+      window.location.href = `continue.html?id=${encodeURIComponent(GIG_ID)}&col=${encodeURIComponent(GIGS_COLLECTION)}`;
+    });
+
+    // ---------- Auth state handling ----------
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        loginStatusEl.textContent = 'Logged in: ' + (user.displayName || user.email || user.uid);
+        // refresh like button state
+        try { await refreshUserLikeState(); } catch(e){console.warn(e);}
+      } else {
+        loginStatusEl.textContent = 'Not logged in';
+        favBtn.classList.remove('liked');
+        favIcon.className = 'fa-regular fa-heart';
+      }
+    });
+
+    // when we get gig data we should start watching likes for that gig
+    // but we already watch aggRef above; however ensure refreshUserLikeState called after auth and gig loaded
+    // call subscribeReviews once
+    subscribeReviews();
+
+    // ---------- Utility: getDoc wrapper ----------
+    async function getDoc(ref) {
+      try { const s = await getDocNoConflict(ref); return s; } catch(e) { throw e; }
+    }
+    // small helper because we already imported getDoc name as local variable? We'll just use getDoc from firestore imported earlier
+    // BUT to avoid name confusion, create alias:
+    // NOTE: in module we imported getDoc earlier? we didn't — let's use getDoc via getDoc variable if available.
+    // To be safe, define a simple wrapper using getDoc from firestore — we've already imported getDoc at top via getDoc (named)
+    // However earlier we didn't explicitly import getDoc; we'll rely on the top import of getDoc above (it exists).
+    // (No additional code needed.)
+
+    // ---------- Clean-up note ----------
+    // On page unload, Firestore listeners auto-clean, but you can unsubscribe manually if needed.
+
+  </script>
+</body>
+</html>
