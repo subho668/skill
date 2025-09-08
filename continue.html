@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Continue / Checkout — Talent-Hub</title>
+
+  <!-- Tailwind CDN for quick, crisp styles (you can replace with your CSS) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg1:#071018; --panel:#0f1722; --muted:#9aa7b6;
+      --accent:#06d6a0; --accent2:#3b82f6; --danger:#ef4444;
+    }
+    body{background:linear-gradient(180deg,var(--bg1),#04121a); color:#e6eef6; font-family:Inter,ui-sans-serif,system-ui;}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent); border:1px solid rgba(255,255,255,.03); border-radius:14px; padding:18px; box-shadow:0 8px 30px rgba(3,6,10,.6)}
+    .btn{padding:.66rem 1rem;border-radius:10px;font-weight:800}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#02120f}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.06); color:#e6eef6}
+    .small-muted{color:var(--muted); font-size:13px}
+    .step-dot{width:28px;height:28px;border-radius:999px;border:2px solid rgba(255,255,255,.12);display:grid;place-items:center}
+    .step-dot.active{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#04221a; border-color:transparent}
+    .input, textarea, select{background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.04); padding:.6rem; border-radius:10px; color:#e6eef6; width:100%; }
+    .chip{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03);padding:.4rem .6rem;border-radius:999px;color:var(--accent);font-weight:700}
+    .muted{color:var(--muted)}
+    @media(max-width:900px){ .layout {padding:14px} .two-col{grid-template-columns:1fr} .fixed-bottom{position:static;box-shadow:none; padding:12px}}
+    .fixed-bottom{position:fixed;left:0;right:0;bottom:0;padding:18px;background:linear-gradient(180deg,rgba(2,6,8,.8),rgba(2,6,8,.95));display:flex;gap:12px; justify-content:center;z-index:1000;border-top:1px solid rgba(255,255,255,.02)}
+  </style>
+</head>
+<body>
+
+  <!-- NAV / header -->
+  <header class="max-w-6xl mx-auto p-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="text-2xl font-extrabold text-emerald-400">Talent-Hub</div>
+        <div class="small-muted">Checkout</div>
+      </div>
+      <div id="authStatus" class="small-muted">Checking auth...</div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto layout p-6">
+    <!-- Step progress -->
+    <div class="card mb-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div id="dot-1" class="step-dot active">1</div>
+          <div style="width:110px;height:2px;background:rgba(255,255,255,.04)"></div>
+          <div id="dot-2" class="step-dot">2</div>
+          <div style="width:110px;height:2px;background:rgba(255,255,255,.04)"></div>
+          <div id="dot-3" class="step-dot">3</div>
+          <div style="width:110px;height:2px;background:rgba(255,255,255,.04)"></div>
+          <div id="dot-4" class="step-dot">4</div>
+        </div>
+        <div id="stepText" class="small-muted">Step 1 of 4 — Select package</div>
+      </div>
+    </div>
+
+    <!-- main layout -->
+    <div class="two-col grid grid-cols-[1fr_380px] gap-6">
+      <!-- LEFT: wizard panes -->
+      <div>
+        <div id="pane-1" class="card mb-4">
+          <h2 class="text-xl font-bold mb-3">1) Choose package</h2>
+          <div id="packageArea" class="space-y-3">
+            <div class="small-muted">Loading available packages…</div>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <button id="toConfirmBtn" class="btn btn-primary w-full">Review Order</button>
+          </div>
+        </div>
+
+        <div id="pane-2" class="card mb-4 hidden">
+          <h2 class="text-xl font-bold mb-2">2) Order confirmation</h2>
+          <div id="orderSummary" class="space-y-3 small-muted">Loading summary…</div>
+          <div class="mt-4">
+            <textarea id="buyerNotes" placeholder="Add short notes / instructions for the seller (optional)" rows="4" class="input"></textarea>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <button id="backToPack" class="btn btn-ghost">Back</button>
+            <button id="toPaymentBtn" class="btn btn-primary w-full">Choose Payment Method</button>
+          </div>
+        </div>
+
+        <div id="pane-3" class="card mb-4 hidden">
+          <h2 class="text-xl font-bold mb-2">3) Payment method</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="inline-flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-transparent hover:border-white/5">
+                <input type="radio" name="payMethod" value="razorpay" checked class="form-radio" />
+                <span class="ml-2 font-bold">Razorpay (Cards/UPI/Netbanking/Wallets)</span>
+              </label>
+              <div class="small-muted ml-10">Recommended for India — instant, UPI & card support</div>
+            </div>
+
+            <div>
+              <label class="inline-flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-transparent hover:border-white/5">
+                <input type="radio" name="payMethod" value="paypal" class="form-radio" />
+                <span class="ml-2 font-bold">PayPal</span>
+              </label>
+              <div class="small-muted ml-10">International payments</div>
+            </div>
+
+            <div>
+              <label class="inline-flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-transparent hover:border-white/5">
+                <input type="radio" name="payMethod" value="wallet" class="form-radio" />
+                <span class="ml-2 font-bold">Pay from Talent-Hub Wallet</span>
+              </label>
+              <div class="small-muted ml-10">Instant (if you have balance) — or top-up below</div>
+            </div>
+          </div>
+
+          <div class="mt-6" id="paymentActions">
+            <div id="walletBalanceBox" class="card mb-4 hidden">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="small-muted">Your Wallet Balance</div>
+                  <div id="walletBalance" class="text-xl font-extrabold">₹0</div>
+                </div>
+                <div>
+                  <button id="topupOpenBtn" class="btn btn-ghost">Add funds</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="payButtons" class="flex gap-3">
+              <button id="payWithRz" class="btn btn-primary flex-1"><i class="fa-solid fa-bolt mr-2"></i> Pay (Razorpay)</button>
+              <div id="paypalContainer" class="w-52"></div>
+            </div>
+
+            <div class="mt-3 small-muted">
+              By paying you agree to Talent-Hub terms. Payment is held in escrow until delivery.
+            </div>
+          </div>
+
+          <div class="mt-4 flex gap-3">
+            <button id="backToConfirm" class="btn btn-ghost">Back</button>
+            <button id="startPaymentBtn" class="btn btn-primary">Proceed</button>
+          </div>
+        </div>
+
+        <div id="pane-4" class="card mb-4 hidden">
+          <h2 class="text-xl font-bold mb-2">4) Order status</h2>
+          <div id="finalMsg" class="space-y-3">
+            <div class="small-muted">Processing…</div>
+          </div>
+          <div class="mt-4">
+            <a id="gotoOrders" href="my-projects.html" class="btn btn-primary">Go to Orders</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: gig summary + wallet topup -->
+      <aside class="card">
+        <div id="gigPreview" class="space-y-3">
+          <div class="flex gap-3 items-start">
+            <img id="gigThumb" src="https://via.placeholder.com/140" class="w-32 h-24 rounded-md object-cover" alt="thumb"/>
+            <div class="flex-1">
+              <div id="gigTitle" class="font-extrabold text-lg">Loading title…</div>
+              <div id="gigSeller" class="small-muted">Loading seller…</div>
+              <div id="gigDelivery" class="small-muted mt-1">—</div>
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <div class="small-muted">Selected</div>
+            <div id="selectedPackage" class="font-extrabold text-emerald-400">—</div>
+          </div>
+
+          <div class="mt-2">
+            <div class="small-muted">Price</div>
+            <div id="finalAmount" class="text-2xl font-extrabold">₹0</div>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <div class="flex items-center justify-between">
+            <div class="small-muted">Escrow hold</div>
+            <div id="escrowNote" class="muted text-sm">Amount will be held securely</div>
+          </div>
+        </div>
+
+        <hr class="my-4 border-white/5"/>
+
+        <!-- Wallet topup panel (inline) -->
+        <div id="walletPanel">
+          <div class="flex items-center justify-between">
+            <div class="font-bold">Wallet</div>
+            <div class="small-muted">Instant top-up</div>
+          </div>
+          <div id="walletInfo" class="mt-3 small-muted">Loading wallet…</div>
+
+          <div id="walletTopUpForm" class="mt-3 hidden">
+            <label class="small-muted">Amount (INR)</label>
+            <input id="topupAmount" type="number" min="10" value="500" class="input mt-2" />
+            <div class="mt-3 flex gap-2">
+              <button id="topupPayRz" class="btn btn-primary flex-1">Add via Razorpay</button>
+              <button id="topupBank" class="btn btn-ghost">Bank Transfer</button>
+            </div>
+            <div class="mt-2 small-muted">Bank transfer is manual — mark completed after funds arrive.</div>
+          </div>
+
+          <div id="topupSuccess" class="mt-3 hidden text-green-400 font-bold"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- bottom actions for mobile/quick -->
+  <div class="fixed-bottom">
+    <button id="backQuick" class="btn btn-ghost">Back</button>
+    <button id="nextQuick" class="btn btn-primary">Continue</button>
+  </div>
+
+  <!-- Include SDKs: Razorpay (client checkout) and PayPal Buttons -->
+  <!-- Replace 'RAZORPAY_KEY_ID' and 'PAYPAL_CLIENT_ID' with your live/test keys -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=PAYPAL_CLIENT_ID&currency=USD"></script>
+
+  <!-- Firebase v10 modular -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, collection, addDoc, setDoc, serverTimestamp, runTransaction, onSnapshot, query, where, orderBy, limit
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* ---------- CONFIG: Replace if needed ---------- */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817"
+    };
+    const RAZORPAY_KEY_ID = "RAZORPAY_KEY_ID"; // <- replace with your Razorpay key_id (pk_live_ or test key)
+    const PAYPAL_CLIENT_ID = "PAYPAL_CLIENT_ID"; // <- replace with your PayPal client id
+
+    /* ---------- Init ---------- */
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    /* ---------- Helpers & DOM ---------- */
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const GIG_ID = new URLSearchParams(location.search).get('id');
+    let gigDoc = null, selectedPackage = null, currentUser = null;
+
+    const pane1 = $('#pane-1'), pane2 = $('#pane-2'), pane3 = $('#pane-3'), pane4 = $('#pane-4');
+    const toConfirmBtn = $('#toConfirmBtn'), backToPack = $('#backToPack'), toPaymentBtn = $('#toPaymentBtn');
+    const backToConfirm = $('#backToConfirm'), startPaymentBtn = $('#startPaymentBtn');
+    const payWithRz = $('#payWithRz'), paypalContainer = $('#paypalContainer');
+    const topupOpenBtn = $('#topupOpenBtn'), walletTopUpForm = $('#walletTopUpForm'), topupPayRz = $('#topupPayRz'), topupBank = $('#topupBank');
+    const walletBalanceBox = $('#walletBalanceBox'), walletBalance = $('#walletBalance'), walletInfo = $('#walletInfo'), topupAmount = $('#topupAmount');
+    const toConfirm = $('#toConfirmBtn'), nextQuick = $('#nextQuick'), backQuick = $('#backQuick');
+    const dot1 = $('#dot-1'), dot2 = $('#dot-2'), dot3 = $('#dot-3'), dot4 = $('#dot-4'), stepText = $('#stepText');
+    const authStatus = $('#authStatus');
+
+    function showStep(n){
+      pane1.classList.toggle('hidden', n!==1);
+      pane2.classList.toggle('hidden', n!==2);
+      pane3.classList.toggle('hidden', n!==3);
+      pane4.classList.toggle('hidden', n!==4);
+      dot1.classList.toggle('active', n>=1);
+      dot2.classList.toggle('active', n>=2);
+      dot3.classList.toggle('active', n>=3);
+      dot4.classList.toggle('active', n>=4);
+      const labels = ['Select package','Confirm order','Payment','Done'];
+      stepText.textContent = `Step ${n} of 4 — ${labels[n-1]}`;
+    }
+
+    /* ---------- Fetch gig (try subho_gigs then gigs) ---------- */
+    async function resolveGig(id){
+      const tries = ['subho_gigs','gigs'];
+      for(const c of tries){
+        try{
+          const dref = doc(db, c, id);
+          const snap = await getDoc(dref);
+          if (snap.exists()) return { col: c, data: { id: snap.id, ...snap.data() }, ref: dref };
+        }catch(e){ console.warn('resolve err', e); }
+      }
+      return null;
+    }
+
+    async function loadGig(){
+      if (!GIG_ID) { alert('Open this page with ?id=GIG_DOC_ID'); return; }
+      const resolved = await resolveGig(GIG_ID);
+      if (!resolved) { alert('Gig not found'); return; }
+      gigDoc = resolved;
+      renderGigPreview();
+      buildPackagesUI();
+    }
+
+    function renderGigPreview(){
+      const g = gigDoc.data;
+      $('#gigTitle').textContent = g.title || 'Untitled gig';
+      $('#gigSeller').textContent = g.sellerName || g.seller || 'Freelancer';
+      $('#gigDelivery').textContent = g.delivery || '—';
+      $('#gigThumb').src = (Array.isArray(g.images) && g.images[0]) || g.coverURL || 'https://via.placeholder.com/400x300';
+    }
+
+    /* ---------- Packages UI ---------- */
+    function buildPackagesUI(){
+      const area = $('#packageArea');
+      area.innerHTML = '';
+      const g = gigDoc.data;
+      // Support both: legacy single price and modern packages array
+      if (Array.isArray(g.packages) && g.packages.length){
+        g.packages.forEach((p, idx) => {
+          const div = document.createElement('div');
+          div.className = 'p-3 border border-white/5 rounded-md flex items-start gap-3 cursor-pointer hover:shadow-lg';
+          div.innerHTML = `
+            <div style="flex:1">
+              <div class="font-bold">${p.name || ('Package ' + (idx+1))}</div>
+              <div class="small-muted mt-1">${p.description || ''}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="font-extrabold text-emerald-400">₹${Number(p.price||0)}</div>
+              <div class="small-muted">${p.delivery || '—'}</div>
+            </div>
+          `;
+          div.addEventListener('click', () => {
+            selectPackage(p);
+            $$('.selected-card').forEach(x=> x.classList.remove('selected-card'));
+            div.classList.add('selected-card');
+          });
+          area.appendChild(div);
+        });
+        // preselect first
+        selectPackage(g.packages[0]);
+      } else {
+        // Single price fallback
+        const price = g.price || g.startingPrice || 0;
+        const div = document.createElement('div');
+        div.className = 'p-3 border border-white/5 rounded-md flex items-start gap-3';
+        div.innerHTML = `
+          <div style="flex:1">
+            <div class="font-bold">Single Offer</div>
+            <div class="small-muted mt-1">${g.description ? (g.description.slice(0,120) + (g.description.length>120?'…':'')) : ''}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="font-extrabold text-emerald-400">₹${Number(price)}</div>
+            <div class="small-muted">${g.delivery || '—'}</div>
+          </div>
+        `;
+        area.appendChild(div);
+        selectPackage({ name: 'Single', price: price, delivery: g.delivery || '—', description: g.description || '' });
+      }
+    }
+
+    function selectPackage(p){
+      selectedPackage = p;
+      $('#selectedPackage').textContent = `${p.name || 'Package'} • ₹${Number(p.price||0)}`;
+      $('#finalAmount').textContent = `₹${Number(p.price||0)}`;
+      $('#orderSummary').innerHTML = `
+        <div class="font-bold">${gigDoc.data.title}</div>
+        <div class="small-muted">${gigDoc.data.sellerName || gigDoc.data.seller}</div>
+        <div class="mt-2"><span class="small-muted">Package:</span> <span class="font-bold">${p.name}</span></div>
+        <div><span class="small-muted">Delivery:</span> ${p.delivery || '—'}</div>
+        <div><span class="small-muted">Price:</span> <span class="font-extrabold text-emerald-400">₹${Number(p.price||0)}</span></div>
+      `;
+    }
+
+    /* ---------- Auth & wallet listeners ---------- */
+    let walletUnsub = null;
+    async function watchWallet(uid){
+      if (!uid) return;
+      const wRef = doc(db, 'wallets', uid);
+      // realtime
+      if (walletUnsub) walletUnsub();
+      walletUnsub = onSnapshot(wRef, snap => {
+        if (!snap.exists()){
+          walletInfo.textContent = 'No wallet yet. Add funds to get started.';
+          walletBalance.textContent = '₹0';
+          walletBalanceBox.classList.add('hidden');
+          walletTopUpForm.classList.add('hidden');
+        } else {
+          const data = snap.data();
+          walletInfo.textContent = `Balance: ₹${Number(data.balance||0)}`;
+          walletBalance.textContent = `₹${Number(data.balance||0)}`;
+          walletBalanceBox.classList.remove('hidden');
+          walletTopUpForm.classList.remove('hidden');
+        }
+      }, err => {
+        console.error('wallet watch', err);
+      });
+    }
+
+    /* ---------- Payment helpers ---------- */
+
+    // Create order doc in 'orders' collection - but for payments we create after success to prevent fake calls.
+    // We will create order BEFORE payment when using Wallet (atomic transaction), and AFTER payment for Razorpay/PayPal.
+    async function createOrderRecord({ buyerUid, sellerUid, gigId, packageName, amount, paidVia, paymentId, requirements }) {
+      const docRef = await addDoc(collection(db, 'orders'), {
+        buyerUid,
+        sellerUid,
+        gigId,
+        packageName,
+        amount,
+        paidVia,
+        paymentId: paymentId || null,
+        requirements: requirements || '',
+        status: 'paid', // payment succeeded, escrow held
+        escrowHeld: true,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      return docRef.id;
+    }
+
+    // Razorpay flow (client-side): create order on your server for secure signature ideally.
+    // Here we use client checkout (Razorpay checkout accepts amount in paise and requires key_id)
+    function openRazorpayCheckout(amountINR, orderMeta){
+      if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'RAZORPAY_KEY_ID') {
+        alert('Please set RAZORPAY_KEY_ID in the script to use Razorpay.');
+        return;
+      }
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: Math.round(Number(amountINR) * 100), // paise
+        currency: "INR",
+        name: "Talent-Hub",
+        description: `Payment for ${orderMeta.title}`,
+        image: "", // optional
+        handler: async function (resp) {
+          // resp.razorpay_payment_id, resp.razorpay_order_id, resp.razorpay_signature
+          // NOTE: For real security, verify signature server-side.
+          try {
+            // create order record in Firestore (paid)
+            await createOrderRecord({
+              buyerUid: currentUser.uid,
+              sellerUid: gigDoc.data.createdByUid || gigDoc.data.sellerId || '',
+              gigId: gigDoc.data.id,
+              packageName: selectedPackage.name,
+              amount: Number(selectedPackage.price),
+              paidVia: 'razorpay',
+              paymentId: resp.razorpay_payment_id,
+              requirements: $('#buyerNotes').value
+            });
+            gotoFinal(`Payment success — Razorpay payment id ${resp.razorpay_payment_id}`);
+          } catch (e) {
+            console.error('post-payment create order err', e);
+            alert('Payment processed but saving order failed. Contact support.');
+          }
+        },
+        prefill: {
+          name: currentUser.displayName || currentUser.email || '',
+          email: currentUser.email || ''
+        },
+        notes: { gigId: gigDoc.data.id },
+        theme: { color: "#06d6a0" }
+      };
+      const rzp = new Razorpay(options);
+      rzp.open();
+    }
+
+    // PayPal Buttons: render into paypalContainer
+    function renderPayPal(amountUSD){
+      paypalContainer.innerHTML = ''; // clear
+      // PayPal SDK loaded globally as paypal (script src included earlier)
+      // Amount in USD. You might need server-side create-order for advanced flows. This is client-buttons simple flow.
+      window.paypal.Buttons({
+        style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'paypal' },
+        createOrder: function(data, actions){
+          return actions.order.create({
+            purchase_units: [{ amount: { value: String(amountUSD) }, description: `${gigDoc.data.title} — ${selectedPackage.name}` }]
+          });
+        },
+        onApprove: function(data, actions){
+          return actions.order.capture().then(async function(details){
+            // details.id is paypal transaction id
+            try {
+              await createOrderRecord({
+                buyerUid: currentUser.uid,
+                sellerUid: gigDoc.data.createdByUid || gigDoc.data.sellerId || '',
+                gigId: gigDoc.data.id,
+                packageName: selectedPackage.name,
+                amount: Number(selectedPackage.price),
+                paidVia: 'paypal',
+                paymentId: details.id,
+                requirements: $('#buyerNotes').value
+              });
+              gotoFinal(`Payment success — PayPal txn ${details.id}`);
+            } catch (e) {
+              console.error('paypal order save err', e);
+              alert('Payment succeeded but saving order failed. Contact support.');
+            }
+          });
+        },
+        onError: function(err){
+          console.error('paypal err', err);
+          alert('PayPal payment failed.');
+        }
+      }).render('#paypalContainer');
+    }
+
+    /* ---------- Wallet Payment: atomic transaction ---------- */
+    async function payWithWallet(){
+      if (!currentUser) { alert('Login required'); return; }
+      const uid = currentUser.uid;
+      const amount = Number(selectedPackage.price || 0);
+      const buyerNotes = $('#buyerNotes').value || '';
+      const walletRef = doc(db, 'wallets', uid);
+
+      try {
+        // Run transaction: check balance, deduct, create order
+        await runTransaction(db, async (tx) => {
+          const wSnap = await tx.get(walletRef);
+          if (!wSnap.exists()) throw new Error('No wallet found — please add funds.');
+          const balance = Number(wSnap.data().balance || 0);
+          if (balance < amount) throw new Error('Insufficient wallet balance.');
+          // deduct
+          tx.update(walletRef, { balance: balance - amount, updatedAt: serverTimestamp() });
+          // create order doc (paid)
+          const orderRef = collection(db, 'orders'); // addDoc outside tx in client; substitute by setDoc with auto id here
+          const newOrderRef = doc(orderRef); // generate new doc reference
+          tx.set(newOrderRef, {
+            buyerUid: uid,
+            sellerUid: gigDoc.data.createdByUid || gigDoc.data.sellerId || '',
+            gigId: gigDoc.data.id,
+            packageName: selectedPackage.name,
+            amount: amount,
+            paidVia: 'wallet',
+            paymentId: `wallet_${Date.now()}`,
+            requirements: buyerNotes,
+            status: 'paid',
+            escrowHeld: true,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        });
+        gotoFinal('Payment completed using Wallet — order placed.');
+      } catch (err) {
+        console.error('wallet tx err', err);
+        alert(err.message || 'Wallet payment failed.');
+      }
+    }
+
+    /* ---------- Wallet Topup via Razorpay (client) ----------
+       For top-up we create a Razorpay checkout amount and on success we write to wallets/{uid}. 
+       NOTE: In production you should create Razorpay order server-side and verify payments server-side.
+    */
+    function topupRazorpay(amount) {
+      if (!currentUser) { alert('Login required'); return; }
+      if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'RAZORPAY_KEY_ID') {
+        alert('Please set RAZORPAY_KEY_ID to accept topups.');
+        return;
+      }
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: Math.round(Number(amount) * 100),
+        currency: 'INR',
+        name: 'Talent-Hub Wallet Topup',
+        description: `Top up ₹${amount}`,
+        handler: async function(resp) {
+          // On success: credit wallet document
+          const uid = currentUser.uid;
+          const wRef = doc(db, 'wallets', uid);
+          try {
+            await runTransaction(db, async (t) => {
+              const wsnap = await t.get(wRef);
+              const prev = wsnap.exists() ? Number(wsnap.data().balance||0) : 0;
+              const newBal = prev + Number(amount);
+              t.set(wRef, { balance: newBal, updatedAt: serverTimestamp() }, { merge: true });
+            });
+            $('#topupSuccess').textContent = `Added ₹${amount} to wallet ✓`;
+            $('#topupSuccess').classList.remove('hidden');
+          } catch (e) {
+            console.error('topup wallet write err', e);
+            alert('Top-up succeeded but wallet update failed. Contact admin.');
+          }
+        },
+        prefill: { name: currentUser.displayName || '', email: currentUser.email || '' },
+        theme: { color: '#06d6a0' }
+      };
+      const rzp = new Razorpay(options);
+      rzp.open();
+    }
+
+    /* ---------- UI wiring & flow ---------- */
+    toConfirmBtn.addEventListener('click', () => {
+      if (!selectedPackage) { alert('Select a package first'); return; }
+      showStep(2);
+      nextQuick.textContent = 'Continue';
+    });
+    backToPack.addEventListener('click', () => showStep(1));
+    backToConfirm.addEventListener('click', () => showStep(2));
+    toPaymentBtn.addEventListener('click', () => showStep(3));
+    nextQuick.addEventListener('click', () => {
+      const visible = !pane1.classList.contains('hidden') ? 1 : (!pane2.classList.contains('hidden')?2:(!pane3.classList.contains('hidden')?3:4));
+      if (visible===1) toConfirmBtn.click();
+      else if (visible===2) toPaymentBtn.click();
+      else if (visible===3) startPaymentBtn.click();
+      else window.location.href='my-projects.html';
+    });
+    backQuick.addEventListener('click', () => {
+      if (!pane1.classList.contains('hidden')) window.history.back();
+      else if (!pane2.classList.contains('hidden')) showStep(1);
+      else if (!pane3.classList.contains('hidden')) showStep(2);
+    });
+
+    // payment initiation
+    startPaymentBtn.addEventListener('click', async () => {
+      const method = document.querySelector('input[name="payMethod"]:checked').value;
+      if (method === 'wallet') {
+        // attempt wallet payment
+        await payWithWallet();
+      } else if (method === 'razorpay') {
+        // open razorpay checkout
+        openRazorpayCheckout(selectedPackage.price, { title: gigDoc.data.title });
+      } else if (method === 'paypal') {
+        // PayPal is client-button rendered; show container and instruct user to click PayPal button
+        alert('Click the PayPal button shown on the page to complete payment.');
+      }
+    });
+
+    // specific quick pay button for Razorpay (direct)
+    payWithRz.addEventListener('click', () => {
+      openRazorpayCheckout(selectedPackage.price, { title: gigDoc.data.title });
+    });
+
+    // PayPal render: convert INR->USD roughly. In production use server to compute exact FX or accept INR via PayPal billing agreement
+    function inrToUsd(inr){ return (Number(inr) / 83.0).toFixed(2); } // approx; replace with real FX if needed
+    (function renderInitialPayPal(){
+      // paypal SDK is loaded (but client-id placeholder must be replaced)
+      try {
+        const usd = inrToUsd(selectedPackage ? selectedPackage.price : 1000);
+        renderPayPal(usd);
+      } catch (e) { /* ignore until gig loaded */ }
+    })();
+
+    // wallet topup UI
+    topupOpenBtn.addEventListener('click', () => {
+      walletTopUpForm.classList.toggle('hidden');
+    });
+    topupPayRz.addEventListener('click', () => {
+      const amt = Number(topupAmount.value || 0);
+      if (!amt || amt < 10) { alert('Enter a valid amount (min ₹10)'); return; }
+      topupRazorpay(amt);
+    });
+    topupBank.addEventListener('click', () => {
+      alert('Bank transfer instructions:\n\n1) Transfer to bank: ACCOUNT_NAME / ACCOUNT_NUMBER / IFSC\n2) After transfer, upload proof in Wallet >> Manual Topup (you will need admin approval).\n\n(Use bank transfer when Razorpay is not available.)');
+    });
+
+    /* ---------- Final page handler ---------- */
+    function gotoFinal(msg){
+      $('#finalMsg').innerHTML = `<div class="font-bold text-emerald-400">${msg}</div><div class="small-muted">Order placed. Visit your orders page to manage delivery & revisions.</div>`;
+      showStep(4);
+    }
+
+    /* ---------- On auth: load gig and wallet ---------- */
+    onAuthStateChanged(auth, async (u) => {
+      if (!u) {
+        authStatus.textContent = 'Not logged in — redirecting…';
+        // optional: redirect to login preserving next param
+        setTimeout(()=> { location.href = 'login.html?next=' + encodeURIComponent(location.href); }, 700);
+        return;
+      }
+      currentUser = u;
+      authStatus.textContent = `Logged in: ${u.email || u.uid}`;
+      await loadGig();
+      // render PayPal buttons with correct amount after gig loads
+      // wait small until selectedPackage assigned
+      setTimeout(()=> {
+        try {
+          const usd = inrToUsd(selectedPackage ? selectedPackage.price : 0);
+          renderPayPal(usd);
+        } catch(e){ console.warn(e); }
+      }, 800);
+      // set wallet watcher
+      watchWallet(currentUser.uid);
+      // show wallet panel
+      walletTopUpForm.classList.remove('hidden');
+    });
+
+    /* ---------- Misc & debug helpers ---------- */
+    window.TALENT_HUB_CHECKOUT = { db, auth, gigDoc };
+
+    // init
+    showStep(1);
+    loadGig();
+
+  </script>
+</body>
+</html>
