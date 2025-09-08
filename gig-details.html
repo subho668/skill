@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gig Details — Talent-Hub</title>
+  <meta name="description" content="Live gig details — Talent-Hub (dark theme). Realtime from Firestore." />
+
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------- Dark theme basic styles ---------- */
+    :root{
+      --bg:#071018;
+      --panel:#0f1722;
+      --muted:#9aa7b6;
+      --accent1:#06d6a0;
+      --accent2:#3b82f6;
+      --glass: rgba(255,255,255,0.03);
+      --card-radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#e6eef6;background:linear-gradient(180deg,var(--bg),#05121a);}
+
+    .wrap{max-width:1100px;margin:22px auto;padding:18px}
+
+    /* top hero */
+    .hero{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
+      align-items:start;
+    }
+    @media(max-width:980px){ .hero{grid-template-columns:1fr} .fixed-actions{position:static;box-shadow:none} }
+
+    .left-card, .right-card{
+      background:var(--panel);
+      border-radius:var(--card-radius);
+      padding:18px;
+      box-shadow:0 10px 30px rgba(2,8,12,0.6);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+
+    /* title + meta */
+    .title-row{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+    .gig-title{font-size:22px;font-weight:800;color:#f7fbff;line-height:1.15;max-width:calc(100% - 140px)}
+    .meta-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+
+    .like-btn{
+      background:linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border-radius:10px;padding:10px 12px;cursor:pointer;border:1px solid rgba(255,255,255,0.03);display:inline-flex;align-items:center;gap:8px;color:var(--muted);
+    }
+    .like-btn.liked{background:linear-gradient(90deg,var(--accent1),#00b3ff);color:#051217;box-shadow:0 6px 20px rgba(6,214,160,0.12);font-weight:800}
+
+    /* gallery */
+    .gallery{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+    .main-image{width:100%;height:440px;background:#061018 center/cover no-repeat;display:grid;place-items:center}
+    .thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .thumb{width:86px;height:64px;border-radius:8px;background:center/cover no-repeat;border:2px solid transparent;cursor:pointer}
+    .thumb.active{border-color:var(--accent1);transform:translateY(-4px)}
+
+    .slider-controls{position:absolute;top:50%;left:8px;right:8px;display:flex;justify-content:space-between;pointer-events:none}
+    .nav-arrow{pointer-events:auto;background:rgba(2,6,10,0.4);border:0;padding:8px;border-radius:10px;color:#fff;cursor:pointer}
+
+    /* seller box */
+    .seller-row{display:flex;gap:12px;align-items:center}
+    .seller-avatar{width:62px;height:62px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:grid;place-items:center;font-weight:800;color:#051217}
+    .seller-info .name{font-weight:800}
+    .seller-info .sub{color:var(--muted);font-size:13px}
+
+    .rating-pill{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700;color:#ffd166;border:1px solid rgba(255,255,255,0.02)}
+
+    /* description */
+    .section{margin-top:14px}
+    .desc{background:var(--glass);padding:14px;border-radius:10px;color:#dbe9f0;line-height:1.6}
+    .chips{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:rgba(255,255,255,0.02);padding:8px 12px;border-radius:999px;color:var(--accent1);font-weight:700;border:1px solid rgba(255,255,255,0.02)}
+
+    /* price box on right */
+    .price-box{display:flex;flex-direction:column;gap:8px;align-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:10px}
+    .price-box .price{font-size:22px;font-weight:900;color:var(--accent1)}
+    .price-box .meta{color:var(--muted);font-weight:700}
+
+    /* reviews */
+    .reviews{margin-top:12px}
+    .review{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-bottom:8px}
+    .review .rhead{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .review .avatar{width:36px;height:36px;border-radius:8px;background:#23323c;display:grid;place-items:center;font-weight:800;color:#fff}
+
+    /* sticky bottom action bar (mobile-friendly) */
+    .fixed-actions{
+      position:fixed;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(180deg, rgba(3,6,8,0.8), rgba(3,6,8,0.95));display:flex;gap:12px;
+      justify-content:center;box-shadow:0 -8px 24px rgba(0,0,0,0.6);z-index:1200;border-top:1px solid rgba(255,255,255,0.02)
+    }
+    .btn-flat{background:transparent;border:2px solid rgba(255,255,255,0.06);color:var(--accent1);padding:12px 18px;border-radius:10px;font-weight:800;cursor:pointer}
+    .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#051217;padding:12px 18px;border-radius:10px;border:0;font-weight:900;cursor:pointer}
+    .btn-primary:active{transform:translateY(1px)}
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+    .row{display:flex;gap:12px;align-items:center}
+    .spacer{flex:1}
+
+    /* responsiveness */
+    @media(max-width:780px){
+      .main-image{height:260px}
+      .left-card, .right-card{padding:12px}
+      .hero{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="hero">
+      <!-- LEFT: main gig content -->
+      <main class="left-card" id="leftCard">
+        <div class="title-row">
+          <div style="flex:1">
+            <div class="gig-title" id="gigTitle">Loading title…</div>
+            <div class="row muted" style="margin-top:6px;font-size:13px">
+              <div id="gigCategory">—</div>
+              <div style="margin-left:8px">•</div>
+              <div id="gigDelivery" style="margin-left:8px">—</div>
+            </div>
+          </div>
+
+          <div class="meta-right">
+            <div id="likeBtn" class="like-btn" title="Like this gig">
+              <span id="likeIcon">♡</span>
+              <span id="likeCount" style="font-weight:700;color:var(--muted)">0 Likes</span>
+            </div>
+            <div style="height:8px"></div>
+            <div class="rating-pill" id="miniRating" title="Average rating">
+              <span id="ratingStar">⭐</span>
+              <span id="ratingVal">0.0</span>
+              <small style="opacity:.8" id="ratingCnt">(0)</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- gallery -->
+        <div class="section" style="position:relative">
+          <div class="gallery">
+            <div class="main-image" id="mainImage">
+              <!-- slider controls will be injected -->
+            </div>
+            <div class="thumbs" id="thumbs"></div>
+          </div>
+        </div>
+
+        <!-- seller -->
+        <div class="section" style="margin-top:14px">
+          <div class="seller-row">
+            <div class="seller-avatar" id="sellerAvatar">U</div>
+            <div class="seller-info">
+              <div class="name" id="sellerName">Loading Seller…</div>
+              <div class="sub" id="sellerRole">—</div>
+              <div style="margin-top:8px" class="muted">Member since <span id="sellerSince">—</span></div>
+            </div>
+            <div class="spacer"></div>
+            <div style="text-align:right">
+              <div class="muted" style="font-size:13px">Response time</div>
+              <div style="font-weight:800">Within 24 hours</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- description -->
+        <div class="section">
+          <h3 style="margin-bottom:8px">About this gig</h3>
+          <div class="desc" id="gigDesc">Loading description…</div>
+        </div>
+
+        <!-- features / tags -->
+        <div class="section">
+          <div class="chips" id="featureChips"></div>
+        </div>
+
+        <!-- reviews -->
+        <div class="section reviews">
+          <h3 style="margin-bottom:10px">Reviews</h3>
+          <div id="reviewsContainer"><div class="muted">Loading reviews…</div></div>
+        </div>
+      </main>
+
+      <!-- RIGHT: price & actions -->
+      <aside class="right-card" id="rightCard">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="price-box">
+            <div style="font-size:14px;color:var(--muted)">Starting at</div>
+            <div class="price" id="sidePrice">₹0</div>
+            <div class="meta" id="sideDelivery">Delivery: —</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button id="contactBtn" class="btn-flat">💬 Contact Seller</button>
+            <button id="continueBtn" class="btn-primary">⚡ Continue (Hire)</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <div style="font-weight:800;margin-bottom:6px">What you'll get</div>
+            <div id="whatYouGet" class="muted">Loading...</div>
+          </div>
+
+          <div style="margin-top:14px">
+            <div style="font-weight:800;margin-bottom:6px">Seller stats</div>
+            <div class="muted">Completed projects: <span id="sellerProjects">0</span></div>
+            <div class="muted" style="margin-top:6px">Total reviews: <span id="sellerReviews">0</span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- fixed bottom actions for mobile/desktop -->
+  <div class="fixed-actions">
+    <button class="btn-flat" id="contactBtnBottom">Contact Seller</button>
+    <button class="btn-primary" id="continueBtnBottom">Continue</button>
+  </div>
+
+  <!-- Firebase + app logic (modular v10) -->
+  <script type="module">
+    /* ---------- Firebase imports ---------- */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, onSnapshot, collection, query, orderBy, limit, getDocs,
+      setDoc, runTransaction
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* ---------- YOUR FIREBASE CONFIG (from your project) ---------- */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    /* ---------- helpers ---------- */
+    const $ = sel => document.querySelector(sel);
+    const el = id => document.getElementById(id);
+    const esc = s => String(s ?? '');
+    const money = n => isFinite(n) ? `₹${Number(n).toLocaleString('en-IN')}` : '₹—';
+    function getQueryParam(name){
+      const u = new URL(window.location.href);
+      return u.searchParams.get(name);
+    }
+
+    /* ---------- UI refs ---------- */
+    const gigTitleEl = el('gigTitle');
+    const gigCategoryEl = el('gigCategory');
+    const gigDeliveryEl = el('gigDelivery');
+    const mainImageEl = el('mainImage');
+    const thumbsEl = el('thumbs');
+    const gigDescEl = el('gigDesc');
+    const featureChipsEl = el('featureChips');
+    const sidePriceEl = el('sidePrice');
+    const sideDeliveryEl = el('sideDelivery');
+    const whatYouGetEl = el('whatYouGet');
+    const sellerAvatarEl = el('sellerAvatar');
+    const sellerNameEl = el('sellerName');
+    const sellerRoleEl = el('sellerRole');
+    const sellerSinceEl = el('sellerSince');
+    const sellerProjectsEl = el('sellerProjects');
+    const sellerReviewsEl = el('sellerReviews');
+    const miniRatingVal = el('ratingVal');
+    const miniRatingCnt = el('ratingCnt');
+    const likeBtnEl = el('likeBtn');
+    const likeIconEl = el('likeIcon');
+    const likeCountEl = el('likeCount');
+    const reviewsContainerEl = el('reviewsContainer');
+
+    const contactBtn = el('contactBtn');
+    const continueBtn = el('continueBtn');
+    const contactBtnBottom = el('contactBtnBottom');
+    const continueBtnBottom = el('continueBtnBottom');
+
+    /* ---------- state ---------- */
+    const GIG_ID = getQueryParam('id');
+    if (!GIG_ID) {
+      document.body.innerHTML = `<div style="padding:40px;color:#fff">No gig id provided. Open this page with ?id=GIG_DOC_ID</div>`;
+      throw new Error('Missing id');
+    }
+
+    let currentGigDocRef = null; // firestore doc ref string like {col:'subho_gigs', id:...}
+    let gigData = null;
+    let currentUser = null;
+
+    /* ---------- Utility: try collections (subho_gigs first then gigs) ---------- */
+    async function resolveGigDoc(id){
+      const tries = ['subho_gigs','gigs'];
+      for (const c of tries){
+        try {
+          const dref = doc(db, c, id);
+          const snap = await getDoc(dref);
+          if (snap.exists()){
+            return { collection: c, docRef: dref };
+          }
+        } catch(e){ console.warn('resolve err', e); }
+      }
+      return null;
+    }
+
+    /* ---------- Realtime subscription to gig doc ---------- */
+    let gigUnsub = null;
+    async function subscribeGig(id){
+      const resolved = await resolveGigDoc(id);
+      if (!resolved) {
+        gigTitleEl.textContent = 'Gig not found';
+        gigDescEl.textContent = 'This gig may have been removed';
+        return;
+      }
+      const { collection: colName, docRef } = resolved;
+      currentGigDocRef = { col: colName, ref: docRef };
+      // subscribe realtime
+      if (gigUnsub) gigUnsub(); // unsubscribe previous
+      gigUnsub = onSnapshot(docRef, snap => {
+        if (!snap.exists()) {
+          gigTitleEl.textContent = 'Gig removed';
+          gigDescEl.textContent = 'This listing was removed by the seller or admin.';
+          return;
+        }
+        gigData = { id: snap.id, ...snap.data() };
+        renderGig(gigData);
+      }, err => {
+        console.error('gig snapshot err', err);
+      });
+    }
+
+    /* ---------- Render gig data into page ---------- */
+    function renderGig(g){
+      // basic fields
+      gigTitleEl.textContent = esc(g.title || g.short || 'Untitled gig');
+      gigCategoryEl.textContent = esc(g.category || g.subcategory || 'General');
+      gigDeliveryEl.textContent = esc(g.delivery || (g.deliveryDays ? g.deliveryDays + ' days' : '—'));
+      sidePriceEl.textContent = money(g.price || g.startingPrice || 0);
+      sideDeliveryEl.textContent = 'Delivery: ' + esc(g.delivery || '—');
+
+      // description / what you get
+      gigDescEl.textContent = esc(g.longDescription || g.description || g.short || 'No description provided.');
+      whatYouGetEl.textContent = esc(g.whatYouGet || g.features?.join(', ') || 'Deliverables as agreed with seller.');
+
+      // features tags
+      featureChipsEl.innerHTML = '';
+      const features = Array.isArray(g.features) && g.features.length ? g.features : (g.pkgFeatures || []);
+      (features || []).slice(0,8).forEach(f => {
+        const d = document.createElement('div'); d.className = 'chip'; d.textContent = f; featureChipsEl.appendChild(d);
+      });
+
+      // images / gallery
+      const images = Array.isArray(g.images) && g.images.length ? g.images : (g.coverURL ? [g.coverURL] : []);
+      setGallery(images);
+
+      // rating / counts
+      const avg = Number(g.ratingAvg || g.rating || 0);
+      const cnt = Number(g.ratingCount || g.reviews || 0);
+      miniRatingVal.textContent = isFinite(avg) ? avg.toFixed(1) : '0.0';
+      miniRatingCnt.textContent = '(' + (cnt || 0) + ')';
+      sellerReviewsEl.textContent = String(cnt);
+
+      // seller stats (from gig; fallback load seller doc)
+      const sellerProjects = g.projectsCompleted || 0;
+      sellerProjectsEl.textContent = sellerProjects;
+
+      // like watcher (subscribe shown like count and user state)
+      watchLikeAgg(g.id);
+      // load seller details
+      if (g.sellerId || g.createdByUid || g.createdByEmail) {
+        loadSellerInfo(g.sellerId || g.createdByUid || g.createdByEmail);
+      }
+      // subscribe reviews
+      subscribeReviews(currentGigDocRef.col, g.id);
+    }
+
+    /* ---------- Gallery logic ---------- */
+    function setGallery(urls){
+      const arr = Array.isArray(urls) && urls.length ? urls : ['https://via.placeholder.com/1200x800?text=No+Image'];
+      // set main image
+      mainImageEl.innerHTML = `<img id="mainImgTag" src="${escapeUrl(arr[0])}" alt="Gig image" style="width:100%;height:100%;object-fit:cover">`;
+      // inject nav controls if more than 1
+      const hasMany = arr.length > 1;
+      // slider controls wrapper
+      const sliderControls = document.createElement('div');
+      sliderControls.className = 'slider-controls';
+      if (hasMany){
+        const left = document.createElement('button'); left.className='nav-arrow'; left.innerHTML='‹'; sliderControls.appendChild(left);
+        const right = document.createElement('button'); right.className='nav-arrow'; right.innerHTML='›'; sliderControls.appendChild(right);
+        mainImageEl.appendChild(sliderControls);
+
+        let idx = 0;
+        function setIdx(n){
+          idx = Math.max(0,Math.min(arr.length-1,n));
+          const img = document.getElementById('mainImgTag');
+          if (img) img.src = escapeUrl(arr[idx]) || '';
+          // update active thumb
+          document.querySelectorAll('.thumb').forEach((t,i)=> t.classList.toggle('active', i===idx));
+        }
+        left.addEventListener('click', e => { e.stopPropagation(); setIdx(idx-1); });
+        right.addEventListener('click', e => { e.stopPropagation(); setIdx(idx+1); });
+      } else {
+        // remove any extra controls
+        const existing = mainImageEl.querySelector('.slider-controls');
+        if (existing) existing.remove();
+      }
+
+      // thumbs
+      thumbsEl.innerHTML = '';
+      arr.forEach((u,i) => {
+        const t = document.createElement('div'); t.className = 'thumb' + (i===0?' active':'');
+        t.style.backgroundImage = `url('${escapeUrl(u)}')`;
+        t.addEventListener('click', () => {
+          document.getElementById('mainImgTag').src = escapeUrl(u);
+          document.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active'));
+          t.classList.add('active');
+        });
+        thumbsEl.appendChild(t);
+      });
+    }
+
+    function escapeUrl(u){ return String(u || '').replaceAll("'", "%27"); }
+
+    /* ---------- Seller info ---------- */
+    async function loadSellerInfo(sellerId){
+      try {
+        // sellerId may be uid or email; prefer users collection by uid
+        let sellerDoc = null;
+        if (!sellerId) return;
+        // attempt doc by uid
+        try {
+          const sRef = doc(db, 'users', sellerId);
+          const sSnap = await getDoc(sRef);
+          if (sSnap.exists()) sellerDoc = { id: sSnap.id, ...sSnap.data() };
+        } catch(e) { /* ignore */ }
+
+        // fallback: search user by email in 'users' (rare)
+        if (!sellerDoc) {
+          // quick attempt: collection users getDocs search (costly if large) - instead show fallback from gig data
+          console.warn('seller doc not found for', sellerId);
+        }
+
+        // render seller info (with fallbacks from gigData)
+        const sname = sellerDoc?.fullName || gigData?.sellerName || gigData?.seller || sellerId;
+        const sphoto = sellerDoc?.photoURL || gigData?.sellerPhoto || '';
+        const srole = sellerDoc?.title || gigData?.sellerBio || 'Freelancer';
+        const since = sellerDoc?.createdAt ? new Date(sellerDoc.createdAt.seconds * 1000).getFullYear() : (sellerDoc?.since || new Date().getFullYear());
+        sellerNameEl.textContent = sname;
+        sellerRoleEl.textContent = srole;
+        sellerSinceEl.textContent = since;
+        sellerAvatarEl.textContent = (sname || 'U').trim()[0].toUpperCase();
+        if (sphoto){
+          // show photo image instead of colored avatar
+          sellerAvatarEl.style.background = 'transparent';
+          sellerAvatarEl.innerHTML = `<img src="${escapeUrl(sphoto)}" alt="${esc(sname)}" style="width:100%;height:100%;border-radius:10px;object-fit:cover">`;
+        } else {
+          sellerAvatarEl.style.background = 'linear-gradient(135deg,var(--accent2),var(--accent1))';
+        }
+
+        // seller stats if available
+        if (sellerDoc?.projectsCompleted) sellerProjectsEl.textContent = sellerDoc.projectsCompleted;
+        if (sellerDoc?.reviews) sellerReviewsEl.textContent = sellerDoc.reviews;
+      } catch (err) {
+        console.error('loadSellerInfo', err);
+      }
+    }
+
+    /* ---------- Reviews subscription ---------- */
+    let reviewsUnsub = null;
+    function subscribeReviews(collectionName, gigId){
+      // remove old
+      if (reviewsUnsub) reviewsUnsub();
+      try {
+        const reviewsCol = collection(db, collectionName, gigId, 'reviews');
+        const q = query(reviewsCol, orderBy('createdAt','desc'), limit(20));
+        reviewsUnsub = onSnapshot(q, snap => {
+          reviewsContainerEl.innerHTML = '';
+          if (snap.empty) {
+            reviewsContainerEl.innerHTML = '<div class="muted">No reviews yet</div>';
+            return;
+          }
+          snap.forEach(d => {
+            const r = d.data();
+            const block = document.createElement('div'); block.className='review';
+            const author = esc(r.authorName || 'User');
+            const text = esc(r.text || '');
+            const created = r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleDateString() : '';
+            block.innerHTML = `
+              <div class="rhead">
+                <div class="row"><div class="avatar">${author[0]||'U'}</div><div style="margin-left:8px"><div style="font-weight:800">${author}</div><div class="muted" style="font-size:12px">${created}</div></div></div>
+                <div style="font-weight:800">${(r.rating||0).toFixed? (Number(r.rating||0).toFixed(1)) : (r.rating||0)}</div>
+              </div>
+              <div style="margin-top:8px;color:#d2e8f0">${text}</div>
+            `;
+            reviewsContainerEl.appendChild(block);
+          });
+        }, err => {
+          console.error('reviews listen err', err);
+        });
+      } catch(e){ console.error(e); reviewsContainerEl.innerHTML = '<div class="muted">Unable to load reviews</div>'; }
+    }
+
+    /* ---------- Likes logic (compatible with dashboard) ---------- */
+    // per-user doc path: gig_likes_user/{gid}_{uid}
+    // agg doc path: gig_likes_agg/{gid} with field count
+
+    // watch agg count (realtime)
+    let likesAggUnsub = null;
+    async function watchLikeAgg(gid){
+      try {
+        // unsubscribe previous for this gid
+        if (likesAggUnsub) likesAggUnsub();
+        const aggRef = doc(db, 'gig_likes_agg', gid);
+        likesAggUnsub = onSnapshot(aggRef, snap => {
+          const c = snap.exists() ? (snap.data().count || 0) : 0;
+          likeCountEl.textContent = `${c} Likes`;
+        }, err => console.warn('likes agg watch err', err));
+
+        // set current user's liked state (one-time)
+        if (currentUser) {
+          const likeDocRef = doc(db, 'gig_likes_user', `${gid}_${currentUser.uid}`);
+          const s = await getDoc(likeDocRef);
+          if (s.exists() && s.data().liked === true) {
+            likeBtnEl.classList.add('liked'); likeIconEl.textContent = '♥';
+          } else {
+            likeBtnEl.classList.remove('liked'); likeIconEl.textContent = '♡';
+          }
+        } else {
+          likeBtnEl.classList.remove('liked'); likeIconEl.textContent = '♡';
+        }
+      } catch(e){ console.error('watchLikeAgg', e); }
+    }
+
+    // toggle like (same pattern as dashboard: write per-user doc then runTransaction on agg)
+    async function toggleLike(){
+      if (!currentUser) {
+        alert('Please login to like a gig.');
+        return;
+      }
+      const gid = gigData?.id;
+      if (!gid) return;
+      const uid = currentUser.uid;
+      const userLikeRef = doc(db, 'gig_likes_user', `${gid}_${uid}`);
+      const aggRef = doc(db, 'gig_likes_agg', gid);
+
+      try {
+        // read existing
+        const userSnap = await getDoc(userLikeRef);
+        const currently = userSnap.exists() && userSnap.data().liked === true;
+
+        // write per-user doc (toggle)
+        await setDoc(userLikeRef, { gid, uid, liked: !currently, updatedAt: Date.now() }, { merge: true });
+
+        // run transaction to update aggregate count safely
+        await runTransaction(db, async (t) => {
+          const aggSnap = await t.get(aggRef);
+          const currentCount = aggSnap.exists() ? (aggSnap.data().count || 0) : 0;
+          const newCount = currently ? Math.max(0, currentCount - 1) : currentCount + 1;
+          t.set(aggRef, { count: newCount }, { merge: true });
+        });
+        // UI will update via agg watcher; optionally flip icon immediately:
+        if (currently) { likeBtnEl.classList.remove('liked'); likeIconEl.textContent='♡'; }
+        else { likeBtnEl.classList.add('liked'); likeIconEl.textContent='♥'; }
+      } catch (err) {
+        console.error('toggleLike err', err);
+        alert('Could not update like — try again.');
+      }
+    }
+
+    /* ---------- Auth ---------- */
+    onAuthStateChanged(auth, user => {
+      currentUser = user;
+      // set initial liked state if gig already loaded
+      if (gigData && gigData.id) {
+        watchLikeAgg(gigData.id);
+      }
+    });
+
+    /* ---------- UI wiring ---------- */
+    // Like button click
+    likeBtnEl.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      likeBtnEl.disabled = true;
+      try { await toggleLike(); } finally { likeBtnEl.disabled = false; }
+    });
+
+    // contact / continue buttons open message.html and continue.html with params
+    function goToMessage(){
+      const sellerId = gigData?.sellerId || gigData?.createdByUid || gigData?.sellerEmail || '';
+      if (!sellerId) { alert('Seller contact info not available'); return; }
+      window.location.href = `message.html?to=${encodeURIComponent(sellerId)}&gig=${encodeURIComponent(gigData.id)}`;
+    }
+    function goToContinue(){
+      window.location.href = `continue.html?gig=${encodeURIComponent(gigData.id)}`;
+    }
+    contactBtn.addEventListener('click', goToMessage);
+    contactBtnBottom.addEventListener('click', goToMessage);
+    continueBtn.addEventListener('click', goToContinue);
+    continueBtnBottom.addEventListener('click', goToContinue);
+
+    /* ---------- initial subscription ---------- */
+    subscribeGig(GIG_ID).catch(console.error);
+
+    /* ---------- small utilities ---------- */
+    async function getDoc(ref){
+      try {
+        const snap = await getDocNative(ref);
+        return snap;
+      } catch(e) { return null; }
+    }
+
+    // Because we've used getDoc name earlier for convenience, ensure we use Firestore imported function names explicitly if needed
+    import { getDoc as getDocNative } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // expose debug
+    window.TALENT_HUB = {
+      db, auth, GIG_ID, forceReload: () => subscribeGig(GIG_ID)
+    };
+  </script>
+</body>
+</html>
