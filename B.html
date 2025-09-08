@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gig Details — Talent-Hub</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg:#071018; --panel:#0b1720; --muted:#9fb0bd; --accent1:#06d6a0; --accent2:#3b82f6;
+      --card: linear-gradient(180deg,#071a12,#071827);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#050b10,#071018);color:#e6f8f1;font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial}
+    .container{max-width:1180px;margin:26px auto;padding:18px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{font-weight:800;color:var(--accent1);font-size:20px}
+    .card{background:var(--panel);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 30px rgba(4,8,12,0.6)}
+    .top{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    @media(max-width:980px){ .top{grid-template-columns:1fr} }
+    .gallery{display:flex;flex-direction:column;gap:10px}
+    .main-image{height:360px;border-radius:10px;background-size:cover;background-position:center;box-shadow:0 12px 34px rgba(3,8,12,0.6)}
+    .thumbs{display:flex;gap:8px;flex-wrap:wrap}
+    .thumb{width:72px;height:72px;border-radius:8px;background-size:cover;background-position:center;border:2px solid transparent;cursor:pointer}
+    .thumb.active{border-color:var(--accent1)}
+    .title{font-size:22px;font-weight:800;color:#eafcf0;margin-bottom:6px}
+    .seller-row{display:flex;gap:10px;align-items:center}
+    .seller-avatar{width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-weight:800;color:white;background:linear-gradient(135deg,#0ea5a0,#2563eb)}
+    .muted{color:var(--muted)}
+    .price-box{margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#04221a,#052a20);display:flex;justify-content:space-between;align-items:center}
+    .price{font-weight:900;font-size:20px;color:var(--accent2)}
+    .delivery{font-size:13px;color:var(--muted)}
+    .desc{margin-top:12px;color:#cfeee6;line-height:1.6}
+    .features{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted);font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,0.02)}
+    .side-card{position:sticky;top:84px}
+    .side-price{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .side-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#d8efe6}
+    .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#042617}
+    .fav{width:46px;height:46px;border-radius:10px;background:transparent;border:1px dashed rgba(255,255,255,0.06);display:grid;place-items:center;cursor:pointer}
+    .top-like-btn{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:10px;background:rgba(0,0,0,0.45);display:grid;place-items:center;color:#fff;border:0;cursor:pointer}
+    .top-like-btn.liked{background:linear-gradient(90deg,#10b981,#2dd4bf);color:#042617;transform:scale(1.03)}
+    .tabs{display:flex;gap:8px;margin-top:16px;border-bottom:1px solid rgba(255,255,255,0.03);padding-bottom:10px}
+    .tab{padding:8px 12px;border-radius:8px;font-weight:700;color:var(--muted);cursor:pointer}
+    .tab.active{background:rgba(6,182,212,0.06);color:#cfeee6}
+    .review{display:flex;gap:12px;padding:12px;border-radius:10px;background:#071a18;border:1px solid rgba(255,255,255,0.02);margin-bottom:10px}
+    .similar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
+    .small{font-size:12px;color:var(--muted)}
+    footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">Talent-Hub</div>
+      <div id="loginStatus" class="small">Checking auth…</div>
+    </header>
+
+    <main id="content">
+      <div class="top">
+        <!-- LEFT: gig details -->
+        <section class="card">
+          <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+            <div class="gallery" style="flex:1">
+              <div id="mainImage" class="main-image" style="background-image:url('https://via.placeholder.com/1200x800?text=Loading...')"></div>
+              <div class="thumbs" id="thumbs"></div>
+            </div>
+
+            <div style="flex-basis:340px">
+              <div class="title" id="gigTitle">Loading title…</div>
+
+              <div class="seller-row" style="margin-bottom:8px">
+                <div id="sellerAvatar" class="seller-avatar">U</div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div id="sellerName" style="font-weight:800">Seller</div>
+                    <div id="sellerSince" class="small muted"></div>
+                  </div>
+                  <div class="small muted" id="sellerBio">—</div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+                <div id="createdAt" class="small muted">Posted —</div>
+                <div style="margin-left:auto" id="likeArea" class="small muted">0 Likes</div>
+              </div>
+
+              <div class="price-box">
+                <div>
+                  <div class="small muted">Starting at</div>
+                  <div class="price" id="price">₹0</div>
+                </div>
+                <div class="delivery small muted" id="delivery">3 days</div>
+              </div>
+
+              <div class="desc" id="gigDesc">Loading description…</div>
+
+              <div class="features" id="features"></div>
+
+              <div class="tabs" style="margin-top:18px">
+                <div class="tab active" data-tab="details">Details</div>
+                <div class="tab" data-tab="reviews">Reviews</div>
+                <div class="tab" data-tab="similar">Related</div>
+              </div>
+
+              <div class="tab-content" id="tabContent" style="margin-top:16px">
+                <div id="detailsTab">
+                  <h4 style="margin-top:6px;color:#bfead5">What you'll get</h4>
+                  <div class="small muted" id="whatYouGet">Loading…</div>
+
+                  <h4 style="margin-top:12px;color:#bfead5">Skills</h4>
+                  <div id="skillsWrap" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+                </div>
+
+                <div id="reviewsTab" class="hidden">
+                  <div id="reviewsList" style="margin-top:8px"></div>
+
+                  <div style="margin-top:12px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02)">
+                    <div style="font-weight:800;margin-bottom:8px">Leave a review</div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <select id="starSelect" class="small" style="padding:8px;border-radius:8px">
+                        <option value="5">⭐ 5 — Excellent</option>
+                        <option value="4">⭐ 4 — Very good</option>
+                        <option value="3">⭐ 3 — Good</option>
+                        <option value="2">⭐ 2 — Fair</option>
+                        <option value="1">⭐ 1 — Poor</option>
+                      </select>
+                      <input id="reviewText" placeholder="Share your thoughts" style="flex:1;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:#e8fff4" />
+                      <button id="addReviewBtn" class="btn btn-primary">Post</button>
+                    </div>
+                    <div id="reviewStatus" class="small muted" style="margin-top:8px"></div>
+                  </div>
+                </div>
+
+                <div id="similarTab" class="hidden">
+                  <div id="similarGrid" class="similar-grid"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px">
+            <h3 style="margin-bottom:8px;color:#bfead5">Full Description</h3>
+            <div id="longDesc" class="muted">Loading...</div>
+          </div>
+        </section>
+
+        <!-- RIGHT: CTA + seller profile -->
+        <aside class="card side-card" style="min-width:300px">
+          <div class="side-price">
+            <div>
+              <div class="small muted">Price</div>
+              <div class="price" id="sidePrice">₹0</div>
+            </div>
+            <div class="small muted" id="sideDelivery">Delivery: 3 days</div>
+          </div>
+
+          <div class="side-actions" id="sideActions">
+            <button id="continueBtn" class="btn btn-primary">Continue (Hire)</button>
+            <button id="favBtn" class="fav" title="Like this gig"><i id="favIcon" class="fa-regular fa-heart"></i></button>
+          </div>
+
+          <div style="margin-top:14px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#041518,#052a1e);border:1px solid rgba(255,255,255,0.02)">
+            <div style="display:flex;gap:10px;align-items:center">
+              <img id="sellerPhoto" src="" alt="photo" style="width:56px;height:56px;border-radius:10px;object-fit:cover;background:#063a2c"/>
+              <div>
+                <div id="panelSellerName" style="font-weight:800">Seller</div>
+                <div id="panelSellerRole" class="small muted">—</div>
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="small muted">Response time</div>
+                <div style="font-weight:800">Within 24 hours</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+                <button id="contactBtn" class="btn btn-ghost" style="padding:8px 10px">Contact Seller</button>
+                <a id="sellerProfileLink" href="#" class="small muted" style="text-decoration:underline">View profile</a>
+              </div>
+            </div>
+            <div id="statusMsg" class="small muted" style="margin-top:10px"></div>
+          </div>
+        </aside>
+      </div>
+
+      <footer>© 2025 Talent-Hub — Live from Firestore</footer>
+    </main>
+  </div>
+
+  <!-- FIREBASE (modular v10) -->
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, doc, collection, query, where, orderBy, limit,
+      onSnapshot, getDoc, getDocs, addDoc, serverTimestamp, runTransaction, setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Your firebase config (use your project values)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // helpers
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const GIG_ID = new URL(location).searchParams.get('id');
+    if (!GIG_ID) {
+      document.getElementById('content').innerHTML = '<div class="card">Open this page with ?id=GIG_ID</div>';
+      throw new Error('Missing id');
+    }
+
+    // Elements
+    const mainImage = $('#mainImage'), thumbs = $('#thumbs');
+    const gigTitle = $('#gigTitle'), gigDesc = $('#gigDesc'), longDesc = $('#longDesc');
+    const priceEl = $('#price'), sidePrice = $('#sidePrice'), deliveryEl = $('#delivery'), sideDelivery = $('#sideDelivery');
+    const featuresWrap = $('#features'), skillsWrap = $('#skillsWrap'), whatYouGet = $('#whatYouGet');
+    const sellerAvatar = $('#sellerAvatar'), sellerName = $('#sellerName'), sellerBio = $('#sellerBio'), sellerSince = $('#sellerSince');
+    const sellerPhoto = $('#sellerPhoto'), panelSellerName = $('#panelSellerName'), sellerProfileLink = $('#sellerProfileLink'), panelSellerRole = $('#panelSellerRole');
+    const likeArea = $('#likeArea'), favBtn = $('#favBtn'), favIcon = $('#favIcon');
+    const continueBtn = $('#continueBtn'), contactBtn = $('#contactBtn'), loginStatus = $('#loginStatus'), statusMsg = $('#statusMsg');
+
+    const reviewsList = $('#reviewsList'), addReviewBtn = $('#addReviewBtn'), reviewText = $('#reviewText'), reviewStatus = $('#reviewStatus'), starSelect = $('#starSelect');
+    const similarGrid = $('#similarGrid');
+
+    // constants for collections
+    const GIGS_COL = 'subho_gigs';
+    const USERS_COL = 'users';
+    const GIG_LIKES_USER = 'gig_likes_user';
+    const GIG_LIKES_AGG = 'gig_likes_agg';
+    const GIG_LIKES_RAW = 'gig_likes';
+    const REVIEWS_COL = 'gig_reviews';
+
+    // state
+    let currentUser = null;
+    let gigData = null;
+    let aggUnsub = null;
+    let reviewsUnsub = null;
+    let similarUnsub = null;
+    let sellerUnsub = null;
+
+    // util
+    const escapeImg = u => String(u||'').replaceAll("'", "%27");
+    function setGallery(urls=[]) {
+      if (!Array.isArray(urls) || urls.length===0) urls = ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'];
+      mainImage.style.backgroundImage = `url('${escapeImg(urls[0])}')`;
+      thumbs.innerHTML = '';
+      urls.forEach((u,i)=>{
+        const t = document.createElement('div'); t.className = 'thumb' + (i===0?' active':''); t.style.backgroundImage = `url('${escapeImg(u)}')`;
+        t.addEventListener('click', ()=>{
+          $$(`.thumb`).forEach(x=>x.classList.remove('active')); t.classList.add('active'); mainImage.style.backgroundImage = `url('${escapeImg(u)}')`;
+        });
+        thumbs.appendChild(t);
+      });
+    }
+
+    // subscribe gig doc realtime
+    const gigRef = doc(db, GIGS_COL, GIG_ID);
+    onSnapshot(gigRef, snap => {
+      if (!snap.exists()) {
+        gigTitle.textContent = 'Gig not found';
+        gigDesc.textContent = '';
+        return;
+      }
+      gigData = snap.data();
+      renderGig(gigData);
+      watchLikes(GIG_ID);
+      subscribeReviews();
+      loadRelatedGigs(gigData.category);
+      subscribeSeller(gigData.createdByUid || gigData.sellerId || gigData.createdByUid);
+    }, err => {
+      console.error('gig snapshot err', err);
+      statusMsg.textContent = 'Could not load gig: ' + (err.message || err);
+    });
+
+    function renderGig(g) {
+      gigTitle.textContent = g.title || 'Untitled';
+      gigDesc.textContent = g.description || g.short || '';
+      longDesc.textContent = g.longDescription || g.description || '';
+      priceEl.textContent = '₹' + (g.price || 0);
+      sidePrice.textContent = '₹' + (g.price || 0);
+      deliveryEl.textContent = g.delivery ? g.delivery + ' days' : (g.delivery || '3 days');
+      sideDelivery.textContent = 'Delivery: ' + (g.delivery || '3 days');
+      whatYouGet.textContent = g.whatYouGet || 'Print-ready files, multiple concepts.';
+      // features
+      featuresWrap.innerHTML = ''; (g.features || g.styles || []).forEach(f=>{
+        const d = document.createElement('div'); d.className='chip'; d.textContent = f; featuresWrap.appendChild(d);
+      });
+      // skills
+      skillsWrap.innerHTML = ''; (g.skills||[]).forEach(s=>{
+        const sp = document.createElement('div'); sp.className='chip'; sp.textContent = s; skillsWrap.appendChild(sp);
+      });
+      createdAt = g.createdAt ? (g.createdAt.toDate ? g.createdAt.toDate().toLocaleDateString() : new Date(g.createdAt).toLocaleDateString()) : '';
+      $('#createdAt').textContent = createdAt ? 'Posted ' + createdAt : '';
+      sellerName.textContent = g.sellerName || g.seller || 'Seller';
+      sellerBio.textContent = g.sellerBio || '';
+      sellerSince.textContent = g.sellerSince ? '• Since ' + g.sellerSince : '';
+      // gallery
+      const images = Array.isArray(g.images) && g.images.length ? g.images : (g.coverURL ? [g.coverURL] : []);
+      setGallery(images);
+    }
+
+    // -------------------- Likes --------------------
+    const aggDocRef = (gid) => doc(db, GIG_LIKES_AGG, gid);
+    const userLikeDoc = (uid, gid) => doc(db, GIG_LIKES_USER, `${uid}_${gid}`);
+    const rawLikeDoc = (uid, gid) => doc(db, GIG_LIKES_RAW, `${gid}_${uid}`);
+
+    function watchLikes(gid) {
+      // unsubscribe previous if any
+      if (aggUnsub) aggUnsub();
+      const aRef = aggDocRef(gid);
+      aggUnsub = onSnapshot(aRef, s=>{
+        const c = s.exists() ? (s.data().count||0) : 0;
+        likeArea.textContent = `${c} Like${c===1?'':'s'}`;
+      }, err=>{ console.warn('agg watch err', err); });
+
+      // update user like button appearance
+      refreshUserLikeState();
+    }
+
+    async function refreshUserLikeState() {
+      if (!currentUser) { favBtn.classList.remove('liked'); favIcon.className='fa-regular fa-heart'; return; }
+      try {
+        const s = await getDoc(userLikeDoc(currentUser.uid, GIG_ID));
+        if (s.exists()) { favBtn.classList.add('liked'); favIcon.className='fa-solid fa-heart'; } else { favBtn.classList.remove('liked'); favIcon.className='fa-regular fa-heart'; }
+      } catch(e){ console.warn(e); }
+    }
+
+    favBtn.addEventListener('click', async (e)=>{
+      e.stopPropagation();
+      if (!currentUser) { if (confirm('Login required to like. Go to login?')) window.location = 'login.html'; return; }
+      favBtn.disabled = true;
+      try {
+        await runTransaction(db, async (t)=>{
+          const uRef = userLikeDoc(currentUser.uid, GIG_ID);
+          const rRef = rawLikeDoc(currentUser.uid, GIG_ID);
+          const aRef = aggDocRef(GIG_ID);
+          const uSnap = await t.get(uRef);
+          const aSnap = await t.get(aRef);
+          let count = aSnap.exists() ? (aSnap.data().count||0) : 0;
+          if (uSnap.exists()) {
+            // unlike
+            t.delete(uRef);
+            t.delete(rRef);
+            count = Math.max(0, count - 1);
+            t.set(aRef, { count }, { merge:true });
+          } else {
+            // like
+            t.set(uRef, { uid: currentUser.uid, gid: GIG_ID, createdAt: serverTimestamp() });
+            t.set(rRef, { uid: currentUser.uid, gid: GIG_ID, createdAt: serverTimestamp() });
+            count = count + 1;
+            t.set(aRef, { count }, { merge:true });
+          }
+        });
+        // UI will refresh on snapshot and refreshUserLikeState
+      } catch(err){ console.error('like tx err', err); alert('Could not toggle like: '+(err.message||err)); }
+      finally { favBtn.disabled = false; await refreshUserLikeState(); }
+    });
+
+    // -------------------- Reviews --------------------
+    function subscribeReviews() {
+      // cleanup old listener
+      if (reviewsUnsub) reviewsUnsub();
+      const colRef = collection(db, REVIEWS_COL);
+      const q = query(colRef, where('gid','==', GIG_ID), orderBy('createdAt','desc'), limit(50));
+      reviewsUnsub = onSnapshot(q, snap=>{
+        reviewsList.innerHTML = '';
+        if (snap.empty) { reviewsList.innerHTML = '<div class="muted">No reviews yet</div>'; return; }
+        snap.forEach(d=>{
+          const r = d.data();
+          const el = document.createElement('div'); el.className='review';
+          el.innerHTML = `<div style="width:44px;height:44px;border-radius:10px;background:#072a23;display:grid;place-items:center;font-weight:800">${(r.authorName||'U')[0]||'U'}</div>
+            <div style="flex:1">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:800">${r.authorName||'User'}</div>
+                <div class="small muted">${r.createdAt? (new Date(r.createdAt.seconds*1000).toLocaleDateString()):''}</div>
+              </div>
+              <div class="small muted" style="margin-top:6px">⭐ ${r.stars || 0} — ${r.text || ''}</div>
+            </div>`;
+          reviewsList.appendChild(el);
+        });
+      }, err => { console.warn('reviews listen err', err); });
+    }
+
+    addReviewBtn.addEventListener('click', async ()=>{
+      reviewStatus.textContent = '';
+      if (!currentUser) { if (confirm('Login required to post review. Go to login?')) window.location='login.html'; return; }
+      const text = reviewText.value.trim();
+      const stars = Number(starSelect.value||5);
+      if (!text) { reviewStatus.textContent = 'Write something first'; return; }
+      addReviewBtn.disabled = true;
+      try {
+        await addDoc(collection(db, REVIEWS_COL), {
+          gid: GIG_ID,
+          authorId: currentUser.uid,
+          authorName: currentUser.displayName || currentUser.email || 'User',
+          text,
+          stars,
+          createdAt: serverTimestamp()
+        });
+        reviewStatus.textContent = 'Posted ✓';
+        reviewText.value = '';
+      } catch (err) {
+        console.error('post review err', err);
+        reviewStatus.textContent = 'Could not post: ' + (err.message||err);
+      } finally { addReviewBtn.disabled = false; }
+    });
+
+    // -------------------- Related gigs --------------------
+    function loadRelatedGigs(category) {
+      // cleanup previous
+      if (similarUnsub) similarUnsub();
+      similarGrid.innerHTML = '';
+      if (!category) { similarGrid.innerHTML = '<div class="muted">No related gigs</div>'; return; }
+      const colRef = collection(db, GIGS_COL);
+      const q = query(colRef, where('category','==', category), orderBy('createdAt','desc'), limit(6));
+
+      similarUnsub = onSnapshot(q, snap=>{
+        similarGrid.innerHTML = '';
+        if (snap.empty) { similarGrid.innerHTML = '<div class="muted">No related gigs</div>'; return; }
+        snap.forEach(d=>{
+          if (d.id === GIG_ID) return; // skip current
+          const g = d.data();
+          const card = document.createElement('a');
+          card.href = `gig-details.html?id=${d.id}`;
+          card.className = 'card';
+          card.style.padding='10px'; card.style.display='block';
+          const img = (Array.isArray(g.images) && g.images[0]) || g.coverURL || 'https://via.placeholder.com/600x400?text=No+Image';
+          card.innerHTML = `<div style="height:120px;border-radius:8px;background-image:url(${escapeImg(img)});background-size:cover;background-position:center"></div>
+            <div style="margin-top:8px">
+              <div style="font-weight:800">${g.title||'Untitled'}</div>
+              <div class="small muted">From ₹${g.price||0}</div>
+            </div>`;
+          similarGrid.appendChild(card);
+        });
+      }, err => { console.warn('related listen err', err); similarGrid.innerHTML = '<div class="muted">Could not load related gigs</div>'; });
+    }
+
+    // -------------------- Seller profile --------------------
+    function subscribeSeller(uid) {
+      if (!uid) return;
+      if (sellerUnsub) sellerUnsub();
+      const uRef = doc(db, USERS_COL, uid);
+      sellerUnsub = onSnapshot(uRef, s=>{
+        if (!s.exists()) {
+          // fallback to data present in gig
+          panelSellerName.textContent = gigData?.sellerName || 'Seller';
+          panelSellerRole.textContent = gigData?.sellerRole || '';
+          sellerPhoto.src = gigData?.sellerPhoto || '';
+          sellerName.textContent = gigData?.sellerName || 'Seller';
+          sellerBio.textContent = gigData?.sellerBio || '';
+          sellerSince.textContent = gigData?.sellerSince ? '• Since ' + gigData.sellerSince : '';
+          return;
+        }
+        const u = s.data();
+        panelSellerName.textContent = u.fullName || u.displayName || (u.company || 'Seller');
+        panelSellerRole.textContent = u.title || u.role || '';
+        sellerPhoto.src = u.photoURL || gigData?.sellerPhoto || '';
+        sellerName.textContent = u.fullName || u.displayName || gigData?.sellerName || 'Seller';
+        sellerBio.textContent = u.bio || gigData?.sellerBio || '';
+        sellerSince.textContent = u.since ? '• Since ' + u.since : (gigData?.sellerSince ? '• Since ' + gigData.sellerSince : '');
+        sellerProfileLink.href = `seller.html?id=${s.id}`;
+      }, err => { console.warn('seller listen err', err); });
+    }
+
+    // -------------------- Contact & Continue --------------------
+    contactBtn.addEventListener('click', ()=>{
+      if (!gigData) return alert('Not loaded yet');
+      const sellerId = gigData.createdByUid || gigData.sellerId || gigData.createdByUid || '';
+      if (!sellerId) return alert('Contact not available');
+      // if sellerId looks like an email open mailto
+      if (sellerId.includes('@')) window.location = `mailto:${encodeURIComponent(sellerId)}?subject=${encodeURIComponent('Inquiry about: '+(gigData.title||'Gig'))}`;
+      else window.location = `client-messages.html?to=${encodeURIComponent(sellerId)}`;
+    });
+
+    continueBtn.addEventListener('click', ()=>{
+      if (!currentUser) {
+        if (confirm('Login required to continue. Go to login?')) window.location='login.html';
+        return;
+      }
+      window.location = `continue.html?id=${GIG_ID}&col=${GIGS_COL}`;
+    });
+
+    // -------------------- Tabs behaviour --------------------
+    $$('.tab').forEach(t=>{
+      t.addEventListener('click', ()=> {
+        $$('.tab').forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        const tab = t.dataset.tab;
+        $('#detailsTab').classList.toggle('hidden', tab!=='details');
+        $('#reviewsTab').classList.toggle('hidden', tab!=='reviews');
+        $('#similarTab').classList.toggle('hidden', tab!=='similar');
+      });
+    });
+
+    // -------------------- Auth state --------------------
+    onAuthStateChanged(auth, user=>{
+      currentUser = user;
+      loginStatus.textContent = user ? `Logged in: ${user.displayName || user.email || user.uid}` : 'Not logged in';
+      refreshUserLikeState();
+    });
+
+    // small safety: load reviews initially
+    subscribeReviews();
+
+  </script>
+</body>
+</html>
