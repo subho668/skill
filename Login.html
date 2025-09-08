@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Talent-Hub | Auth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg,#0a0f1e,#101820);
+      color: #e6eef6;
+    }
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
+    }
+    .input {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      width: 100%;
+    }
+    .btn {
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: bold;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg,#06d6a0,#3b82f6);
+      color: #02120f;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    .link { color:#60a5fa; cursor:pointer; }
+  </style>
+</head>
+<body class="h-screen flex items-center justify-center">
+  <div class="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+
+    <!-- Left Banner -->
+    <div class="hidden md:flex items-center justify-center">
+      <img src="https://images.unsplash.com/photo-1581092335365-6a9aee1f5f45"
+           alt="TalentHub" class="rounded-2xl shadow-xl w-full object-cover">
+    </div>
+
+    <!-- Right Forms -->
+    <div class="card p-8 flex flex-col justify-center">
+      <h2 id="formTitle" class="text-2xl font-bold mb-6 text-center">Sign in to your account</h2>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="space-y-4">
+        <input type="email" id="loginEmail" placeholder="Email" class="input" required>
+        <input type="password" id="loginPassword" placeholder="Password" class="input" required>
+        <button type="submit" class="btn btn-primary">Login</button>
+
+        <div class="text-center text-sm text-gray-400">OR</div>
+        <button type="button" onclick="signInWithGoogle()" class="btn bg-red-500 hover:bg-red-600 text-white">
+          <i class="fab fa-google mr-2"></i> Login with Google
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="space-y-4 hidden">
+        <input type="text" id="registerName" placeholder="Full Name" class="input" required>
+        <input type="email" id="registerEmail" placeholder="Email" class="input" required>
+        <input type="password" id="registerPassword" placeholder="Password" class="input" required>
+        <select id="registerRole" required class="input">
+          <option value="" disabled selected>Select Role</option>
+          <option value="client">Client</option>
+          <option value="freelancer">Freelancer</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+
+      <!-- Toggle Links -->
+      <p class="text-center mt-6 text-sm">
+        <span id="toggleText">Don’t have an account?</span>
+        <span id="toggleLink" class="link">Register</span>
+      </p>
+
+      <p id="message" class="text-center text-sm mt-3 text-emerald-400"></p>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup,
+      createUserWithEmailAndPassword 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const toggleLink = document.getElementById("toggleLink");
+    const toggleText = document.getElementById("toggleText");
+    const formTitle = document.getElementById("formTitle");
+    const message = document.getElementById("message");
+
+    // Toggle between login and register
+    toggleLink.addEventListener("click", () => {
+      if (loginForm.classList.contains("hidden")) {
+        loginForm.classList.remove("hidden");
+        registerForm.classList.add("hidden");
+        formTitle.textContent = "Sign in to your account";
+        toggleText.textContent = "Don’t have an account?";
+        toggleLink.textContent = "Register";
+      } else {
+        loginForm.classList.add("hidden");
+        registerForm.classList.remove("hidden");
+        formTitle.textContent = "Create Your Account";
+        toggleText.textContent = "Already have an account?";
+        toggleLink.textContent = "Login";
+      }
+      message.textContent = "";
+    });
+
+    // Login with email
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        message.textContent = "✅ Login successful!";
+        window.location.href = "client-dashboard.html"; // or check role
+      } catch (err) {
+        message.textContent = "❌ " + err.message;
+      }
+    });
+
+    // Google login
+    window.signInWithGoogle = async () => {
+      try {
+        await signInWithPopup(auth, provider);
+        message.textContent = "✅ Google login successful!";
+        window.location.href = "client-dashboard.html";
+      } catch (err) {
+        message.textContent = "❌ " + err.message;
+      }
+    };
+
+    // Register
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fullname = document.getElementById("registerName").value;
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+      const role = document.getElementById("registerRole").value;
+
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid, fullname, email, role, createdAt: new Date()
+        });
+        message.textContent = "🎉 Registration successful! Please login.";
+        // Switch back to login
+        loginForm.classList.remove("hidden");
+        registerForm.classList.add("hidden");
+        formTitle.textContent = "Sign in to your account";
+        toggleText.textContent = "Don’t have an account?";
+        toggleLink.textContent = "Register";
+      } catch (err) {
+        message.textContent = "❌ " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
