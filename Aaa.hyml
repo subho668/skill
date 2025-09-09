@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Gig - Talent-Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #1dbf73;
+            --primary-dark: #19a463;
+            --secondary: #446ee7;
+            --dark: #0e0e0f;
+            --darker: #090a0c;
+            --light: #f5f5f5;
+            --lighter: #ffffff;
+            --gray: #74767e;
+            --light-gray: #f1f1f2;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #fafafa, #f1f1f2);
+            color: #222325;
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #e4e5e7;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.5s ease;
+        }
+        
+        .step-indicator {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e4e5e7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #74767e;
+            transition: all 0.3s ease;
+        }
+        
+        .step-indicator.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .step-indicator.completed {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .package-card {
+            border: 2px solid #e4e5e7;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .package-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .package-card.selected {
+            border-color: var(--primary);
+            background-color: rgba(29, 191, 115, 0.05);
+        }
+        
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f1f1f2;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .tag {
+            background-color: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .tag-remove {
+            margin-left: 6px;
+            cursor: pointer;
+        }
+        
+        .tag-input input {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            min-width: 60px;
+        }
+        
+        .image-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .image-upload:hover {
+            border-color: var(--primary);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(29, 191, 115, 0.2);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #404145;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .gig-preview {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .gig-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .add-faq-btn {
+            background: transparent;
+            border: 2px dashed #ddd;
+            color: #74767e;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .add-faq-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center">
+                <h1 class="text-3xl font-bold text-gray-800">Talent<span class="text-green-500">Hub</span></h1>
+                <span class="ml-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Create Gig</span>
+            </div>
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                </div>
+                <div>
+                    <p class="font-medium">John Designer</p>
+                    <p class="text-sm text-gray-500">Freelancer</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Form -->
+            <div class="lg:col-span-2">
+                <div class="glass-card p-6 mb-6">
+                    <h2 class="text-2xl font-bold mb-2">Create a New Gig</h2>
+                    <p class="text-gray-600 mb-6">Complete the steps below to create your gig and start selling your services</p>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mb-8">
+                        <div class="flex justify-between mb-3">
+                            <span class="text-sm font-medium">Step <span id="current-step">1</span> of 7</span>
+                            <span class="text-sm font-medium" id="progress-percentage">14%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 14%;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step Indicators -->
+                    <div class="flex justify-between mb-10">
+                        <div class="text-center">
+                            <div class="step-indicator completed" id="step-1-indicator">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <p class="text-xs mt-2 font-medium">Overview</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="step-indicator active" id="step-2-indicator">2</div>
+                            <p class="text-xs mt-2 font-medium">Packages</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="step-indicator" id="step-3-indicator">3</div>
+                            <p class="text-xs mt-2 font-medium">Description</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="step-indicator" id="step-4-indicator">4</div>
+                            <p class="text-xs mt-2 font-medium">FAQ</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="step-indicator" id="step-5-indicator">5</div>
+                            <p class="text-xs mt-2 font-medium">Gallery</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="step-indicator" id="step-6-indicator">6</div>
+                            <p class="text-xs mt-2 font-medium">About</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="step-indicator" id="step-7-indicator">7</div>
+                            <p class="text-xs mt-2 font-medium">Publish</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Steps -->
+                    <form id="gig-form">
+                        <!-- Step 1: Gig Overview -->
+                        <div class="step active" id="step-1">
+                            <h3 class="text-xl font-bold mb-6">Gig Overview</h3>
+                            
+                            <div class="form-group">
+                                <label for="service-title">Service Title</label>
+                                <input type="text" id="service-title" placeholder="e.g., I will design a professional website">
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="form-group">
+                                    <label for="category">Category</label>
+                                    <select id="category">
+                                        <option value="">Select Category</option>
+                                        <option value="web-dev">Web Development</option>
+                                        <option value="design">Design</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="writing">Writing</option>
+                                        <option value="video">Video & Animation</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="subcategory">Sub-Category</label>
+                                    <select id="subcategory">
+                                        <option value="">Select Sub-Category</option>
+                                        <option value="wordpress">WordPress</option>
+                                        <option value="ecommerce">Ecommerce</option>
+                                        <option value="logo-design">Logo Design</option>
+                                        <option value="ui-ux">UI/UX Design</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tags">Tags</label>
+                                <div class="tag-input">
+                                    <span class="tag">WordPress <span class="tag-remove">&times;</span></span>
+                                    <span class="tag">Design <span class="tag-remove">&times;</span></span>
+                                    <input type="text" placeholder="Add tags...">
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Add up to 5 tags that describe your gig</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Pricing Packages -->
+                        <div class="step" id="step-2">
+                            <h3 class="text-xl font-bold mb-6">Pricing Packages</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <!-- Starter Package -->
+                                <div class="package-card selected" id="starter-package">
+                                    <div class="p-5">
+                                        <h4 class="font-bold text-lg mb-2">Starter</h4>
+                                        <p class="text-gray-600 text-sm mb-4">Basic package for simple projects</p>
+                                        
+                                        <div class="form-group">
+                                            <label for="starter-price">Price ($)</label>
+                                            <input type="number" id="starter-price" value="25">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="starter-delivery">Delivery Time</label>
+                                            <select id="starter-delivery">
+                                                <option>1 day</option>
+                                                <option>2 days</option>
+                                                <option selected>3 days</option>
+                                                <option>5 days</option>
+                                                <option>7 days</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="starter-revisions">Revisions</label>
+                                            <input type="number" id="starter-revisions" value="1" min="0">
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="mb-2">Features</label>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500" checked>
+                                                    <span class="ml-2">Responsive Design</span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500">
+                                                    <span class="ml-2">SEO Optimization</span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500">
+                                                    <span class="ml-2">Payment Integration</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Growth Package -->
+                                <div class="package-card" id="growth-package">
+                                    <div class="p-5">
+                                        <h4 class="font-bold text-lg mb-2">Growth</h4>
+                                        <p class="text-gray-600 text-sm mb-4">For growing businesses</p>
+                                        
+                                        <div class="form-group">
+                                            <label for="growth-price">Price ($)</label>
+                                            <input type="number" id="growth-price" value="50">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="growth-delivery">Delivery Time</label>
+                                            <select id="growth-delivery">
+                                                <option>3 days</option>
+                                                <option selected>5 days</option>
+                                                <option>7 days</option>
+                                                <option>10 days</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="growth-revisions">Revisions</label>
+                                            <input type="number" id="growth-revisions" value="2" min="0">
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="mb-2">Features</label>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500" checked>
+                                                    <span class="ml-2">Responsive Design</span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500" checked>
+                                                    <span class="ml-2">SEO Optimization</span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500">
+                                                    <span class="ml-2">Payment Integration</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Elite Package -->
+                                <div class="package-card" id="elite-package">
+                                    <div class="p-5">
+                                        <h4 class="font-bold text-lg mb-2">Elite</h4>
+                                        <p class="text-gray-600 text-sm mb-4">Premium package for complex projects</p>
+                                        
+                                        <div class="form-group">
+                                            <label for="elite-price">Price ($)</label>
+                                            <input type="number" id="elite-price" value="100">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="elite-delivery">Delivery Time</label>
+                                            <select id="elite-delivery">
+                                                <option>5 days</option>
+                                                <option>7 days</option>
+                                                <option selected>10 days</option>
+                                                <option>14 days</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="elite-revisions">Revisions</label>
+                                            <input type="number" id="elite-revisions" value="3" min="0">
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="mb-2">Features</label>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500" checked>
+                                                    <span class="ml-2">Responsive Design</span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500" checked>
+                                                    <span class="ml-2">SEO Optimization</span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label class="inline-flex items-center mt-2">
+                                                    <input type="checkbox" class="form-checkbox text-green-500" checked>
+                                                    <span class="ml-2">Payment Integration</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Gig Description -->
+                        <div class="step" id="step-3">
+                            <h3 class="text-xl font-bold mb-6">Gig Description</h3>
+                            
+                            <div class="form-group">
+                                <label for="gig-description">Full Description</label>
+                                <textarea id="gig-description" rows="8" placeholder="Describe your gig in detail..."></textarea>
+                                <p class="text-sm text-gray-500 mt-2">Minimum 120 characters. Describe what you will deliver, your process, and what makes your service unique.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4: FAQ Section -->
+                        <div class="step" id="step-4">
+                            <h3 class="text-xl font-bold mb-6">FAQ Section</h3>
+                            
+                            <div class="mb-6">
+                                <div class="faq-item glass-card p-5 mb-4">
+                                    <div class="form-group">
+                                        <label>Question</label>
+                                        <input type="text" placeholder="What do you need to get started?">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Answer</label>
+                                        <textarea rows="3" placeholder="I need your requirements, brand guidelines, and any content you want to include."></textarea>
+                                    </div>
+                                    <button type="button" class="text-red-500 text-sm font-medium mt-2">
+                                        <i class="fas fa-trash-alt mr-1"></i> Remove FAQ
+                                    </button>
+                                </div>
+                                
+                                <div class="faq-item glass-card p-5 mb-4">
+                                    <div class="form-group">
+                                        <label>Question</label>
+                                        <input type="text" placeholder="How many revisions do I get?">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Answer</label>
+                                        <textarea rows="3" placeholder="The number of revisions depends on the package you choose. Please check the package details."></textarea>
+                                    </div>
+                                    <button type="button" class="text-red-500 text-sm font-medium mt-2">
+                                        <i class="fas fa-trash-alt mr-1"></i> Remove FAQ
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button type="button" class="add-faq-btn">
+                                <i class="fas fa-plus mr-2"></i> Add More FAQ
+                            </button>
+                        </div>
+                        
+                        <!-- Step 5: Gallery Upload -->
+                        <div class="step" id="step-5">
+                            <h3 class="text-xl font-bold mb-6">Gallery Upload</h3>
+                            
+                            <div class="mb-6">
+                                <label class="mb-4">Upload Images (Minimum 3)</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                                    <div class="image-upload">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                                        <p class="text-sm">Click to upload</p>
+                                    </div>
+                                    <div class="image-upload">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                                        <p class="text-sm">Click to upload</p>
+                                    </div>
+                                    <div class="image-upload">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                                        <p class="text-sm">Click to upload</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="gig-video">Upload Video (Optional)</label>
+                                    <div class="image-upload">
+                                        <i class="fas fa-video text-3xl text-gray-400 mb-3"></i>
+                                        <p class="text-sm">Click to upload a video</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 6: About the Freelancer -->
+                        <div class="step" id="step-6">
+                            <h3 class="text-xl font-bold mb-6">About the Freelancer</h3>
+                            
+                            <div class="form-group">
+                                <label for="bio">Short Bio</label>
+                                <textarea id="bio" rows="4" placeholder="Tell clients about yourself and your experience..."></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="form-group">
+                                    <label for="languages">Languages</label>
+                                    <select id="languages" multiple class="h-40">
+                                        <option value="english" selected>English</option>
+                                        <option value="hindi">Hindi</option>
+                                        <option value="spanish">Spanish</option>
+                                        <option value="french">French</option>
+                                        <option value="german">German</option>
+                                        <option value="arabic">Arabic</option>
+                                    </select>
+                                    <p class="text-sm text-gray-500 mt-2">Hold Ctrl/Cmd to select multiple languages</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="skills">Skills</label>
+                                    <select id="skills" multiple class="h-40">
+                                        <option value="web-design" selected>Web Design</option>
+                                        <option value="graphic-design" selected>Graphic Design</option>
+                                        <option value="ui-ux">UI/UX Design</option>
+                                        <option value="logo-design">Logo Design</option>
+                                        <option value="html-css">HTML/CSS</option>
+                                        <option value="javascript">JavaScript</option>
+                                        <option value="wordpress">WordPress</option>
+                                    </select>
+                                    <p class="text-sm text-gray-500 mt-2">Hold Ctrl/Cmd to select multiple skills</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 7: Publish -->
+                        <div class="step" id="step-7">
+                            <h3 class="text-xl font-bold mb-6">Review & Publish</h3>
+                            
+                            <div class="glass-card p-6 mb-6">
+                                <h4 class="font-bold text-lg mb-4">Checklist</h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                        <span>Gig Overview Completed</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                        <span>Packages Configured</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                        <span>Description Added</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                        <span>FAQ Section Completed</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                        <span>Gallery Images Uploaded</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                        <span>Freelancer Bio Added</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button type="button" class="btn-outline flex-1">
+                                    <i class="fas fa-save mr-2"></i> Save as Draft
+                                </button>
+                                <button type="button" class="btn-primary flex-1">
+                                    <i class="fas fa-rocket mr-2"></i> Publish Gig
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between mt-10">
+                        <button id="prev-btn" class="btn-outline">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous
+                        </button>
+                        <button id="next-btn" class="btn-primary">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Preview -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-6">
+                    <div class="glass-card p-6 mb-6">
+                        <h3 class="text-xl font-bold mb-4">Live Preview</h3>
+                        <div class="gig-preview">
+                            <div class="preview-image" style="background-image: url('https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80')"></div>
+                            <div class="p-5">
+                                <h4 class="font-bold text-lg mb-2" id="preview-title">Professional Website Design</h4>
+                                <div class="flex items-center mb-3">
+                                    <div class="flex items-center text-yellow-400 mr-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <span class="text-sm font-medium">4.8 (128 reviews)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-xl">Starting at $25</span>
+                                    <button class="text-green-500 font-medium">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-6">
+                        <h3 class="text-xl font-bold mb-4">Tips</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                                <span>Use clear, high-quality images to showcase your work</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                                <span>Be specific about what you're offering in your title</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                                <span>Set realistic delivery times to avoid rush fees</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                                <span>Offer multiple packages to cater to different budgets</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Step management
+            const steps = document.querySelectorAll('.step');
+            const stepIndicators = document.querySelectorAll('.step-indicator');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressFill = document.getElementById('progress-fill');
+            const currentStepElement = document.getElementById('current-step');
+            const progressPercentage = document.getElementById('progress-percentage');
+            
+            let currentStep = 1;
+            const totalSteps = steps.length;
+            
+            // Update progress
+            function updateProgress() {
+                const progress = (currentStep / totalSteps) * 100;
+                progressFill.style.width = `${progress}%`;
+                progressPercentage.textContent = `${Math.round(progress)}%`;
+                currentStepElement.textContent = currentStep;
+                
+                // Update step indicators
+                stepIndicators.forEach((indicator, index) => {
+                    indicator.classList.remove('active', 'completed');
+                    if (index + 1 < currentStep) {
+                        indicator.classList.add('completed');
+                    } else if (index + 1 === currentStep) {
+                        indicator.classList.add('active');
+                    }
+                });
+            }
+            
+            // Show current step
+            function showStep(stepNumber) {
+                steps.forEach(step => step.classList.remove('active'));
+                document.getElementById(`step-${stepNumber}`).classList.add('active');
+                
+                // Update buttons
+                if (stepNumber === 1) {
+                    prevBtn.style.visibility = 'hidden';
+                } else {
+                    prevBtn.style.visibility = 'visible';
+                }
+                
+                if (stepNumber === totalSteps) {
+                    nextBtn.innerHTML = 'Publish <i class="fas fa-check ml-2"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right ml-2"></i>';
+                }
+                
+                updateProgress();
+            }
+            
+            // Next button click
+            nextBtn.addEventListener('click', function() {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                } else {
+                    alert('Gig published successfully!');
+                    // Here you would typically submit the form data to your backend
+                }
+            });
+            
+            // Previous button click
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+            
+            // Package selection
+            const packageCards = document.querySelectorAll('.package-card');
+            packageCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    packageCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Update preview title when user types
+            const titleInput = document.getElementById('service-title');
+            const previewTitle = document.getElementById('preview-title');
+            
+            titleInput.addEventListener('input', function() {
+                previewTitle.textContent = this.value || 'Professional Website Design';
+            });
+            
+            // Initialize the form
+            showStep(currentStep);
+        });
+    </script>
+</body>
+</html>
