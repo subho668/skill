@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Gig — Talent-Hub (Part 1/2)</title>
+  <meta name="description" content="Create a new gig — Part 1 (Overview, Packages, Description).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root{
+      --bg1:#061022; --bg2:#041523; --ink:#e6eef8; --muted:#9fb0cc;
+      --glass: rgba(255,255,255,.03); --b: rgba(255,255,255,.06);
+      --brand:#34d399; --brand-ink:#062d22; --err:#ff8a8a;
+    }
+    html,body{height:100%}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--ink);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .glass{background:var(--glass);backdrop-filter:blur(10px);border-radius:12px;border:1px solid var(--b)}
+    .input{
+      width:100%; padding:10px; border-radius:10px; background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06); color:var(--ink);
+    }
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn-plain{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:var(--ink)}
+    .btn-brand{background:var(--brand);color:var(--brand-ink)}
+    .step-dot{width:36px;height:36px;border-radius:999px;border:2px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:800}
+    .step-dot.active{background:var(--brand);color:var(--brand-ink);border-color:transparent;box-shadow:0 8px 28px rgba(52,211,153,.12)}
+    .divider{height:1px;background:rgba(255,255,255,.04);margin:12px 0}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-size:12px}
+    .thumb{width:100px;height:72px;border-radius:10px;background:#0e1836 center/cover no-repeat;border:1px solid rgba(255,255,255,.06)}
+    .err{color:var(--err);font-size:13px}
+    .ok{color:#9be7c4;font-size:13px}
+    .soft{background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.04);border-radius:10px;padding:12px}
+    .addon-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:10px;border-radius:8px;cursor:pointer}
+    .addon-card.selected{border-color:var(--brand);background:rgba(52,211,153,.06)}
+    .tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin:4px}
+    .skill-chip{display:inline-flex;align-items:center;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin:4px}
+    .preview-cover{aspect-ratio:16/10;background:#1b1752 center/cover no-repeat;border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+    .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas, 'Courier New',monospace}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .ai-loading{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,.18);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
+    /* mobile tweaks */
+    @media (max-width:900px){ .lg\\:col-span-2{grid-column:span 1} .stick{position:static} }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NAV -->
+  <nav class="glass sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-300">Talent-Hub</a>
+      <div class="flex items-center gap-3">
+        <span id="loginStatus" class="pill">Checking auth…</span>
+        <a id="loginBtnLink" href="login.html" class="btn btn-plain text-sm">Login</a>
+        <button id="btnLogout" class="btn btn-plain text-sm hidden">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- LEFT: multi-step form -->
+      <section class="lg:col-span-2 glass p-4 md:p-5">
+
+        <div class="kicker">Create new gig</div>
+        <h1 class="text-xl md:text-2xl font-extrabold mt-1 mb-2">Tell clients what you'll deliver</h1>
+        <p class="hint">This is Part 1 — Steps 1–3. Part 2 will include FAQ, Gallery, About & Publish with your Firebase logic.</p>
+
+        <div class="divider my-4"></div>
+
+        <!-- STEPS ROW -->
+        <div class="flex items-center gap-3 mb-4">
+          <div id="dot-1" class="step-dot active">1</div>
+          <div class="flex-1 step-line"></div>
+          <div id="dot-2" class="step-dot">2</div>
+          <div class="flex-1 step-line"></div>
+          <div id="dot-3" class="step-dot">3</div>
+          <div class="flex-1 step-line"></div>
+          <div id="dot-4" class="step-dot">4</div>
+          <div class="flex-1 step-line"></div>
+          <div id="dot-5" class="step-dot">5</div>
+          <div class="flex-1 step-line"></div>
+          <div id="dot-6" class="step-dot">6</div>
+          <div class="flex-1 step-line"></div>
+          <div id="dot-7" class="step-dot">7</div>
+        </div>
+
+        <div class="mt-2 grid grid-cols-7 text-center text-[11px] text-slate-300/80 mb-5">
+          <div>Overview</div><div>Packages</div><div>Add-ons</div><div>Description</div><div>Gallery</div><div>About</div><div>Publish</div>
+        </div>
+
+        <form id="gigForm" class="space-y-6">
+
+          <!-- STEP 1 -->
+          <div id="step-1" class="step-pane">
+            <div class="kicker mb-2">Overview</div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="md:col-span-2">
+                <label class="block mb-1">Gig Title</label>
+                <input id="title" maxlength="120" class="input" placeholder="I will design a professional minimalist logo" />
+                <div class="tip mt-1 text-xs text-slate-300">Max 120 characters</div>
+              </div>
+              <div>
+                <label class="block mb-1">Category</label>
+                <select id="category" class="input">
+                  <option value="">Select</option>
+                  <option>Graphics & Design</option>
+                  <option>Programming & Tech</option>
+                  <option>Digital Marketing</option>
+                  <option>Video & Animation</option>
+                  <option>Writing & Translation</option>
+                  <option>Music & Audio</option>
+                  <option>AI Services</option>
+                </select>
+                <div class="tip mt-1 text-xs text-slate-300">e.g. Programming & Tech</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+              <div class="md:col-span-2">
+                <label class="block mb-1">Subcategory</label>
+                <input id="subcategory" class="input" placeholder="Logo Design / Web App / SEO" />
+              </div>
+              <div>
+                <label class="block mb-1">Delivery (e.g., 3 Days)</label>
+                <input id="delivery" class="input" placeholder="3 Days" />
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <label class="block mb-1">Tags (comma separated)</label>
+              <input id="tagsInput" class="input" placeholder="logo, brand, minimal" />
+              <div id="tagsWrap" class="flex gap-2 flex-wrap mt-2"></div>
+            </div>
+
+            <div class="mt-4">
+              <label class="flex items-center gap-2">
+                <input type="checkbox" id="isSubscription" />
+                <span class="font-semibold">Subscription-based service</span>
+              </label>
+              <div id="subscriptionOptions" class="mt-3 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block mb-1">Monthly Price (₹)</label>
+                    <input id="monthlyPrice" type="number" min="0" step="1" class="input" placeholder="1999" />
+                  </div>
+                  <div>
+                    <label class="block mb-1">Billing Cycle</label>
+                    <select id="billingCycle" class="input">
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly (10% off)</option>
+                      <option value="yearly">Yearly (20% off)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div id="step-2" class="step-pane hidden">
+            <div class="kicker mb-2">Packages</div>
+
+            <div class="soft p-3 mb-4">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">Smart Package Generator</div>
+                <button type="button" id="aiPackageBtn" class="btn btn-plain text-sm"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Packages</button>
+              </div>
+              <div class="tip mt-1 text-xs text-slate-300">Let AI create Basic, Standard, and Premium packages based on your service</div>
+              <div id="aiPackageStatus" class="mt-2 text-sm hidden"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="block mb-1">Starting Price (₹)</label>
+                <input id="price" type="number" min="0" step="1" class="input" placeholder="999" />
+                <div class="tip mt-1 text-xs text-slate-300">You can send custom offers later</div>
+              </div>
+              <div>
+                <label class="block mb-1">Revisions</label>
+                <input id="revisions" type="number" min="0" class="input" placeholder="2" />
+                <div class="tip mt-1 text-xs text-slate-300">How many revisions</div>
+              </div>
+              <div>
+                <label class="block mb-1">Source files</label>
+                <select id="sourceFiles" class="input">
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+                <div class="tip mt-1 text-xs text-slate-300">Will you provide source files?</div>
+              </div>
+            </div>
+
+            <div class="soft p-3 mt-3">
+              <div class="font-semibold mb-2">Key features (comma separated)</div>
+              <input id="pkgFeatures" class="input" placeholder="High quality, Responsive, SEO-friendly, Fast delivery" />
+              <div class="tip mt-1 text-xs text-slate-300">These appear on order card</div>
+            </div>
+
+            <!-- Multi-tier Packages -->
+            <div class="mt-4">
+              <div class="kicker mb-2">Package Tiers</div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="soft p-3">
+                  <div class="font-bold mb-2">Basic</div>
+                  <input id="basicPrice" type="number" min="0" class="input mb-2" placeholder="Price" />
+                  <textarea id="basicFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+                </div>
+                <div class="soft p-3">
+                  <div class="font-bold mb-2">Standard</div>
+                  <input id="standardPrice" type="number" min="0" class="input mb-2" placeholder="Price" />
+                  <textarea id="standardFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+                </div>
+                <div class="soft p-3">
+                  <div class="font-bold mb-2">Premium</div>
+                  <input id="premiumPrice" type="number" min="0" class="input mb-2" placeholder="Price" />
+                  <textarea id="premiumFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div id="step-3" class="step-pane hidden">
+            <div class="kicker mb-2">Description & Skills</div>
+
+            <div>
+              <label class="block mb-1">Description</label>
+              <textarea id="description" rows="8" class="input" placeholder="Explain what you will deliver, process, requirements, and what makes you unique..."></textarea>
+              <div class="tip mt-1 text-xs text-slate-300">Add process, deliverables, tools & stack</div>
+            </div>
+
+            <div class="mt-3">
+              <label class="block mb-1">Skills / Tags</label>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <input id="skillsInput" class="input" placeholder="e.g., Figma, React, Logo" />
+                <button id="addSkill" type="button" class="btn btn-plain">Add</button>
+                <button id="clearSkill" type="button" class="btn btn-plain">Clear</button>
+              </div>
+              <div id="skillsWrap" class="flex gap-2 flex-wrap mt-2"></div>
+            </div>
+
+            <div class="mt-4">
+              <div class="kicker mb-2">Frequently Asked Questions</div>
+              <div id="faqContainer">
+                <div class="faq-item mb-3">
+                  <input class="input mb-2 faq-q" placeholder="Question" />
+                  <textarea class="input faq-a" rows="2" placeholder="Answer"></textarea>
+                </div>
+              </div>
+              <button type="button" id="addFaq" class="btn btn-plain mt-2">+ Add FAQ</button>
+            </div>
+          </div>
+
+          <!-- note: steps 4-7 placeholders live in Part 2 -->
+        </form>
+
+        <div class="divider my-5"></div>
+
+        <div class="flex items-center justify-between gap-3">
+          <button id="btnPrev" class="btn btn-plain"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+          <div class="text-sm text-slate-300" id="stepNote">Step 1 of 7</div>
+          <button id="btnNext" class="btn btn-plain">Next <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+      </section>
+
+      <!-- RIGHT: sticky live preview + profile -->
+      <aside class="space-y-4">
+
+        <!-- Profile -->
+        <div class="glass p-4">
+          <div class="kicker mb-1">Your profile</div>
+          <div class="flex items-center gap-3">
+            <img id="uPhoto" class="w-12 h-12 rounded-full object-cover border border-white/10" src="https://via.placeholder.com/80" />
+            <div>
+              <div id="uName" class="font-extrabold">—</div>
+              <div id="uEmail" class="text-xs text-slate-300">—</div>
+            </div>
+          </div>
+          <div class="mt-3 text-sm text-slate-300">Your display name appears as seller name on your gig.</div>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="glass p-4 stick" id="previewCard">
+          <div class="kicker mb-1">Live preview</div>
+          <div id="liveThumb" class="preview-cover" style="background-image:url('https://via.placeholder.com/1200x800?text=Preview');"></div>
+          <div class="mt-3">
+            <div class="text-slate-300 text-xs">Title</div>
+            <div id="pvTitle" class="font-extrabold text-white text-lg truncate">—</div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <div class="soft p-2">
+              <div class="text-[11px] text-slate-400">Category</div>
+              <div id="pvCat" class="font-semibold text-sm">—</div>
+            </div>
+            <div class="soft p-2">
+              <div class="text-[11px] text-slate-400">Delivery</div>
+              <div id="pvDel" class="font-semibold text-sm">—</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <div class="soft p-2">
+              <div class="text-[11px] text-slate-400">Price</div>
+              <div id="pvPrice" class="font-black text-emerald-300 text-base">₹0</div>
+            </div>
+            <div class="soft p-2">
+              <div class="text-[11px] text-slate-400">Revisions</div>
+              <div id="pvRev" class="font-semibold text-sm">—</div>
+            </div>
+          </div>
+          <div class="mt-2">
+            <div class="text-[11px] text-slate-400">Features</div>
+            <div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div>
+          </div>
+          <div id="pvSubscription" class="mt-2 hidden">
+            <div class="badge bg-emerald-900/30 text-emerald-300"><i class="fa-solid fa-repeat"></i> Subscription Available</div>
+          </div>
+        </div>
+
+        <div class="glass p-4">
+          <div class="kicker mb-1">Pro tips</div>
+          <ul class="list-disc list-inside text-sm text-slate-300 space-y-1">
+            <li>Use clear, high-res images of your work.</li>
+            <li>Set realistic delivery times.</li>
+            <li>Add 5–8 skills/tags for better discovery.</li>
+            <li>Keep title specific (niche works better).</li>
+            <li>Offer subscription options for recurring work.</li>
+          </ul>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <footer class="text-center py-8 text-slate-300">© 2025 Talent-Hub</footer>
+
+  <!-- PART 1 JS -->
+  <script>
+    // Short selectors
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    // Elements & state
+    const stepPanes = {
+      1: $('#step-1'),
+      2: $('#step-2'),
+      3: $('#step-3'),
+      // steps 4-7 placeholders are in Part 2
+      4: $('#step-4'),
+      5: $('#step-5'),
+      6: $('#step-6'),
+      7: $('#step-7')
+    };
+    const dots = {1:$('#dot-1'),2:$('#dot-2'),3:$('#dot-3'),4:$('#dot-4'),5:$('#dot-5'),6:$('#dot-6'),7:$('#dot-7')};
+    const btnPrev = $('#btnPrev'), btnNext = $('#btnNext'), stepNote = $('#stepNote');
+
+    // Step fields
+    const titleEl = $('#title'), categoryEl = $('#category'), subcatEl = $('#subcategory'), deliveryEl = $('#delivery');
+    const tagsInput = $('#tagsInput'), tagsWrap = $('#tagsWrap');
+    const isSubscriptionEl = $('#isSubscription'), subscriptionOptions = $('#subscriptionOptions'), monthlyPriceEl = $('#monthlyPrice'), billingCycleEl = $('#billingCycle');
+
+    // packages
+    const priceEl = $('#price'), revisionsEl = $('#revisions'), sourceFilesEl = $('#sourceFiles'), pkgFeaturesEl = $('#pkgFeatures');
+    const basicPriceEl = $('#basicPrice'), basicFeaturesEl = $('#basicFeatures'), standardPriceEl = $('#standardPrice'), standardFeaturesEl = $('#standardFeatures'), premiumPriceEl = $('#premiumPrice'), premiumFeaturesEl = $('#premiumFeatures');
+    const aiPackageBtn = $('#aiPackageBtn'), aiPackageStatus = $('#aiPackageStatus');
+
+    // description & skills
+    const descEl = $('#description'), skillsInput = $('#skillsInput'), addSkillBtn = $('#addSkill'), clearSkillBtn = $('#clearSkill'), skillsWrap = $('#skillsWrap');
+
+    // preview elements
+    const pvTitle = $('#pvTitle'), pvCat = $('#pvCat'), pvDel = $('#pvDel'), pvPrice = $('#pvPrice'), pvRev = $('#pvRev'), pvFeat = $('#pvFeat'), pvSubscription = $('#pvSubscription'), liveThumb = $('#liveThumb');
+
+    // small util
+    function byId(id){ return document.getElementById(id); }
+
+    // state
+    let currentStep = 1, maxStep = 7;
+    let tags = [], skills = [], addons = [];
+
+    // Show step
+    function gotoStep(n){
+      currentStep = Math.max(1, Math.min(maxStep, n));
+      for (let i=1;i<=maxStep;i++){
+        const pane = stepPanes[i];
+        if (pane) pane.classList.toggle('hidden', i!==currentStep);
+        const dot = dots[i];
+        if (dot) dot.classList.toggle('active', i<=currentStep);
+      }
+      stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
+      if (currentStep <= 3) renderPreview();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    gotoStep(1);
+
+    btnPrev.addEventListener('click', ()=> gotoStep(currentStep-1));
+    btnNext.addEventListener('click', ()=> gotoStep(currentStep+1));
+
+    Object.values(dots).forEach((d, idx)=>{
+      d.addEventListener('click', ()=> gotoStep(idx+1));
+    });
+
+    // TAGS handler
+    function renderTags(){
+      tagsWrap.innerHTML = '';
+      tags.forEach((t,i)=>{
+        const el = document.createElement('div'); el.className='tag';
+        el.innerText = t;
+        const btn = document.createElement('button'); btn.style.marginLeft='8px'; btn.style.background='transparent'; btn.style.border='none';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        btn.addEventListener('click', ()=> { tags.splice(i,1); renderTags(); });
+        el.appendChild(btn);
+        tagsWrap.appendChild(el);
+      });
+      renderPreview();
+    }
+    tagsInput.addEventListener('keyup', (e)=>{
+      if (e.key === 'Enter' || e.key === ','){
+        e.preventDefault();
+        const raw = tagsInput.value.trim().replace(/,+$/,'');
+        if (!raw) { tagsInput.value=''; return; }
+        const parts = raw.split(',').map(s=>s.trim()).filter(Boolean);
+        parts.forEach(p=> { if (!tags.includes(p)) tags.push(p); });
+        tagsInput.value=''; renderTags();
+      }
+    });
+
+    // Subscription toggle
+    isSubscriptionEl?.addEventListener('change', ()=>{
+      if (isSubscriptionEl.checked) subscriptionOptions.classList.remove('hidden'); else subscriptionOptions.classList.add('hidden');
+      pvSubscription.classList.toggle('hidden', !isSubscriptionEl.checked);
+    });
+
+    // Preview render
+    function renderPreview(){
+      pvTitle.textContent = titleEl?.value?.trim() || '—';
+      pvCat.textContent = categoryEl?.value || '—';
+      pvDel.textContent = deliveryEl?.value || '—';
+      pvPrice.textContent = '₹' + (Number(priceEl?.value || 0));
+      pvRev.textContent = (revisionsEl?.value || '—');
+      pvFeat.innerHTML = '';
+      const feats = (pkgFeaturesEl?.value || '').split(',').map(s=>s.trim()).filter(Boolean);
+      feats.forEach(f=>{
+        const x = document.createElement('div'); x.className='badge'; x.style.marginRight='6px';
+        x.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`;
+        pvFeat.appendChild(x);
+      });
+      pvSubscription.classList.toggle('hidden', !isSubscriptionEl?.checked);
+    }
+    [titleEl, categoryEl, deliveryEl, priceEl, revisionsEl, pkgFeaturesEl].forEach(el=>{
+      if (!el) return;
+      el.addEventListener('input', renderPreview);
+      el.addEventListener('change', renderPreview);
+    });
+
+    // SKILLS
+    function renderSkills(){
+      skillsWrap.innerHTML='';
+      skills.forEach((s,i)=>{
+        const sp = document.createElement('div'); sp.className='skill-chip'; sp.textContent = s;
+        sp.title='Click to remove'; sp.style.cursor='pointer'; sp.addEventListener('click', ()=> { skills.splice(i,1); renderSkills(); });
+        skillsWrap.appendChild(sp);
+      });
+    }
+    addSkillBtn.addEventListener('click', ()=> {
+      const v = (skillsInput.value||'').trim();
+      if (!v) return;
+      if (!skills.includes(v)) skills.push(v);
+      skillsInput.value = ''; renderSkills();
+    });
+    skillsInput.addEventListener('keyup', (e)=> { if (e.key==='Enter') addSkillBtn.click(); });
+    clearSkillBtn.addEventListener('click', ()=> { skills = []; renderSkills(); });
+
+    // FAQ Add (basic UI)
+    const addFaqBtn = $('#addFaq');
+    addFaqBtn.addEventListener('click', ()=>{
+      const container = $('#faqContainer');
+      const div = document.createElement('div'); div.className='faq-item mb-3';
+      div.innerHTML = `<input class="input mb-2 faq-q" placeholder="Question" /><textarea class="input faq-a" rows="2" placeholder="Answer"></textarea><div class="text-right mt-2"><button class="btn btn-plain remove-faq">Remove</button></div>`;
+      container.appendChild(div);
+      div.querySelector('.remove-faq').addEventListener('click', ()=> div.remove());
+    });
+
+    // AI Package Generator (simulation)
+    aiPackageBtn?.addEventListener('click', async ()=>{
+      const title = (titleEl.value||'').trim(); const category = categoryEl.value || '';
+      if (!title || !category) { alert('Please provide a title and category first'); return; }
+      aiPackageStatus.classList.remove('hidden');
+      aiPackageStatus.innerHTML = '<span class="ai-loading"></span> Generating packages...';
+      aiPackageBtn.disabled = true;
+      try{
+        await new Promise(r=>setTimeout(r,1200));
+        let basicPrice, standardPrice, premiumPrice, basicFeatures, standardFeatures, premiumFeatures;
+        if (category.includes('Design') || title.toLowerCase().includes('design')){
+          basicPrice=1499; standardPrice=3499; premiumPrice=6999;
+          basicFeatures='1 concept\n2 revisions\nPNG/JPG'; standardFeatures='2 concepts\n4 revisions\nSource files'; premiumFeatures='3 concepts\nUnlimited revisions\nSource files\nMockups';
+        } else if (category.includes('Programming')||category.includes('Tech')||title.toLowerCase().includes('app')){
+          basicPrice=4999; standardPrice=8999; premiumPrice=14999;
+          basicFeatures='Basic functionality\n1 revision\nDocs'; standardFeatures='Advanced features\n3 revisions\nSource code'; premiumFeatures='Complete solution\nUnlimited revisions\nDeployment';
+        } else {
+          basicPrice=1999; standardPrice=3999; premiumPrice=7999;
+          basicFeatures='Basic service\n2 revisions'; standardFeatures='Enhanced service\n4 revisions'; premiumFeatures='Complete package\nPriority support';
+        }
+        basicPriceEl.value = basicPrice; basicFeaturesEl.value = basicFeatures;
+        standardPriceEl.value = standardPrice; standardFeaturesEl.value = standardFeatures;
+        premiumPriceEl.value = premiumPrice; premiumFeaturesEl.value = premiumFeatures;
+        priceEl.value = basicPrice;
+        aiPackageStatus.innerHTML = '<span class="ok">✓ Packages generated</span>';
+      }catch(err){
+        aiPackageStatus.innerHTML = `<span class="err">Failed: ${err?.message || err}</span>`;
+      }finally{
+        setTimeout(()=>{ aiPackageStatus.classList.add('hidden'); aiPackageBtn.disabled=false; }, 1400);
+      }
+    });
+
+    // Soft validation (visual only)
+    function softValidate(){
+      const fields = [[titleEl,'Title'],[priceEl,'Price'],[categoryEl,'Category'],[subcatEl,'Subcategory'],[deliveryEl,'Delivery'],[descEl,'Description']];
+      const missing = [];
+      fields.forEach(([el,name])=>{
+        if (!el) return;
+        const empty = !String(el.value||'').trim();
+        el.classList.toggle('danger', empty);
+        if (empty) missing.push(name);
+      });
+      return missing;
+    }
+    setInterval(()=>{ if (currentStep !== 7) softValidate(); }, 1500);
+
+    // Build preview payload (used for debug preview & local save)
+    function buildPreviewPayload(){
+      const feats = (pkgFeaturesEl?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+      const packages = [];
+      if (basicPriceEl && basicPriceEl.value) packages.push({name:'Basic',price:Number(basicPriceEl.value),features:(basicFeaturesEl.value||'').split('\\n').filter(Boolean)});
+      if (standardPriceEl && standardPriceEl.value) packages.push({name:'Standard',price:Number(standardPriceEl.value),features:(standardFeaturesEl.value||'').split('\\n').filter(Boolean)});
+      if (premiumPriceEl && premiumPriceEl.value) packages.push({name:'Premium',price:Number(premiumPriceEl.value),features:(premiumFeaturesEl.value||'').split('\\n').filter(Boolean)});
+      const faqs = [];
+      document.querySelectorAll('#faqContainer .faq-item').forEach(item=>{
+        const q = item.querySelector('.faq-q')?.value?.trim();
+        const a = item.querySelector('.faq-a')?.value?.trim();
+        if (q && a) faqs.push({question:q,answer:a});
+      });
+      return {
+        title: titleEl.value || 'Not Provided',
+        category: categoryEl.value || 'Not Provided',
+        subcategory: subcatEl.value || 'Not Provided',
+        delivery: deliveryEl.value || 'Not Provided',
+        price: Number(priceEl.value || 0),
+        revisions: Number(revisionsEl.value || 0),
+        sourceFiles: sourceFilesEl.value || 'Not Provided',
+        features: feats,
+        packages,
+        tags,
+        skills,
+        isSubscription: isSubscriptionEl.checked ? {monthly:monthlyPriceEl.value||0,cycle:billingCycleEl.value} : false,
+        description: descEl.value || 'Not Provided',
+        faqs
+      };
+    }
+
+    // Debug preview if debug element exists in Part 2 later
+    function renderDebugIfExists(){
+      const dbg = document.getElementById('debugJson') || document.getElementById('debugOutput');
+      if (!dbg) return;
+      dbg.textContent = JSON.stringify(buildPreviewPayload(), null, 2);
+    }
+
+    // Bind inputs to render preview + debug
+    [titleEl,categoryEl,subcatEl,deliveryEl,priceEl,revisionsEl,pkgFeaturesEl,basicFeaturesEl,standardFeaturesEl,premiumFeaturesEl,descEl].forEach(el=>{
+      if (!el) return;
+      el.addEventListener('input', ()=>{ renderPreview(); renderDebugIfExists(); });
+      el.addEventListener('change', ()=>{ renderPreview(); renderDebugIfExists(); });
+    });
+
+    // attempt load from temp local backup
+    (function restoreLocal(){
+      try{
+        const raw = localStorage.getItem('talenthub_gig_temp');
+        if (!raw) return;
+        const obj = JSON.parse(raw);
+        if (obj.title) titleEl.value = obj.title;
+        if (obj.category) categoryEl.value = obj.category;
+        if (obj.subcategory) subcatEl.value = obj.subcategory;
+        if (obj.delivery) deliveryEl.value = obj.delivery;
+        if (obj.price) priceEl.value = obj.price;
+        if (obj.packages && obj.packages.length){
+          const b = obj.packages.find(p=>p.name==='Basic'); if (b){ basicPriceEl.value = b.price; basicFeaturesEl.value = (b.features||[]).join('\\n'); }
+          const s = obj.packages.find(p=>p.name==='Standard'); if (s){ standardPriceEl.value = s.price; standardFeaturesEl.value = (s.features||[]).join('\\n'); }
+          const p = obj.packages.find(p=>p.name==='Premium'); if (p){ premiumPriceEl.value = p.price; premiumFeaturesEl.value = (p.features||[]).join('\\n'); }
+        }
+        if (obj.features) pkgFeaturesEl.value = obj.features.join(', ');
+        if (obj.tags) { tags = obj.tags; renderTags(); }
+        if (obj.skills) { skills = obj.skills; renderSkills(); }
+        if (obj.description) descEl.value = obj.description;
+        // restore faqs
+        const faqData = obj.faqs || [];
+        const faqContainer = $('#faqContainer');
+        faqContainer.innerHTML = ''; // reset
+        if (faqData.length){
+          faqData.forEach(f=>{
+            const div = document.createElement('div'); div.className='faq-item mb-3';
+            div.innerHTML = `<input class="input mb-2 faq-q" value="${(f.question||'').replaceAll('"','&quot;')}" placeholder="Question" /><textarea class="input faq-a" rows="2" placeholder="Answer">${(f.answer||'').replaceAll('"','&quot;')}</textarea>`;
+            faqContainer.appendChild(div);
+            const rm = document.createElement('div'); rm.className='text-right mt-2'; rm.innerHTML = '<button class="btn btn-plain remove-faq">Remove</button>'; div.appendChild(rm);
+            rm.querySelector('.remove-faq').addEventListener('click', ()=> div.remove());
+          });
+        } else {
+          // leave default
+        }
+        renderPreview(); renderDebugIfExists();
+      }catch(e){}
+    })();
+
+    // auto-save to localStorage every 6s (non-blocking)
+    setInterval(()=>{
+      try{
+        const snapshot = buildPreviewPayload();
+        localStorage.setItem('talenthub_gig_temp', JSON.stringify(snapshot));
+      }catch(e){}
+    }, 6000);
+
+    // keyboard shortcut: Ctrl+S save local snapshot (not firebase)
+    window.addEventListener('keydown', (e)=>{
+      if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); try{ localStorage.setItem('talenthub_gig_temp', JSON.stringify(buildPreviewPayload())); alert('Temporary draft saved locally'); }catch(e){ alert('Save failed'); } }
+    });
+
+    // small helper to remove danger CSS on reset
+    window.addEventListener('reset', ()=>{
+      document.querySelectorAll('.danger').forEach(el=> el.classList.remove('danger'));
+    });
+
+    // final: expose some helpers to console for dev
+    window.__talentHub = {
+      buildPreviewPayload, renderPreview, gotoStep
+    };
+
+    // end of Part 1 JS
+  </script>
+
+</body>
+</html>
