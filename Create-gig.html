@@ -1,0 +1,1388 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Create Gig — Talent-Hub</title>
+    <meta name="description"
+        content="Create a new gig — Talent-Hub. Multi-step wizard, optional images, real-time preview." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --bg1: #0a1024;
+            --bg2: #050a1a;
+            --ink: #e9f0fb;
+            --muted: #a8b6d3;
+            --glass: rgba(255, 255, 255, .04);
+            --b: rgba(255, 255, 255, .08);
+            --brand: #34d399;
+            --brand-ink: #062d22;
+            --warn: #ffcc66;
+            --err: #ff8a8a;
+        }
+
+        body {
+            font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+            color: var(--ink)
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--b);
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .28)
+        }
+
+        .pill {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            font-size: 12px;
+            color: #b9c6db
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
+            transition: transform .12s ease, filter .12s ease
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(.99)
+        }
+
+        .btn-brand {
+            background: var(--brand);
+            color: var(--brand-ink)
+        }
+
+        .btn-plain {
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: #fff
+        }
+
+        .kicker {
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #9db2cf;
+            font-size: 11px
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #9fb0cc
+        }
+
+        .tip {
+            font-size: 11px;
+            color: #a9bad6
+        }
+
+        .chip {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            font-size: 12px
+        }
+
+        .thumb {
+            width: 100px;
+            height: 74px;
+            border-radius: 10px;
+            background: #0e1836 center/cover no-repeat;
+            border: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .err {
+            color: var(--err);
+            font-size: 12px
+        }
+
+        .ok {
+            color: #9be7c4;
+            font-size: 12px
+        }
+
+        .warn {
+            color: var(--warn);
+            font-size: 12px
+        }
+
+        .step-dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            border: 2px solid rgba(255, 255, 255, .15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900
+        }
+
+        .step-dot.active {
+            background: var(--brand);
+            color: var(--brand-ink);
+            border-color: transparent;
+            box-shadow: 0 6px 16px rgba(52, 211, 153, .3)
+        }
+
+        .step-line {
+            height: 2px;
+            background: rgba(255, 255, 255, .1)
+        }
+
+        .soft {
+            background: rgba(255, 255, 255, .03);
+            border: 1px dashed rgba(255, 255, 255, .08);
+            border-radius: 12px
+        }
+
+        .stick {
+            position: sticky;
+            top: 90px
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(80, 55, 55, 0.06);
+            border: 1px solid rgba(255, 255, 255, .08);
+            font-size: 12px
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(122, 29, 29, 0.05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: rgb(187, 179, 179)
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: rgba(12, 12, 12, 0.25)
+        }
+
+        .danger {
+            border-color: rgba(255, 100, 100, .45) !important
+        }
+
+        .preview-cover {
+            aspect-ratio: 16/10;
+            background: #1b1752 center/cover no-repeat;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+        }
+        
+        /* New styles for enhanced features */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--brand);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .addon-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .addon-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        
+        .addon-card.selected {
+            border-color: var(--brand);
+            background: rgba(52, 211, 153, 0.1);
+        }
+        
+        .ai-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .subscription-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .subscription-option.selected {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid var(--brand);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- NAV -->
+    <nav class="glass sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub</a>
+            <div class="flex items-center gap-2">
+                
+                <span id="loginStatus" class="pill">Checking auth…</span>
+                <a id="loginBtnLink" href="login.html" class="btn btn-plain text-sm">Login</a>
+                <button id="btnLogout" class="btn btn-plain text-sm hidden">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PROGRESS BAR -->
+    <header class="max-w-6xl mx-auto px-4 md:px-6 mt-5">
+        <div class="glass p-3 md:p-4">
+            <div class="flex items-center gap-3">
+                <div id="dot-1" class="step-dot active">1</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-2" class="step-dot">2</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-3" class="step-dot">3</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-4" class="step-dot">4</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-5" class="step-dot">5</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-6" class="step-dot">6</div>
+            </div>
+            <div class="mt-2 grid grid-cols-6 text-center text-[11px] text-slate-300/80">
+                <div>Overview</div>
+                <div>Packages</div>
+                <div>Add-ons</div>
+                <div>Description & Skills</div>
+                <div>Gallery</div>
+                <div>Review & Publish</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- LEFT: multi-step form -->
+            <section class="lg:col-span-2 glass p-4 md:p-5">
+
+                <div class="kicker">Create new gig</div>
+                <h1 class="text-xl md:text-2xl font-extrabold mt-1 mb-2">Tell clients what you'll deliver</h1>
+                <p class="hint">Free navigation: aage ke steps dekh sakte ho; Publish hamesha active hai.</p>
+
+                <div class="divider my-4"></div>
+
+                <!-- STEPS NAV -->
+                <div class="flex gap-2 flex-wrap mb-4">
+                    <button data-step="1" class="btn btn-plain step-tab">1. Overview</button>
+                    <button data-step="2" class="btn btn-plain step-tab">2. Packages</button>
+                    <button data-step="3" class="btn btn-plain step-tab">3. Add-ons</button>
+                    <button data-step="4" class="btn btn-plain step-tab">4. Description & Skills</button>
+                    <button data-step="5" class="btn btn-plain step-tab">5. Gallery</button>
+                    <button data-step="6" class="btn btn-plain step-tab">6. Review & Publish</button>
+                </div>
+
+                <form id="gigForm" class="space-y-6">
+
+                    <!-- STEP 1 -->
+                    <div id="step-1" class="step-pane">
+                        <div class="kicker mb-2">Overview</div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="md:col-span-2">
+                                <label class="block mb-1">Gig Title</label>
+                                <input id="title" maxlength="120" class="input"
+                                    placeholder="I will design a professional minimalist logo">
+                                <div class="tip mt-1">Max 120 characters</div>
+                            </div>
+                            <div>
+                                <label class="block mb-1">Category</label>
+                                <select id="category" class="input">
+                                    <option value="">Select</option>
+                                    <option>Graphics & Design</option>
+                                    <option>Programming & Tech</option>
+                                    <option>Digital Marketing</option>
+                                    <option>Video & Animation</option>
+                                    <option>Writing & Translation</option>
+                                    <option>Music & Audio</option>
+                                    <option>AI Services</option>
+                                </select>
+                                <div class="tip mt-1">e.g. Programming & Tech</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="md:col-span-2">
+                                <label class="block mb-1">Subcategory</label>
+                                <input id="subcategory" class="input" placeholder="Logo Design / Web App / SEO">
+                            </div>
+                            <div>
+                                <label class="block mb-1">Delivery (e.g., 3 Days)</label>
+                                <input id="delivery" class="input" placeholder="3 Days">
+                            </div>
+                        </div>
+                        
+                        <!-- Subscription Option -->
+                        <div class="mt-4">
+                            <label class="flex items-center gap-2">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="isSubscription">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                                <span class="font-semibold">Subscription-based service</span>
+                            </label>
+                            <div class="tip mt-1">Offer this as a recurring monthly service</div>
+                            
+                            <div id="subscriptionOptions" class="mt-3 hidden">
+                                <div class="kicker mb-2">Subscription Options</div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block mb-1">Monthly Price (₹)</label>
+                                        <input id="monthlyPrice" type="number" min="0" step="1" class="input" placeholder="1999">
+                                    </div>
+                                    <div>
+                                        <label class="block mb-1">Billing Cycle</label>
+                                        <select id="billingCycle" class="input">
+                                            <option value="monthly">Monthly</option>
+                                            <option value="quarterly">Quarterly (10% off)</option>
+                                            <option value="yearly">Yearly (20% off)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div id="step-2" class="step-pane hidden">
+                        <div class="kicker mb-2">Packages</div>
+                        
+                        <!-- Smart Package Generator -->
+                        <div class="soft p-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <div class="font-semibold">Smart Package Generator</div>
+                                <button type="button" id="aiPackageBtn" class="btn btn-plain text-sm">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Packages
+                                </button>
+                            </div>
+                            <div class="tip mt-1">Let AI create Basic, Standard, and Premium packages based on your service</div>
+                            <div id="aiPackageStatus" class="mt-2 text-sm hidden"></div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block mb-1">Starting Price (₹)</label>
+                                <input id="price" type="number" min="0" step="1" class="input" placeholder="999">
+                                <div class="tip mt-1">You can send custom offers later</div>
+                            </div>
+                            <div>
+                                <label class="block mb-1">Revisions</label>
+                                <input id="revisions" type="number" min="0" class="input" placeholder="2">
+                                <div class="tip mt-1">How many revisions</div>
+                            </div>
+                            <div>
+                                <label class="block mb-1">Source files</label>
+                                <select id="sourceFiles" class="input">
+                                    <option value="">Select</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                <div class="tip mt-1">Will you provide source files?</div>
+                            </div>
+                        </div>
+
+                        <div class="soft p-3 mt-3">
+                            <div class="font-semibold mb-2">Key features (comma separated)</div>
+                            <input id="pkgFeatures" class="input"
+                                placeholder="High quality, Responsive, SEO-friendly, Fast delivery">
+                            <div class="tip mt-1">These appear on order card</div>
+                        </div>
+                        
+                        <!-- Multi-tier Packages -->
+                        <div class="mt-4">
+                            <div class="kicker mb-2">Package Tiers</div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div class="soft p-3">
+                                    <div class="font-bold mb-2">Basic</div>
+                                    <input id="basicPrice" type="number" min="0" class="input mb-2" placeholder="Price">
+                                    <textarea id="basicFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+                                </div>
+                                <div class="soft p-3">
+                                    <div class="font-bold mb-2">Standard</div>
+                                    <input id="standardPrice" type="number" min="0" class="input mb-2" placeholder="Price">
+                                    <textarea id="standardFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+                                </div>
+                                <div class="soft p-3">
+                                    <div class="font-bold mb-2">Premium</div>
+                                    <input id="premiumPrice" type="number" min="0" class="input mb-2" placeholder="Price">
+                                    <textarea id="premiumFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: ADD-ONS -->
+                    <div id="step-3" class="step-pane hidden">
+                        <div class="kicker mb-2">Add-on Marketplace</div>
+                        <p class="hint mb-4">Select standard add-ons that clients can purchase with your service</p>
+                        
+                        <div id="addonList">
+                            <!-- Add-ons will be populated here -->
+                        </div>
+                        
+                        <div class="mt-4">
+                            <div class="kicker mb-2">Custom Add-ons</div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <input id="customAddonName" class="input mb-2" placeholder="Add-on name">
+                                </div>
+                                <div>
+                                    <input id="customAddonPrice" type="number" class="input mb-2" placeholder="Price (₹)">
+                                </div>
+                            </div>
+                            <textarea id="customAddonDesc" class="input mb-2" placeholder="Description" rows="2"></textarea>
+                            <button type="button" id="addCustomAddon" class="btn btn-plain">Add Custom Add-on</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4 -->
+                    <div id="step-4" class="step-pane hidden">
+                        <div class="kicker mb-2">Description & Skills</div>
+
+                        <div>
+                            <label class="block mb-1">Description</label>
+                            <textarea id="description" rows="8" class="input"
+                                placeholder="Explain what you will deliver, process, requirements, and what makes you unique..."></textarea>
+                            <div class="tip mt-1">Add process, deliverables, tools & stack</div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="block mb-1">Skills / Tags</label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <input id="skillsInput" class="input" placeholder="e.g., Figma, React, Logo">
+                                <button id="addSkill" type="button" class="btn btn-plain">Add</button>
+                                <button id="clearSkill" type="button" class="btn btn-plain">Clear</button>
+                            </div>
+                            <div id="skillsWrap" class="flex gap-2 flex-wrap mt-2"></div>
+                        </div>
+                        
+                        <!-- FAQ Section -->
+                        <div class="mt-4">
+                            <div class="kicker mb-2">Frequently Asked Questions</div>
+                            <div id="faqContainer">
+                                <div class="faq-item mb-3">
+                                    <input class="input mb-2" placeholder="Question">
+                                    <textarea class="input" rows="2" placeholder="Answer"></textarea>
+                                </div>
+                            </div>
+                            <button type="button" id="addFaq" class="btn btn-plain mt-2">+ Add FAQ</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5 -->
+                    <div id="step-5" class="step-pane hidden">
+                        <div class="kicker mb-2">Gallery</div>
+                        <label class="block mb-1">Images (Optional, 1–6)</label>
+                        <input id="images" type="file" accept="image/*" multiple class="input">
+                        <div class="tip mt-1">If not provided, we'll save a placeholder thumbnail.</div>
+                        <div id="preview" class="mt-3 flex gap-2 flex-wrap"></div>
+                        
+                        <!-- Video Upload -->
+                        <div class="mt-4">
+                            <label class="block mb-1">Video (Optional)</label>
+                            <input id="video" type="file" accept="video/*" class="input">
+                            <div class="tip mt-1">Short intro or work showcase video (max 2 min)</div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 6 -->
+                    <div id="step-6" class="step-pane hidden">
+                        <div class="kicker mb-2">Review & Publish</div>
+
+                        <div class="soft p-3">
+                            <div class="font-bold mb-2">Checklist</div>
+                            <ul id="checklist" class="text-sm text-slate-200 space-y-1">
+                                <!-- auto populated -->
+                            </ul>
+                            <div class="mt-2 warn">Tip: Aap abhi bhi publish kar sakte ho — blank fields "Not Provided"
+                                ke saath save honge.</div>
+                        </div>
+                        
+                        <!-- Collaboration Tools Option -->
+                        <div class="mt-4">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" id="enableCollabTools" checked>
+                                <span class="font-semibold">Enable Collaboration Tools</span>
+                            </label>
+                            <div class="tip mt-1">Built-in chat, file sharing, and video call system for better client communication</div>
+                        </div>
+                        
+                        <!-- Gamification Options -->
+                        <div class="mt-4">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" id="enableGamification" checked>
+                                <span class="font-semibold">Enable Performance Badges</span>
+                            </label>
+                            <div class="tip mt-1">Earn badges for on-time delivery, positive reviews, and client satisfaction</div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                            <button id="btnSaveDraft" type="button" class="btn btn-plain">Save Draft</button>
+                            <button id="btnPublish" type="button" class="btn btn-brand"><i class="fa-solid fa-bolt"></i>
+                                Publish Gig</button>
+                            <button id="btnReset" type="reset" class="btn btn-plain">Reset</button>
+                        </div>
+
+                        <div id="formStatus" class="mt-2 text-sm"></div>
+
+                        <div class="mt-4">
+                            <div class="kicker mb-1">Debug (for devs)</div>
+                            <pre id="debugJson" class="soft p-3 text-xs code overflow-auto"></pre>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- bottom nav -->
+                <div class="divider my-5"></div>
+                <div class="flex items-center justify-between gap-3">
+                    <button id="btnPrev" class="btn btn-plain"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+                    <div class="text-sm text-slate-300" id="stepNote">Step 1 of 6</div>
+                    <button id="btnNext" class="btn btn-plain">Next <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+            </section>
+
+            <!-- RIGHT: sticky live preview + profile -->
+            <aside class="space-y-4">
+
+                <!-- Profile -->
+                <div class="glass p-4">
+                    <div class="kicker mb-1">Your profile</div>
+                    <div class="flex items-center gap-3">
+                        <img id="uPhoto" class="w-12 h-12 rounded-full object-cover border border-white/10"
+                            src="https://via.placeholder.com/80" />
+                        <div>
+                            <div id="uName" class="font-extrabold">—</div>
+                            <div id="uEmail" class="text-xs text-slate-300">—</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-sm text-slate-300">Your display name appears as seller name on your gig.</div>
+                </div>
+
+                <!-- Live Preview -->
+                <div class="glass p-4 stick" id="previewCard">
+                    <div class="kicker mb-1">Live preview</div>
+                    <div id="liveThumb" class="preview-cover"
+                        style="background-image:url('https://via.placeholder.com/1200x800?text=Preview');"></div>
+                    <div class="mt-3">
+                        <div class="text-slate-300 text-xs">Title</div>
+                        <div id="pvTitle" class="font-extrabold text-white text-lg truncate">—</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Category</div>
+                            <div id="pvCat" class="font-semibold text-sm">—</div>
+                        </div>
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Delivery</div>
+                            <div id="pvDel" class="font-semibold text-sm">—</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Price</div>
+                            <div id="pvPrice" class="font-black text-emerald-300 text-base">₹0</div>
+                        </div>
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Revisions</div>
+                            <div id="pvRev" class="font-semibold text-sm">—</div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="text-[11px] text-slate-400">Features</div>
+                        <div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div>
+                    </div>
+                    <div id="pvSubscription" class="mt-2 hidden">
+                        <div class="badge bg-emerald-900/30 text-emerald-300">
+                            <i class="fa-solid fa-repeat"></i> Subscription Available
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="glass p-4">
+                    <div class="kicker mb-1">Pro tips</div>
+                    <ul class="list-disc list-inside text-sm text-slate-300 space-y-1">
+                        <li>Use clear, high-res images of your work.</li>
+                        <li>Set realistic delivery times.</li>
+                        <li>Add 5–8 skills/tags for better discovery.</li>
+                        <li>Keep title specific (niche works better).</li>
+                        <li>Offer subscription options for recurring work.</li>
+                    </ul>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+    <footer class="text-center py-8 text-slate-300">© 2025 Talent-Hub</footer>
+
+    <!-- FIREBASE + LOGIC -->
+    <script type="module">
+        // Firebase v10 modular
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import {
+            getAuth, onAuthStateChanged, signOut, updateProfile
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import {
+            getFirestore, collection, addDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import {
+            getStorage, ref as storageRef, uploadBytes, getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+        // --- Firebase config (tumhara project) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+            authDomain: "skillspot-pro.firebaseapp.com",
+            projectId: "skillspot-pro",
+            storageBucket: "skillspot-pro.appspot.com",
+            messagingSenderId: "600467343030",
+            appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+            measurementId: "G-TYL2XF4WZY"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // --- helpers & elements ---
+        const $ = s => document.querySelector(s);
+        const $$ = s => document.querySelectorAll(s);
+
+        const loginStatus = $('#loginStatus');
+        const loginBtnLink = $('#loginBtnLink');
+        const btnLogout = $('#btnLogout');
+        const uPhoto = $('#uPhoto'); const uName = $('#uName'); const uEmail = $('#uEmail');
+
+        // form els
+        const form = $('#gigForm');
+        const titleEl = $('#title');
+        const priceEl = $('#price');
+        const categoryEl = $('#category');
+        const subcatEl = $('#subcategory');
+        const deliveryEl = $('#delivery');
+        const revisionsEl = $('#revisions');
+        const sourceFilesEl = $('#sourceFiles');
+        const featuresEl = $('#pkgFeatures');
+
+        // New elements for enhanced features
+        const isSubscriptionEl = $('#isSubscription');
+        const subscriptionOptionsEl = $('#subscriptionOptions');
+        const monthlyPriceEl = $('#monthlyPrice');
+        const billingCycleEl = $('#billingCycle');
+        
+        const basicPriceEl = $('#basicPrice');
+        const basicFeaturesEl = $('#basicFeatures');
+        const standardPriceEl = $('#standardPrice');
+        const standardFeaturesEl = $('#standardFeatures');
+        const premiumPriceEl = $('#premiumPrice');
+        const premiumFeaturesEl = $('#premiumFeatures');
+        
+        const aiPackageBtn = $('#aiPackageBtn');
+        const aiPackageStatus = $('#aiPackageStatus');
+        
+        const addonListEl = $('#addonList');
+        const customAddonNameEl = $('#customAddonName');
+        const customAddonPriceEl = $('#customAddonPrice');
+        const customAddonDescEl = $('#customAddonDesc');
+        const addCustomAddonBtn = $('#addCustomAddon');
+        
+        const enableCollabToolsEl = $('#enableCollabTools');
+        const enableGamificationEl = $('#enableGamification');
+        
+        const faqContainerEl = $('#faqContainer');
+        const addFaqBtn = $('#addFaq');
+        
+        const videoEl = $('#video');
+
+        const descEl = $('#description');
+        const skillsInput = $('#skillsInput');
+        const addSkillBtn = $('#addSkill');
+        const clearSkillBtn = $('#clearSkill');
+        const skillsWrap = $('#skillsWrap');
+
+        const imagesEl = $('#images');
+        const preview = $('#preview');
+
+        const btnPrev = $('#btnPrev');
+        const btnNext = $('#btnNext');
+        const stepNote = $('#stepNote');
+        const stepTabs = $$('.step-tab');
+
+        const btnSaveDraft = $('#btnSaveDraft');
+        const btnPublish = $('#btnPublish');
+        const btnReset = $('#btnReset');
+        const formStatus = $('#formStatus');
+        const debugJson = $('#debugJson');
+
+        // live preview
+        const pvTitle = $('#pvTitle');
+        const pvCat = $('#pvCat');
+        const pvDel = $('#pvDel');
+        const pvPrice = $('#pvPrice');
+        const pvRev = $('#pvRev');
+        const pvFeat = $('#pvFeat');
+        const pvSubscription = $('#pvSubscription');
+        const liveThumb = $('#liveThumb');
+
+        let currentUser = null;
+        let skills = [];
+        let addons = [];
+        let faqs = [];
+        let currentStep = 1;
+        const maxStep = 6;
+
+        // --- AUTH GUARD ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                loginStatus.textContent = "Not logged in";
+                btnLogout.classList.add('hidden');
+                loginBtnLink.classList.remove('hidden');
+                // Redirect to login preserving next
+                location.href = 'login.html?next=create-gig.html';
+                return;
+            }
+            currentUser = user;
+            loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`;
+            btnLogout.classList.remove('hidden');
+            loginBtnLink.classList.add('hidden');
+
+            // Fill profile card
+            uName.textContent = user.displayName || (user.email ? user.email.split('@')[0] : user.uid);
+            uEmail.textContent = user.email || user.uid;
+            uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
+
+            // Optional: set displayName if missing
+            if (!user.displayName && user.email) {
+                try { await updateProfile(user, { displayName: user.email.split('@')[0] }); } catch (e) { /*noop*/ }
+            }
+            
+            // Initialize add-ons
+            initAddons();
+        });
+
+        btnLogout.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                location.href = 'index.html';
+            } catch (e) { alert('Logout failed'); }
+        });
+
+        // --- STEP NAV (free navigation) ---
+        function gotoStep(n) {
+            currentStep = Math.max(1, Math.min(maxStep, n));
+            for (let i = 1; i <= maxStep; i++) {
+                const pane = document.getElementById('step-' + i);
+                if (pane) pane.classList.toggle('hidden', i !== currentStep);
+                const dot = document.getElementById('dot-' + i);
+                if (dot) dot.classList.toggle('active', i <= currentStep);
+            }
+            stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
+            stepTabs.forEach(btn => {
+                const target = Number(btn.dataset.step);
+                if (target === currentStep) {
+                    btn.classList.add('btn-brand');
+                    btn.classList.remove('btn-plain');
+                } else {
+                    btn.classList.add('btn-plain');
+                    btn.classList.remove('btn-brand');
+                }
+            });
+            if (currentStep === maxStep) { buildChecklist(); renderDebug(); }
+        }
+
+        btnPrev.addEventListener('click', () => gotoStep(currentStep - 1));
+        btnNext.addEventListener('click', () => gotoStep(currentStep + 1));
+        stepTabs.forEach(btn => btn.addEventListener('click', () => gotoStep(Number(btn.dataset.step))));
+        gotoStep(1);
+
+        // --- Subscription Toggle ---
+        isSubscriptionEl.addEventListener('change', () => {
+            subscriptionOptionsEl.classList.toggle('hidden', !isSubscriptionEl.checked);
+            pvSubscription.classList.toggle('hidden', !isSubscriptionEl.checked);
+        });
+
+        // --- SKILLS UI ---
+        function renderSkills() {
+            skillsWrap.innerHTML = '';
+            skills.forEach((s, idx) => {
+                const el = document.createElement('span');
+                el.className = 'chip';
+                el.textContent = s;
+                el.title = 'Click to remove';
+                el.style.cursor = 'pointer';
+                el.addEventListener('click', () => { skills.splice(idx, 1); renderSkills(); renderPreview(); });
+                skillsWrap.appendChild(el);
+            });
+            renderPreview();
+        }
+        addSkillBtn.addEventListener('click', () => {
+            const v = (skillsInput.value || '').trim();
+            if (!v) return;
+            if (!skills.includes(v)) skills.push(v);
+            skillsInput.value = ''; renderSkills();
+        });
+        clearSkillBtn.addEventListener('click', () => { skills = []; renderSkills(); });
+
+        // --- IMAGE PREVIEW ---
+        imagesEl.addEventListener('change', () => {
+            preview.innerHTML = '';
+            const files = imagesEl.files || [];
+            const arr = [...files].slice(0, 6);
+            arr.forEach(file => {
+                const url = URL.createObjectURL(file);
+                const d = document.createElement('div');
+                d.className = 'thumb';
+                d.style.backgroundImage = `url('${url.replaceAll("'", "%27")}')`;
+                preview.appendChild(d);
+            });
+            if (arr[0]) {
+                const first = URL.createObjectURL(arr[0]);
+                liveThumb.style.backgroundImage = `url('${first.replaceAll("'", "%27")}')`;
+            }
+        });
+
+        // --- PREVIEW BINDINGS ---
+        function renderPreview() {
+            pvTitle.textContent = (titleEl.value || '—');
+            pvCat.textContent = (categoryEl.value || '—');
+            pvDel.textContent = (deliveryEl.value || '—');
+            pvPrice.textContent = '₹' + (Number(priceEl.value || 0));
+            pvRev.textContent = (revisionsEl.value || '—');
+
+            // features
+            pvFeat.innerHTML = '';
+            const feats = (featuresEl.value || '').split(',').map(s => s.trim()).filter(Boolean);
+            feats.forEach(f => {
+                const x = document.createElement('span');
+                x.className = 'badge';
+                x.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`;
+                pvFeat.appendChild(x);
+            });
+        }
+        [titleEl, categoryEl, deliveryEl, priceEl, revisionsEl, featuresEl].forEach(el => {
+            el.addEventListener('input', renderPreview);
+            el.addEventListener('change', renderPreview);
+        });
+
+        // --- INIT ADDONS ---
+        function initAddons() {
+            const standardAddons = [
+                { id: 'priority', name: 'Priority Support', price: 499, description: 'Get your project prioritized in my queue' },
+                { id: 'extraRevision', name: 'Extra Revision', price: 299, description: 'One additional revision round' },
+                { id: 'sourceFiles', name: 'Source Files', price: 999, description: 'Get all source files and assets' },
+                { id: 'commercialUse', name: 'Commercial Use License', price: 1499, description: 'Full commercial rights to the deliverables' },
+                { id: 'rushDelivery', name: 'Rush Delivery (24h)', price: 1999, description: 'Get your project delivered within 24 hours' }
+            ];
+            
+            addonListEl.innerHTML = '';
+            standardAddons.forEach(addon => {
+                const div = document.createElement('div');
+                div.className = 'addon-card';
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-semibold">${addon.name}</div>
+                            <div class="text-xs text-slate-400 mt-1">${addon.description}</div>
+                        </div>
+                        <div class="font-bold text-emerald-300">₹${addon.price}</div>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" data-id="${addon.id}" data-name="${addon.name}" data-price="${addon.price}">
+                            <span class="text-xs">Include this add-on</span>
+                        </label>
+                    </div>
+                `;
+                addonListEl.appendChild(div);
+                
+                // Add event listener
+                const checkbox = div.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        addons.push({
+                            id: addon.id,
+                            name: addon.name,
+                            price: addon.price,
+                            description: addon.description
+                        });
+                    } else {
+                        addons = addons.filter(a => a.id !== addon.id);
+                    }
+                });
+            });
+        }
+
+        // --- CUSTOM ADDONS ---
+        addCustomAddonBtn.addEventListener('click', () => {
+            const name = customAddonNameEl.value.trim();
+            const price = Number(customAddonPriceEl.value);
+            const description = customAddonDescEl.value.trim();
+            
+            if (!name || isNaN(price) || price <= 0) {
+                alert('Please provide a valid name and price for your add-on');
+                return;
+            }
+            
+            const id = 'custom_' + Date.now();
+            addons.push({ id, name, price, description, custom: true });
+            
+            // Add to UI
+            const div = document.createElement('div');
+            div.className = 'addon-card selected';
+            div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="font-semibold">${name} <span class="text-xs text-slate-400">(Custom)</span></div>
+                        <div class="text-xs text-slate-400 mt-1">${description}</div>
+                    </div>
+                    <div class="font-bold text-emerald-300">₹${price}</div>
+                </div>
+                <div class="text-right mt-2">
+                    <button type="button" class="text-xs text-red-400" data-id="${id}">Remove</button>
+                </div>
+            `;
+            addonListEl.appendChild(div);
+            
+            // Add remove event
+            div.querySelector('button').addEventListener('click', (e) => {
+                addons = addons.filter(a => a.id !== id);
+                div.remove();
+            });
+            
+            // Clear form
+            customAddonNameEl.value = '';
+            customAddonPriceEl.value = '';
+            customAddonDescEl.value = '';
+        });
+
+        // --- FAQ MANAGEMENT ---
+        addFaqBtn.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.className = 'faq-item mb-3';
+            div.innerHTML = `
+                <input class="input mb-2" placeholder="Question">
+                <textarea class="input" rows="2" placeholder="Answer"></textarea>
+                <button type="button" class="text-xs text-red-400 mt-1 remove-faq">Remove</button>
+            `;
+            faqContainerEl.appendChild(div);
+            
+            div.querySelector('.remove-faq').addEventListener('click', () => {
+                div.remove();
+            });
+        });
+
+        // --- AI PACKAGE GENERATOR ---
+        aiPackageBtn.addEventListener('click', async () => {
+            const title = titleEl.value.trim();
+            const category = categoryEl.value;
+            
+            if (!title || !category) {
+                alert('Please provide a title and category first');
+                return;
+            }
+            
+            aiPackageStatus.classList.remove('hidden');
+            aiPackageStatus.innerHTML = '<span class="ai-loading"></span> Generating packages...';
+            aiPackageBtn.disabled = true;
+            
+            try {
+                // Simulate AI processing (in a real app, this would call an API)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Generate packages based on category and title
+                let basicPrice, standardPrice, premiumPrice;
+                let basicFeatures, standardFeatures, premiumFeatures;
+                
+                if (category.includes('Design')) {
+                    basicPrice = 1999;
+                    standardPrice = 3999;
+                    premiumPrice = 6999;
+                    
+                    basicFeatures = '1 initial concept\n2 revisions\nJPG/PNG files';
+                    standardFeatures = '2 initial concepts\n4 revisions\nSource files\nVector files';
+                    premiumFeatures = '3 initial concepts\nUnlimited revisions\nSource files\n3D mockups\nPrint-ready files';
+                } else if (category.includes('Programming')) {
+                    basicPrice = 4999;
+                    standardPrice = 8999;
+                    premiumPrice = 14999;
+                    
+                    basicFeatures = 'Basic functionality\n1 revision\nDocumentation';
+                    standardFeatures = 'Advanced features\n3 revisions\nSource code\n1 month support';
+                    premiumFeatures = 'Complete solution\nUnlimited revisions\nSource code\n3 months support\nDeployment assistance';
+                } else {
+                    // Generic pricing
+                    basicPrice = 2499;
+                    standardPrice = 4999;
+                    premiumPrice = 8999;
+                    
+                    basicFeatures = 'Basic service package\n2 revisions\nStandard delivery';
+                    standardFeatures = 'Enhanced service package\n4 revisions\nFaster delivery\nAdditional features';
+                    premiumFeatures = 'Complete service package\nUnlimited revisions\nPriority delivery\nAll features included';
+                }
+                
+                // Apply to form
+                basicPriceEl.value = basicPrice;
+                basicFeaturesEl.value = basicFeatures;
+                standardPriceEl.value = standardPrice;
+                standardFeaturesEl.value = standardFeatures;
+                premiumPriceEl.value = premiumPrice;
+                premiumFeaturesEl.value = premiumFeatures;
+                
+                // Also set the main price to the basic price
+                priceEl.value = basicPrice;
+                
+                aiPackageStatus.innerHTML = '<span class="ok">✓</span> Packages generated successfully!';
+                
+            } catch (error) {
+                aiPackageStatus.innerHTML = `<span class="err">Failed to generate packages: ${error.message}</span>`;
+            } finally {
+                setTimeout(() => {
+                    aiPackageStatus.classList.add('hidden');
+                    aiPackageBtn.disabled = false;
+                }, 3000);
+            }
+        });
+
+        // --- SOFT VALIDATION (just highlights, does not block) ---
+        function softValidate() {
+            const missing = [];
+            const fields = [
+                [titleEl, 'Title'],
+                [priceEl, 'Price'],
+                [categoryEl, 'Category'],
+                [subcatEl, 'Subcategory'],
+                [deliveryEl, 'Delivery'],
+                [descEl, 'Description']
+            ];
+            fields.forEach(([el, name]) => {
+                const empty = !String(el.value || '').trim();
+                el.classList.toggle('danger', empty);
+                if (empty) missing.push(name);
+            });
+            return missing;
+        }
+
+        // --- CHECKLIST FOR FINAL STEP ---
+        function buildChecklist() {
+            const checklist = $('#checklist');
+            const missing = softValidate();
+            checklist.innerHTML = '';
+            const items = [
+                ['Title', !!titleEl.value.trim()],
+                ['Category', !!categoryEl.value.trim()],
+                ['Subcategory', !!subcatEl.value.trim()],
+                ['Delivery', !!deliveryEl.value.trim()],
+                ['Price', !!priceEl.value.trim()],
+                ['Description', !!descEl.value.trim()],
+                ['Subscription', !isSubscriptionEl.checked || !!monthlyPriceEl.value],
+                ['Packages', !!basicPriceEl.value || !!priceEl.value],
+            ];
+            items.forEach(([label, ok]) => {
+                const li = document.createElement('li');
+                li.innerHTML = ok
+                    ? `<span class="ok">✔</span> ${label}`
+                    : `<span class="warn">•</span> ${label} — Not Provided (will be saved as "Not Provided")`;
+                checklist.appendChild(li);
+            });
+        }
+
+        // --- UPLOAD IMAGES (optional) ---
+        async function uploadImagesAndGetUrls(files, uid) {
+            const urls = [];
+            const arr = [...files].slice(0, 6);
+            for (let i = 0; i < arr.length; i++) {
+                const f = arr[i];
+                const path = `gigs/${uid}/${Date.now()}_${i}_${f.name}`;
+                const ref = storageRef(storage, path);
+                await uploadBytes(ref, f);
+                const url = await getDownloadURL(ref);
+                urls.push(url);
+            }
+            return urls;
+        }
+        
+        // --- UPLOAD VIDEO (optional) ---
+        async function uploadVideoAndGetUrl(file, uid) {
+            if (!file) return null;
+            const path = `gigs/${uid}/${Date.now()}_video_${file.name}`;
+            const ref = storageRef(storage, path);
+            await uploadBytes(ref, file);
+            return await getDownloadURL(ref);
+        }
+
+        // --- PAYLOAD BUILDER (blanks => "Not Provided") ---
+        function valOrDefault(v) {
+            const s = String(v || '').trim();
+            if (s === '') return 'Not Provided';
+            return s;
+        }
+        
+        function buildGigPayload(status = 'published', imageUrls = [], videoUrl = null) {
+            const sellerName = currentUser?.displayName || (currentUser?.email ? currentUser.email.split('@')[0] : 'Freelancer');
+            const sellerPhoto = currentUser?.photoURL || '';
+            const feats = (featuresEl.value || '').split(',').map(s => s.trim()).filter(Boolean);
+            
+            // Get package tiers
+            const packages = [];
+            if (basicPriceEl.value) {
+                packages.push({
+                    name: 'Basic',
+                    price: Number(basicPriceEl.value),
+                    features: basicFeaturesEl.value.split('\n').filter(f => f.trim())
+                });
+            }
+            if (standardPriceEl.value) {
+                packages.push({
+                    name: 'Standard',
+                    price: Number(standardPriceEl.value),
+                    features: standardFeaturesEl.value.split('\n').filter(f => f.trim())
+                });
+            }
+            if (premiumPriceEl.value) {
+                packages.push({
+                    name: 'Premium',
+                    price: Number(premiumPriceEl.value),
+                    features: premiumFeaturesEl.value.split('\n').filter(f => f.trim())
+                });
+            }
+
+            // Get FAQs
+            const faqItems = [];
+            const faqElements = faqContainerEl.querySelectorAll('.faq-item');
+            faqElements.forEach(item => {
+                const question = item.querySelector('input').value.trim();
+                const answer = item.querySelector('textarea').value.trim();
+                if (question && answer) {
+                    faqItems.push({ question, answer });
+                }
+            });
+
+            let finalImages = imageUrls;
+            if (finalImages.length === 0) {
+                finalImages = ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'];
+            }
+
+            const payload = {
+                title: valOrDefault(titleEl.value),
+                price: Number(priceEl.value || 0),
+                category: valOrDefault(categoryEl.value),
+                subcategory: valOrDefault(subcatEl.value),
+                delivery: valOrDefault(deliveryEl.value),
+                revisions: Number(revisionsEl.value || 0),
+                sourceFiles: valOrDefault(sourceFilesEl.value),
+                features: feats.length ? feats : [],
+                description: valOrDefault(descEl.value),
+                skills: skills,
+                images: finalImages,
+                video: videoUrl,
+                
+                // Enhanced features
+                isSubscription: isSubscriptionEl.checked,
+                subscription: isSubscriptionEl.checked ? {
+                    monthlyPrice: Number(monthlyPriceEl.value || 0),
+                    billingCycle: billingCycleEl.value
+                } : null,
+                
+                packages: packages.length > 0 ? packages : null,
+                addons: addons,
+                faqs: faqItems,
+                
+                collaborationTools: enableCollabToolsEl.checked,
+                gamification: enableGamificationEl.checked,
+
+                // seller / creator fields
+                sellerName,
+                sellerPhoto,
+                sellerSince: new Date().getFullYear().toString(),
+                createdByUid: currentUser?.uid || '',
+                createdByEmail: currentUser?.email || '',
+
+                rating: 0,
+                reviews: 0,
+                status,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            };
+            return payload;
+        }
+
+        // --- DEBUG JSON ---
+        function renderDebug() {
+            const draftPayload = buildGigPayload('preview', [], null);
+            debugJson.textContent = JSON.stringify(draftPayload, null, 2);
+        }
+
+        // --- ACTIONS ---
+        btnSaveDraft?.addEventListener('click', async () => {
+            if (!currentUser) { alert('Please login'); return; }
+            try {
+                btnSaveDraft.disabled = true;
+                btnSaveDraft.innerHTML = 'Saving draft…';
+                formStatus.className = '';
+                formStatus.textContent = 'Preparing draft…';
+
+                const files = imagesEl.files || [];
+                const urls = files.length ? await uploadImagesAndGetUrls(files, currentUser.uid) : [];
+                const videoFile = videoEl.files?.[0];
+                const videoUrl = videoFile ? await uploadVideoAndGetUrl(videoFile, currentUser.uid) : null;
+                
+                // ✅ DRAFT status
+                const payload = buildGigPayload('draft', urls, videoUrl);
+                const ref = await addDoc(collection(db, 'subho_gigs'), payload);
+
+                formStatus.className = 'ok';
+                formStatus.textContent = 'Draft saved ✓ (You can publish later from your dashboard)';
+                debugJson.textContent = JSON.stringify({ draftId: ref.id, ...payload }, null, 2);
+            } catch (e) {
+                formStatus.className = 'err';
+                formStatus.textContent = 'Failed to save draft: ' + (e.message || e);
+            } finally {
+                btnSaveDraft.disabled = false;
+                btnSaveDraft.innerHTML = 'Save Draft';
+            }
+        });
+
+        btnPublish?.addEventListener('click', async () => {
+            if (!currentUser) { alert('Please login'); return; }
+            try {
+                btnPublish.disabled = true;
+                btnPublish.innerHTML = 'Publishing…';
+                formStatus.className = '';
+                formStatus.textContent = 'Uploading images (if any)…';
+
+                const files = imagesEl.files || [];
+                const urls = files.length ? await uploadImagesAndGetUrls(files, currentUser.uid) : [];
+                const videoFile = videoEl.files?.[0];
+                const videoUrl = videoFile ? await uploadVideoAndGetUrl(videoFile, currentUser.uid) : null;
+
+                formStatus.textContent = 'Saving gig…';
+                const payload = buildGigPayload('published', urls, videoUrl);
+                const docRef = await addDoc(collection(db, 'subho_gigs'), payload);
+
+                formStatus.className = 'ok';
+                formStatus.textContent = 'Gig published ✓ Redirecting to detail…';
+                setTimeout(() => { location.href = `index.html?id=${encodeURIComponent(docRef.id)}`; }, 700);
+            } catch (e) {
+                formStatus.className = 'err';
+                formStatus.textContent = 'Publish failed: ' + (e.message || e);
+            } finally {
+                btnPublish.disabled = false;
+                btnPublish.innerHTML = '<i class="fa-solid fa-bolt"></i> Publish Gig';
+            }
+        });
+
+        btnReset?.addEventListener('click', () => {
+            skills = []; skillsWrap.innerHTML = '';
+            addons = []; initAddons();
+            preview.innerHTML = '';
+            liveThumb.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Preview')";
+            formStatus.textContent = '';
+            [titleEl, priceEl, categoryEl, subcatEl, deliveryEl, revisionsEl, sourceFilesEl, featuresEl, descEl].forEach(el => el.classList.remove('danger'));
+            renderPreview(); buildChecklist(); renderDebug();
+        });
+
+        // soft validate periodically
+        setInterval(() => { if (currentStep !== maxStep) softValidate(); }, 1500);
+
+    </script>
+</body>
+
+</html>
