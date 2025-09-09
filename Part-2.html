@@ -1,0 +1,572 @@
+<!-- =========================
+     PART 2: Firebase + Steps 4-7 + Publish logic
+     Paste this AFTER Part 1 HTML (so all elements exist).
+     Uses Firebase v10 modular imports (same as your original).
+     Collection used: subho_gigs
+     ========================= -->
+<script type="module">
+  // ---------- FIREBASE (modular v10) ----------
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut,
+    updateProfile
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    getStorage,
+    ref as storageRef,
+    uploadBytes,
+    getDownloadURL
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  // === Use your actual project config (you provided earlier) ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+    authDomain: "skillspot-pro.firebaseapp.com",
+    projectId: "skillspot-pro",
+    storageBucket: "skillspot-pro.appspot.com",
+    messagingSenderId: "600467343030",
+    appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+    measurementId: "G-TYL2XF4WZY"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // ---------- SHORT HELPERS ----------
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const exists = (sel) => !!$(sel);
+
+  // Elements (match many possible ids used across parts)
+  const loginStatus = $('#loginStatus');
+  const loginBtnLink = $('#loginBtnLink');
+  const btnLogout = $('#btnLogout');
+  const uPhoto = $('#uPhoto'); const uName = $('#uName'); const uEmail = $('#uEmail');
+
+  // Form fields (try both naming variants if present)
+  const titleEl = $('#title') || $('#gigTitle');
+  const categoryEl = $('#category') || $('#categorySelect');
+  const subcatEl = $('#subcategory') || $('#subCategory');
+  const deliveryEl = $('#delivery') || $('#deliveryTime');
+  const tagsInput = $('#tagsInput') || $('#tagInput');
+  const tagsWrap = $('#tagsWrap') || $('#tagContainer');
+
+  // Packages & features (Part1 IDs)
+  const priceEl = $('#price') || $('#starterPrice') || $('#priceInput');
+  const revisionsEl = $('#revisions') || $('#starterRevisions');
+  const sourceFilesEl = $('#sourceFiles') || $('#sourceFilesSelect');
+  const pkgFeaturesEl = $('#pkgFeatures') || $('#starterFeatures');
+
+  const basicPriceEl = $('#basicPrice') || $('#basicPriceInput');
+  const basicFeaturesEl = $('#basicFeatures');
+  const standardPriceEl = $('#standardPrice');
+  const standardFeaturesEl = $('#standardFeatures');
+  const premiumPriceEl = $('#premiumPrice');
+  const premiumFeaturesEl = $('#premiumFeatures');
+
+  const aiPackageBtn = $('#aiPackageBtn');
+  const aiPackageStatus = $('#aiPackageStatus');
+
+  // Description & skills
+  const descEl = $('#description') || $('#gigDescription');
+  const skillsInput = $('#skillsInput') || $('#skillInput');
+  const addSkillBtn = $('#addSkill');
+  const clearSkillBtn = $('#clearSkill');
+  const skillsWrap = $('#skillsWrap') || $('#languageWrap');
+
+  // FAQ container (may be in Part1 or Part2)
+  const faqContainer = $('#faqContainer') || (() => {
+    const el = document.createElement('div'); el.id = 'faqContainer'; document.body.appendChild(el); return el;
+  })();
+
+  // Gallery elements (support both id variants)
+  const imagesEl = $('#images') || $('#gigImages') || $('#imageUpload');
+  const imagePreview = $('#preview') || $('#imagePreview') || $('#imagePreview') || $('#imagePreview');
+  const videoEl = $('#video') || $('#gigVideo') || $('#videoUpload');
+  const videoPreview = $('#videoPreview') || $('#videoPreview') || $('#videoPreview');
+
+  // Publish / draft buttons
+  const btnSaveDraft = $('#btnSaveDraft') || $('#saveDraftBtn') || $('#btnSaveDraftAlt');
+  const btnPublish = $('#btnPublish') || $('#publishBtn') || $('#btnPublishAlt');
+  const debugJson = $('#debugJson') || $('#debugOutput') || $('#debugJsonAlt');
+
+  // Navigation (if present)
+  const btnPrev = $('#btnPrev') || $('button[onclick="prevStep()"]') || null;
+  const btnNext = $('#btnNext') || $('button[onclick="nextStep()"]') || null;
+  const stepNote = $('#stepNote') || null;
+
+  // preview card fields
+  const pvTitle = $('#pvTitle');
+  const pvCat = $('#pvCat');
+  const pvDel = $('#pvDel');
+  const pvPrice = $('#pvPrice');
+  const pvRev = $('#pvRev');
+  const pvFeat = $('#pvFeat');
+  const pvSubscription = $('#pvSubscription');
+  const liveThumb = $('#liveThumb');
+
+  // local state
+  let currentUser = null;
+  let tags = []; // kept across steps
+  let skills = [];
+  let addons = []; // added via initAddons
+  let faqs = [];
+
+  // ---------- AUTH GUARD (same behavior as your original script) ----------
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      if (loginStatus) loginStatus.textContent = "Not logged in";
+      if (btnLogout) btnLogout.classList.add('hidden');
+      if (loginBtnLink) loginBtnLink.classList.remove('hidden');
+      // preserve next param and redirect
+      try { location.href = 'login.html?next=create-gig.html'; } catch (e) {}
+      return;
+    }
+    currentUser = user;
+    if (loginStatus) loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`;
+    if (btnLogout) btnLogout.classList.remove('hidden');
+    if (loginBtnLink) loginBtnLink.classList.add('hidden');
+
+    // profile card update
+    if (uName) uName.textContent = user.displayName || (user.email ? user.email.split('@')[0] : user.uid);
+    if (uEmail) uEmail.textContent = user.email || user.uid;
+    if (uPhoto) uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
+
+    // ensure displayName exists optionally
+    if (!user.displayName && user.email) {
+      try { await updateProfile(user, { displayName: user.email.split('@')[0] }); } catch(e){/*noop*/ }
+    }
+
+    // init addons and other dynamic UI
+    initAddons();
+    renderDebug();
+  });
+
+  if (btnLogout) btnLogout.addEventListener('click', async () => {
+    try {
+      await signOut(auth);
+      location.href = 'index.html';
+    } catch (e) { alert('Logout failed: ' + (e.message || e)); }
+  });
+
+  // ---------- INIT ADD-ONS (same as your earlier code) ----------
+  function initAddons() {
+    const addonListEl = $('#addonList') || document.createElement('div');
+    if (!$('#addonList')) {
+      addonListEl.id = 'addonList';
+      // attach into step-2 or append near packages if not present
+      const container = $('#step-2') || document.body;
+      container.appendChild(addonListEl);
+    }
+    addonListEl.innerHTML = '';
+    const standardAddons = [
+      { id: 'priority', name: 'Priority Support', price: 499, description: 'Get your project prioritized in my queue' },
+      { id: 'extraRevision', name: 'Extra Revision', price: 299, description: 'One additional revision round' },
+      { id: 'sourceFiles', name: 'Source Files', price: 999, description: 'Get all source files and assets' },
+      { id: 'commercialUse', name: 'Commercial Use License', price: 1499, description: 'Full commercial rights to the deliverables' },
+      { id: 'rushDelivery', name: 'Rush Delivery (24h)', price: 1999, description: 'Get your project delivered within 24 hours' }
+    ];
+
+    standardAddons.forEach(addon => {
+      const div = document.createElement('div');
+      div.className = 'addon-card';
+      div.innerHTML = `
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="font-semibold">${addon.name}</div>
+            <div class="text-xs text-slate-400 mt-1">${addon.description}</div>
+          </div>
+          <div class="font-bold text-emerald-300">₹${addon.price}</div>
+        </div>
+        <div class="flex justify-between items-center mt-2">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" data-id="${addon.id}" data-name="${addon.name}" data-price="${addon.price}">
+            <span class="text-xs">Include this add-on</span>
+          </label>
+        </div>
+      `;
+      addonListEl.appendChild(div);
+      const checkbox = div.querySelector('input[type="checkbox"]');
+      checkbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          addons.push({ id: addon.id, name: addon.name, price: addon.price, description: addon.description });
+          div.classList.add('selected');
+        } else {
+          addons = addons.filter(a => a.id !== addon.id);
+          div.classList.remove('selected');
+        }
+      });
+    });
+  }
+
+  // ---------- FAQ Helpers ----------
+  function addFAQ(initialQ = '', initialA = '') {
+    const container = $('#faqContainer');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'faq-card';
+    div.innerHTML = `
+      <div class="grid grid-cols-12 gap-2">
+        <div class="col-span-11">
+          <input class="input faq-q mb-2" placeholder="Question" value="${escapeHtml(initialQ)}" />
+          <textarea class="input faq-a" rows="2" placeholder="Answer">${escapeHtml(initialA)}</textarea>
+        </div>
+        <div class="col-span-1 flex items-start justify-end">
+          <button class="btn btn-plain remove-faq" title="Remove">✕</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+    div.querySelector('.remove-faq').addEventListener('click', ()=> div.remove());
+  }
+
+  // initial - if empty add one
+  (function ensureFaq() {
+    const container = $('#faqContainer');
+    if (!container) return;
+    if (container.children.length === 0) addFAQ();
+  })();
+
+  // ---------- IMAGE / VIDEO PREVIEWS (works with multiple ids) ----------
+  function clearImagePreview() {
+    if (imagePreview) imagePreview.innerHTML = '';
+    if (liveThumb) liveThumb.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Preview')";
+  }
+
+  function previewImagesFromFiles(fileList) {
+    if (!imagePreview) return;
+    imagePreview.innerHTML = '';
+    const arr = Array.from(fileList).slice(0, 6);
+    arr.forEach((file) => {
+      const url = URL.createObjectURL(file);
+      const d = document.createElement('div');
+      d.className = 'thumb';
+      d.style.backgroundImage = `url('${url.replaceAll("'", "%27")}')`;
+      imagePreview.appendChild(d);
+    });
+    if (arr[0] && liveThumb) {
+      const first = URL.createObjectURL(arr[0]);
+      liveThumb.style.backgroundImage = `url('${first.replaceAll("'", "%27")}')`;
+    }
+  }
+
+  function previewImages(e) {
+    let files = e?.target?.files || [];
+    if (!files || files.length === 0) return;
+    previewImagesFromFiles(files);
+  }
+
+  function previewVideo(e) {
+    const file = e?.target?.files?.[0];
+    const vp = videoPreview;
+    if (!vp) return;
+    if (!file) { vp.style.display='none'; vp.src = ''; return; }
+    const url = URL.createObjectURL(file);
+    vp.style.display = 'block';
+    vp.src = url;
+  }
+
+  // wire preview listeners for multiple possible inputs
+  if (imagesEl) imagesEl.addEventListener('change', (e) => previewImages(e));
+  const altImageInputs = $$('#gigImages, #imageUpload, input[type="file"].image-input');
+  altImageInputs.forEach(inp => inp.addEventListener('change', previewImages));
+  if (videoEl) videoEl.addEventListener('change', previewVideo);
+  const altVideos = $$('#gigVideo, #videoUpload, input[type="file"].video-input');
+  altVideos.forEach(v => v.addEventListener('change', previewVideo));
+
+  // ---------- UPLOAD HELPERS (Firebase Storage) ----------
+  async function uploadImagesAndGetUrls(files, uid) {
+    const urls = [];
+    if (!files || files.length === 0) return urls;
+    const arr = Array.from(files).slice(0, 6);
+    for (let i=0;i<arr.length;i++){
+      const f = arr[i];
+      const path = `gigs/${uid}/${Date.now()}_${i}_${sanitizeFilename(f.name)}`;
+      const ref = storageRef(storage, path);
+      await uploadBytes(ref, f);
+      const url = await getDownloadURL(ref);
+      urls.push(url);
+    }
+    return urls;
+  }
+
+  async function uploadVideoAndGetUrl(file, uid) {
+    if (!file) return null;
+    const path = `gigs/${uid}/${Date.now()}_video_${sanitizeFilename(file.name)}`;
+    const ref = storageRef(storage, path);
+    await uploadBytes(ref, file);
+    return await getDownloadURL(ref);
+  }
+
+  function sanitizeFilename(name){
+    return name.replace(/[^\w.-]/g, '_');
+  }
+
+  function escapeHtml(s){
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ---------- BUILD PAYLOAD (same shape as your original) ----------
+  function valOrDefault(v){
+    const s = String(v||'').trim();
+    return s==='' ? 'Not Provided' : s;
+  }
+
+  function gatherFaqs(){
+    const out = [];
+    const container = $('#faqContainer');
+    if (!container) return out;
+    const items = container.querySelectorAll('.faq-card, .faq-item');
+    items.forEach(item=>{
+      const q = item.querySelector('.faq-q')?.value?.trim() || item.querySelector('input')?.value?.trim();
+      const a = item.querySelector('.faq-a')?.value?.trim() || item.querySelector('textarea')?.value?.trim();
+      if (q && a) out.push({question:q, answer:a});
+    });
+    return out;
+  }
+
+  function gatherSkillsFromUI(){
+    // prefer skills state if available, else from comma input
+    if (skills && skills.length>0) return skills;
+    const el = $('#freelancerSkills') || $('#skillsInput');
+    if (!el) return [];
+    return ( (el.value||'').split(',').map(s=>s.trim()).filter(Boolean) );
+  }
+
+  function buildGigPayload(status='published', imageUrls=[], videoUrl=null){
+    const currentUserName = currentUser?.displayName || (currentUser?.email ? currentUser.email.split('@')[0] : 'Freelancer');
+    const currentUserPhoto = currentUser?.photoURL || '';
+    const feats = (pkgFeaturesEl?.value || '').split(',').map(s=>s.trim()).filter(Boolean);
+
+    // package tiers
+    const packages = [];
+    if (basicPriceEl?.value) packages.push({name:'Basic', price:Number(basicPriceEl.value), features:(basicFeaturesEl?.value||'').split('\n').filter(Boolean)});
+    if (standardPriceEl?.value) packages.push({name:'Standard', price:Number(standardPriceEl.value), features:(standardFeaturesEl?.value||'').split('\n').filter(Boolean)});
+    if (premiumPriceEl?.value) packages.push({name:'Premium', price:Number(premiumPriceEl.value), features:(premiumFeaturesEl?.value||'').split('\n').filter(Boolean)});
+
+    // faqs
+    const faqItems = gatherFaqs();
+
+    let finalImages = imageUrls && imageUrls.length ? imageUrls : ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'];
+
+    const payload = {
+      title: valOrDefault(titleEl?.value),
+      price: Number(priceEl?.value || 0),
+      category: valOrDefault(categoryEl?.value),
+      subcategory: valOrDefault(subcatEl?.value),
+      delivery: valOrDefault(deliveryEl?.value),
+      revisions: Number(revisionsEl?.value || 0),
+      sourceFiles: valOrDefault(sourceFilesEl?.value),
+      features: feats.length ? feats : [],
+      description: valOrDefault(descEl?.value),
+      skills: gatherSkillsFromUI(),
+      tags: tags || [],
+      images: finalImages,
+      video: videoUrl,
+      isSubscription: (document.querySelector('#isSubscription')?.checked) || false,
+      subscription: document.querySelector('#isSubscription')?.checked ? {
+        monthlyPrice: Number(document.querySelector('#monthlyPrice')?.value || 0),
+        billingCycle: document.querySelector('#billingCycle')?.value || 'monthly'
+      } : null,
+      packages: packages.length ? packages : null,
+      addons,
+      faqs: faqItems,
+      collaborationTools: !!document.querySelector('#enableCollabTools')?.checked,
+      gamification: !!document.querySelector('#enableGamification')?.checked,
+      sellerName: currentUserName,
+      sellerPhoto: currentUserPhoto,
+      createdByUid: currentUser?.uid || '',
+      createdByEmail: currentUser?.email || '',
+      rating: 0,
+      reviews: 0,
+      status,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    return payload;
+  }
+
+  // ---------- CHECKLIST BUILDER ----------
+  function buildChecklist(){
+    const checklistEl = $('#checklist') || $('#publishChecklist');
+    if (!checklistEl) return;
+    // if original checklist is UL, replace children; else update content
+    if (checklistEl.tagName === 'UL') {
+      checklistEl.innerHTML = '';
+      const items = [
+        ['Title', !!titleEl?.value],
+        ['Category', !!categoryEl?.value],
+        ['Subcategory', !!subcatEl?.value],
+        ['Delivery', !!deliveryEl?.value],
+        ['Price', !!priceEl?.value],
+        ['Description', !!descEl?.value],
+        ['Gallery', (imagesEl?.files?.length>0)],
+        ['FAQ', (gatherFaqs().length>0)]
+      ];
+      items.forEach(([label, ok])=>{
+        const li = document.createElement('li');
+        li.innerHTML = ok ? `${label} ✓` : `${label} — Not Provided`;
+        checklistEl.appendChild(li);
+      });
+    } else {
+      // generic div case
+      checklistEl.innerHTML = '';
+      const missing = [];
+      ['title','price','category','description'].forEach(key=>{
+        // quick check
+        const el = {title:titleEl, price:priceEl, category:categoryEl, description:descEl}[key];
+        if (!el || !el.value || !String(el.value).trim()) missing.push(key);
+      });
+      checklistEl.textContent = missing.length ? `Missing: ${missing.join(', ')}` : 'All good — ready to publish';
+    }
+  }
+
+  // ---------- DEBUG RENDER ----------
+  function renderDebug(){
+    const dbg = debugJson;
+    if (!dbg) return;
+    const payload = buildGigPayload('preview', [], null);
+    dbg.textContent = JSON.stringify(payload, null, 2);
+  }
+
+  // render periodically & on changes
+  [titleEl, categoryEl, subcatEl, priceEl, descEl, basicPriceEl, standardPriceEl, premiumPriceEl].forEach(el=>{
+    if (!el) return;
+    el.addEventListener('input', ()=> { buildChecklist(); renderDebug(); });
+  });
+
+  // ---------- SAVE DRAFT ----------
+  async function saveDraft() {
+    if (!currentUser) { alert('Please login to save'); return; }
+    try {
+      if (btnSaveDraft) { btnSaveDraft.disabled = true; btnSaveDraft.textContent = 'Saving…'; }
+      // upload images/video if present
+      const files = (imagesEl?.files) ? imagesEl.files : [];
+      const imgUrls = files && files.length ? await uploadImagesAndGetUrls(files, currentUser.uid) : [];
+      const videoFile = (videoEl?.files && videoEl.files.length) ? videoEl.files[0] : null;
+      const videoUrl = videoFile ? await uploadVideoAndGetUrl(videoFile, currentUser.uid) : null;
+
+      const payload = buildGigPayload('draft', imgUrls, videoUrl);
+      const ref = await addDoc(collection(db, 'subho_gigs'), payload);
+
+      // success UI
+      if (debugJson) debugJson.textContent = JSON.stringify({ draftId: ref.id, ...payload }, null, 2);
+      alert('Draft saved ✓ (id: ' + ref.id + ')');
+      buildChecklist();
+    } catch (e) {
+      console.error('Draft save error', e);
+      alert('Failed to save draft: ' + (e.message || e));
+    } finally {
+      if (btnSaveDraft) { btnSaveDraft.disabled = false; btnSaveDraft.textContent = 'Save Draft'; }
+    }
+  }
+
+  // ---------- PUBLISH ----------
+  async function publishGig() {
+    if (!currentUser) { alert('Please login to publish'); return; }
+    try {
+      if (btnPublish) { btnPublish.disabled = true; btnPublish.innerHTML = 'Publishing…'; }
+      // Upload
+      const files = (imagesEl?.files) ? imagesEl.files : [];
+      const imgUrls = files && files.length ? await uploadImagesAndGetUrls(files, currentUser.uid) : [];
+      const videoFile = (videoEl?.files && videoEl.files.length) ? videoEl.files[0] : null;
+      const videoUrl = videoFile ? await uploadVideoAndGetUrl(videoFile, currentUser.uid) : null;
+
+      // Save to Firestore
+      const payload = buildGigPayload('published', imgUrls, videoUrl);
+      const docRef = await addDoc(collection(db, 'subho_gigs'), payload);
+
+      if (debugJson) debugJson.textContent = JSON.stringify({ publishedId: docRef.id, ...payload }, null, 2);
+      alert('Gig published ✓ (id: ' + docRef.id + ')');
+      // redirect optionally to detail page
+      setTimeout(()=>{ location.href = `index.html?id=${encodeURIComponent(docRef.id)}`; }, 700);
+    } catch (e) {
+      console.error('Publish failed', e);
+      alert('Publish failed: ' + (e.message || e));
+    } finally {
+      if (btnPublish) { btnPublish.disabled = false; btnPublish.innerHTML = 'Publish Gig'; }
+    }
+  }
+
+  // bind buttons (if present)
+  if (btnSaveDraft) btnSaveDraft.addEventListener('click', saveDraft);
+  // fallback function name used in some earlier Part2 samples
+  window.saveDraft = saveDraft;
+
+  if (btnPublish) btnPublish.addEventListener('click', publishGig);
+  window.publishGig = publishGig;
+
+  // also provide prev/next functions for navigation used in Part2 stub
+  window.nextStep = () => { currentStep = Math.min(7, currentStep+1); showStepDOM(currentStep); };
+  window.prevStep = () => { currentStep = Math.max(1, currentStep-1); showStepDOM(currentStep); };
+
+  function showStepDOM(step){
+    // hide all .step-pane and show requested
+    document.querySelectorAll('.step-pane').forEach(p=>p.classList.add('hidden'));
+    const pane = document.querySelector('#step-' + step) || document.querySelector('#step'+step);
+    if (pane) pane.classList.remove('hidden');
+    // update dots
+    for (let i=1;i<=7;i++){
+      const d = document.getElementById('dot-' + i) || document.getElementById('dot' + i);
+      if (!d) continue;
+      if (i <= step) d.classList.add('active'); else d.classList.remove('active');
+    }
+    // update step note label if present
+    if (stepNote) stepNote.textContent = `Step ${step} of 7`;
+    window.scrollTo({top:0,behavior:'smooth'});
+    // rebuild checklist on publish step
+    if (step === 7) { buildChecklist(); renderDebug(); }
+  }
+
+  // initialize DOM step visibility (if Part1 left some visible)
+  showStepDOM(1);
+
+  // ---------- small UX helpers ----------
+  // allow adding custom add-ons (Part1 button)
+  const addCustomAddonBtn = $('#addCustomAddon');
+  if (addCustomAddonBtn) {
+    addCustomAddonBtn.addEventListener('click', ()=>{
+      const nameEl = $('#customAddonName'), priceEl = $('#customAddonPrice'), descEl = $('#customAddonDesc');
+      const name = nameEl?.value?.trim(); const price = Number(priceEl?.value || 0); const desc = descEl?.value?.trim();
+      if (!name || isNaN(price) || price <= 0) { alert('Provide valid addon name and price'); return; }
+      const id = 'custom_' + Date.now();
+      addons.push({ id, name, price, description: desc, custom:true });
+      // add visual card to addonList if exists
+      const addonListEl = $('#addonList');
+      if (addonListEl) {
+        const div = document.createElement('div');
+        div.className = 'addon-card selected';
+        div.innerHTML = `<div class="flex justify-between items-start"><div><div class="font-semibold">${name} <span class="text-xs text-slate-400">(Custom)</span></div><div class="text-xs text-slate-400 mt-1">${desc}</div></div><div class="font-bold text-emerald-300">₹${price}</div></div><div class="text-right mt-2"><button type="button" class="text-xs text-red-400" data-id="${id}">Remove</button></div>`;
+        addonListEl.appendChild(div);
+        const btn = div.querySelector('button');
+        btn.addEventListener('click', ()=>{ addons = addons.filter(a=>a.id!==id); div.remove(); });
+      }
+      if (nameEl) nameEl.value=''; if (priceEl) priceEl.value=''; if (descEl) descEl.value='';
+    });
+  }
+
+  // support removing uploaded preview blobs on image preview UI
+  // (no need to remove files from input - just visual)
+  // handled by user by changing selection
+
+  // ---------- FINAL render debug on load ----------
+  setTimeout(()=>{ buildChecklist(); renderDebug(); }, 400);
+
+  // expose some functions for console/debug
+  window.buildChecklist = buildChecklist;
+  window.buildGigPayload = buildGigPayload;
+  window.uploadImagesAndGetUrls = uploadImagesAndGetUrls;
+
+  // End module
+</script>
