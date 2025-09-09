@@ -1,0 +1,1440 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Gig — Talent-Hub (Fixed)</title>
+  <meta name="description" content="Create a new gig — Complete form with all steps.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>  <style>
+    :root{
+      --bg1:#061022; --bg2:#041523; --ink:#e6eef8; --muted:#9fb0cc;
+      --glass: rgba(255,255,255,.03); --b: rgba(255,255,255,.06);
+      --brand:#34d399; --brand-ink:#062d22; --err:#ff8a8a;
+      --success: #34d399; --warning: #fbbf24;
+    }
+    html,body{height:100%}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--ink);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .glass{background:var(--glass);backdrop-filter:blur(10px);border-radius:12px;border:1px solid var(--b)}
+    .input{
+      width:100%; padding:12px 16px; border-radius:10px; background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06); color:var(--ink); transition: all 0.2s ease;
+    }
+    .input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1);
+    }
+    .input.danger {
+      border-color: var(--err);
+      box-shadow: 0 0 0 3px rgba(255, 138, 138, 0.1);
+    }
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:12px 20px;border-radius:10px;font-weight:700;cursor:pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-plain{
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:var(--ink);
+    }
+    .btn-plain:hover {
+      background: rgba(255,255,255,.06);
+    }
+    .btn-brand{
+      background:var(--brand);color:var(--brand-ink);
+    }
+    .btn-brand:hover {
+      background: #22c58b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 211, 153, 0.2);
+    }
+    .btn-danger {
+      background: #ef4444; color: white;
+    }
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    .step-dot{
+      width:36px;height:36px;border-radius:999px;border:2px solid rgba(255,255,255,.08);
+      display:flex;align-items:center;justify-content:center;font-weight:800;transition: all 0.3s ease;
+    }
+    .step-dot.active{background:var(--brand);color:var(--brand-ink);border-color:transparent;box-shadow:0 8px 28px rgba(52,211,153,.12)}
+    .step-dot.completed {
+      background: var(--success);
+      color: var(--brand-ink);
+    }
+    .divider{height:1px;background:rgba(255,255,255,.04);margin:12px 0}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-size:12px}
+    .thumb{
+      width:100px;height:72px;border-radius:10px;background:#0e1836 center/cover no-repeat;
+      border:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden;
+    }
+    .thumb .remove {
+      position: absolute; top: 4px; right: 4px;
+      background: rgba(0,0,0,0.6); color: white;
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 12px;
+    }
+    .err{color:var(--err);font-size:13px}
+    .ok{color:var(--success);font-size:13px}
+    .warn{color:var(--warning);font-size:13px}
+    .soft{background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.04);border-radius:10px;padding:12px}
+    .addon-card{
+      background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);
+      padding:16px;border-radius:8px;cursor:pointer;transition: all 0.2s ease;
+    }
+    .addon-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .addon-card.selected{border-color:var(--brand);background:rgba(52,211,153,.06)}
+    .tag{
+      display:inline-flex;align-items:center;padding:6px 12px;border-radius:999px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin:4px;
+    }
+    .skill-chip{
+      display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin:4px;
+    }
+    .preview-cover{
+      aspect-ratio:16/10;background:#1b1752 center/cover no-repeat;border-radius:12px;
+      border:1px solid rgba(255,255,255,.08);transition: all 0.3s ease;
+    }
+    .preview-cover:hover {
+      transform: scale(1.02);
+    }
+    .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas, 'Courier New',monospace}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .ai-loading{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,.18);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
+    .progress-bar {
+      height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;
+      margin: 12px 0;
+    }
+    .progress-fill {
+      height: 100%; background: var(--brand); border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    .tooltip {
+      position: relative;
+    }
+    .tooltip .tooltip-text {
+      visibility: hidden; width: 200px; background-color: black; color: #fff;
+      text-align: center; border-radius: 6px; padding: 8px; position: absolute;
+      z-index: 1; bottom: 125%; left: 50%; margin-left: -100px; opacity: 0;
+      transition: opacity 0.3s; font-size: 12px;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible; opacity: 1;
+    }
+    .checklist-item {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .checklist-item.completed {
+      color: var(--success);
+    }
+
+    /* mobile tweaks */
+    @media (max-width:900px){
+      .lg\:col-span-2{grid-column:span 1}
+      .stick{position:static}
+      .step-dot { width: 30px; height: 30px; font-size: 12px; }
+      .btn { padding: 10px 16px; font-size: 14px; }
+    }
+  </style></head>
+<body class="min-h-screen">  <!-- NAV -->  <nav class="glass sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-300 flex items-center gap-2">
+        <i class="fa-solid fa-rocket"></i> Talent-Hub
+      </a>
+      <div class="flex items-center gap-3">
+        <span id="loginStatus" class="chip">Checking auth…</span>
+        <a id="loginBtnLink" href="login.html" class="btn btn-plain text-sm">Login</a>
+        <button id="btnLogout" class="btn btn-plain text-sm hidden">Logout</button>
+      </div>
+    </div>
+  </nav>  <main class="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- LEFT: multi-step form -->
+      <section class="lg:col-span-2 glass p-4 md:p-5"><div class="flex items-center justify-between mb-4">
+      <div>
+        <div class="kicker">Create new gig</div>
+        <h1 class="text-xl md:text-2xl font-extrabold mt-1">Tell clients what you'll deliver</h1>
+      </div>
+      <div class="tooltip">
+        <i class="fa-solid fa-circle-question text-slate-400"></i>
+        <div class="tooltip-text">Complete all steps to create an attractive gig that stands out</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-bar">
+      <div id="progressFill" class="progress-fill" style="width: 14%"></div>
+    </div>
+
+    <div class="divider my-4"></div>
+
+    <!-- STEPS ROW -->
+    <div class="flex items-center gap-3 mb-4">
+      <div id="dot-1" class="step-dot active">1</div>
+      <div class="flex-1 step-line" style="height:2px; background:rgba(255,255,255,.1)"></div>
+      <div id="dot-2" class="step-dot">2</div>
+      <div class="flex-1 step-line" style="height:2px; background:rgba(255,255,255,.1)"></div>
+      <div id="dot-3" class="step-dot">3</div>
+      <div class="flex-1 step-line" style="height:2px; background:rgba(255,255,255,.1)"></div>
+      <div id="dot-4" class="step-dot">4</div>
+      <div class="flex-1 step-line" style="height:2px; background:rgba(255,255,255,.1)"></div>
+      <div id="dot-5" class="step-dot">5</div>
+      <div class="flex-1 step-line" style="height:2px; background:rgba(255,255,255,.1)"></div>
+      <div id="dot-6" class="step-dot">6</div>
+      <div class="flex-1 step-line" style="height:2px; background:rgba(255,255,255,.1)"></div>
+      <div id="dot-7" class="step-dot">7</div>
+    </div>
+
+    <div class="mt-2 grid grid-cols-7 text-center text-[11px] text-slate-300/80 mb-5">
+      <div>Overview</div><div>Packages</div><div>Add-ons</div><div>Description</div><div>Gallery</div><div>About</div><div>Publish</div>
+    </div>
+
+    <form id="gigForm" class="space-y-6">
+
+      <!-- STEP 1 -->
+      <div id="step-1" class="step-pane">
+        <div class="kicker mb-2">Overview</div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="md:col-span-2">
+            <label class="block mb-1">Gig Title <span class="text-red-400">*</span></label>
+            <input id="title" maxlength="120" class="input" placeholder="I will design a professional minimalist logo" required />
+            <div class="tip mt-1 text-xs text-slate-300">Max 120 characters. Be specific about what you offer.</div>
+          </div>
+          <div>
+            <label class="block mb-1">Category <span class="text-red-400">*</span></label>
+            <select id="category" class="input" required>
+              <option value="">Select Category</option>
+              <option>Graphics & Design</option>
+              <option>Programming & Tech</option>
+              <option>Digital Marketing</option>
+              <option>Video & Animation</option>
+              <option>Writing & Translation</option>
+              <option>Music & Audio</option>
+              <option>AI Services</option>
+            </select>
+            <div class="tip mt-1 text-xs text-slate-300">Choose the most relevant category</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+          <div class="md:col-span-2">
+            <label class="block mb-1">Subcategory <span class="text-red-400">*</span></label>
+            <input id="subcategory" class="input" placeholder="Logo Design / Web App / SEO" required />
+            <div class="tip mt-1 text-xs text-slate-300">Be specific to attract the right clients</div>
+          </div>
+          <div>
+            <label class="block mb-1">Delivery Time <span class="text-red-400">*</span></label>
+            <input id="delivery" class="input" placeholder="3 Days" required />
+            <div class="tip mt-1 text-xs text-slate-300">Be realistic about your timeline</div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block mb-1">Tags (comma separated) <span class="text-red-400">*</span></label>
+          <input id="tagsInput" class="input" placeholder="logo, brand, minimal" />
+          <div class="tip mt-1 text-xs text-slate-300">Add 5-8 relevant tags for better visibility</div>
+          <div id="tagsWrap" class="flex gap-2 flex-wrap mt-2"></div>
+        </div>
+
+        <div class="mt-4">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" id="isSubscription" />
+            <span class="font-semibold">Subscription-based service</span>
+          </label>
+          <div class="tip mt-1 text-xs text-slate-300">Offer recurring services for steady income</div>
+          <div id="subscriptionOptions" class="mt-3 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block mb-1">Monthly Price (₹) <span class="text-red-400">*</span></label>
+                <input id="monthlyPrice" type="number" min="0" step="1" class="input" placeholder="1999" />
+              </div>
+              <div>
+                <label class="block mb-1">Billing Cycle <span class="text-red-400">*</span></label>
+                <select id="billingCycle" class="input">
+                  <option value="monthly">Monthly</option>
+                  <option value="quarterly">Quarterly (10% off)</option>
+                  <option value="yearly">Yearly (20% off)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div id="step-2" class="step-pane hidden">
+        <div class="kicker mb-2">Packages & Pricing</div>
+
+        <div class="soft p-3 mb-4">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">Smart Package Generator</div>
+            <button type="button" id="aiPackageBtn" class="btn btn-plain text-sm"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Packages</button>
+          </div>
+          <div class="tip mt-1 text-xs text-slate-300">Let AI create Basic, Standard, and Premium packages based on your service</div>
+          <div id="aiPackageStatus" class="mt-2 text-sm hidden"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="block mb-1">Starting Price (₹) <span class="text-red-400">*</span></label>
+            <input id="price" type="number" min="0" step="1" class="input" placeholder="999" required />
+            <div class="tip mt-1 text-xs text-slate-300">You can send custom offers later</div>
+          </div>
+          <div>
+            <label class="block mb-1">Revisions <span class="text-red-400">*</span></label>
+            <input id="revisions" type="number" min="0" class="input" placeholder="2" required />
+            <div class="tip mt-1 text-xs text-slate-300">How many revisions included</div>
+          </div>
+          <div>
+            <label class="block mb-1">Source files <span class="text-red-400">*</span></label>
+            <select id="sourceFiles" class="input" required>
+              <option value="">Select Option</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+            <div class="tip mt-1 text-xs text-slate-300">Will you provide source files?</div>
+          </div>
+        </div>
+
+        <div class="soft p-3 mt-3">
+          <div class="font-semibold mb-2">Key features (comma separated) <span class="text-red-400">*</span></div>
+          <input id="pkgFeatures" class="input" placeholder="High quality, Responsive, SEO-friendly, Fast delivery" required />
+          <div class="tip mt-1 text-xs text-slate-300">These appear on order card - highlight your value</div>
+        </div>
+
+        <!-- Multi-tier Packages -->
+        <div class="mt-4">
+          <div class="kicker mb-2">Package Tiers</div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="soft p-3">
+              <div class="font-bold mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-circle text-blue-400"></i> Basic
+              </div>
+              <input id="basicPrice" type="number" min="0" class="input mb-2" placeholder="Price" />
+              <textarea id="basicFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+            </div>
+            <div class="soft p-3">
+              <div class="font-bold mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-star text-purple-400"></i> Standard
+              </div>
+              <input id="standardPrice" type="number" min="0" class="input mb-2" placeholder="Price" />
+              <textarea id="standardFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+            </div>
+            <div class="soft p-3">
+              <div class="font-bold mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-crown text-yellow-400"></i> Premium
+              </div>
+              <input id="premiumPrice" type="number" min="0" class="input mb-2" placeholder="Price" />
+              <textarea id="premiumFeatures" class="input" rows="3" placeholder="Features (one per line)"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div id="step-3" class="step-pane hidden">
+        <div class="kicker mb-2">Add-ons</div>
+        <p class="text-sm text-slate-300 mb-4">Offer additional services to increase your earnings</p>
+
+        <div id="addonList" class="space-y-3"></div>
+
+        <div class="mt-6 soft p-4">
+          <div class="font-semibold mb-2">Custom Add-on</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="block mb-1">Add-on Name</label>
+              <input id="customAddonName" class="input" placeholder="e.g., Extra Fast Delivery" />
+            </div>
+            <div>
+              <label class="block mb-1">Price (₹)</label>
+              <input id="customAddonPrice" type="number" class="input" placeholder="499" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="block mb-1">Description</label>
+            <textarea id="customAddonDesc" class="input" rows="2" placeholder="Describe what this add-on includes"></textarea>
+          </div>
+          <button type="button" id="addCustomAddon" class="btn btn-plain">+ Add Custom Add-on</button>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div id="step-4" class="step-pane hidden">
+        <div class="kicker mb-2">Description & Skills</div>
+
+        <div>
+          <label class="block mb-1">Description <span class="text-red-400">*</span></label>
+          <textarea id="description" rows="8" class="input" placeholder="Explain what you will deliver, process, requirements, and what makes you unique..." required></textarea>
+          <div class="tip mt-1 text-xs text-slate-300">Add process, deliverables, tools & stack. Minimum 120 characters.</div>
+          <div class="text-right mt-1 text-xs text-slate-400"><span id="charCount">0</span>/2000 characters</div>
+        </div>
+
+        <div class="mt-3">
+          <label class="block mb-1">Skills / Tags <span class="text-red-400">*</span></label>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input id="skillsInput" class="input" placeholder="e.g., Figma, React, Logo" />
+            <button id="addSkill" type="button" class="btn btn-plain">Add</button>
+            <button id="clearSkill" type="button" class="btn btn-plain">Clear</button>
+          </div>
+          <div class="tip mt-1 text-xs text-slate-300">Add 5-8 relevant skills for better matching</div>
+          <div id="skillsWrap" class="flex gap-2 flex-wrap mt-2"></div>
+        </div>
+
+        <div class="mt-4">
+          <div class="kicker mb-2">Frequently Asked Questions</div>
+          <div id="faqContainer">
+            <div class="faq-item mb-3">
+              <input class="input mb-2 faq-q" placeholder="Question" />
+              <textarea class="input faq-a" rows="2" placeholder="Answer"></textarea>
+              <div class="text-right mt-2">
+                <button type="button" class="btn btn-plain remove-faq">Remove</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" id="addFaq" class="btn btn-plain mt-2">+ Add FAQ</button>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div id="step-5" class="step-pane hidden">
+        <div class="kicker mb-2">Gallery</div>
+        <p class="text-sm text-slate-300 mb-4">Showcase your work with images and videos</p>
+
+        <div class="mb-4">
+          <label class="block mb-1">Upload Images <span class="text-red-400">*</span></label>
+          <input type="file" id="images" accept="image/*" multiple class="input" />
+          <div class="tip mt-1 text-xs text-slate-300">Upload up to 6 images (JPEG, PNG, GIF). First image will be your cover.</div>
+          <div id="imagePreview" class="flex gap-2 flex-wrap mt-3"></div>
+        </div>
+
+        <div class="mb-4">
+          <label class="block mb-1">Upload Video</label>
+          <input type="file" id="video" accept="video/*" class="input" />
+          <div class="tip mt-1 text-xs text-slate-300">Optional: Add a short video showcasing your work (MP4, MOV, max 50MB)</div>
+          <video id="videoPreview" class="w-full mt-3 rounded-lg hidden" controls></video>
+        </div>
+
+        <div class="soft p-3">
+          <div class="font-semibold mb-2">Pro Tips for Gallery</div>
+          <ul class="list-disc list-inside text-sm text-slate-300 space-y-1">
+            <li>Use high-quality, relevant images</li>
+            <li>Show before/after examples if applicable</li>
+            <li>Include your branding</li>
+            <li>Keep videos under 60 seconds</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div id="step-6" class="step-pane hidden">
+        <div class="kicker mb-2">About You</div>
+        <p class="text-sm text-slate-300 mb-4">Tell clients about yourself and your experience</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+          <div>
+            <label class="block mb-1">Years of Experience</label>
+            <input type="number" id="experience" min="0" class="input" placeholder="3" />
+          </div>
+          <div>
+            <label class="block mb-1">Language(s)</label>
+            <input id="languages" class="input" placeholder="English, Hindi, Spanish" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-1">Bio/Introduction <span class="text-red-400">*</span></label>
+          <textarea id="bio" rows="4" class="input" placeholder="Tell clients about your background, skills, and experience..." required></textarea>
+          <div class="tip mt-1 text-xs text-slate-300">This will be displayed on your gig page</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-1">Education/Certifications</label>
+          <textarea id="education" rows="3" class="input" placeholder="Relevant education, courses, or certifications"></textarea>
+        </div>
+
+        <div>
+          <label class="block mb-1">Previous Work Examples (URLs)</label>
+          <textarea id="portfolio" rows="2" class="input" placeholder="https://example.com/portfolio"></textarea>
+          <div class="tip mt-1 text-xs text-slate-300">Link to your portfolio, LinkedIn, or other work examples</div>
+        </div>
+      </div>
+
+      <!-- STEP 7 -->
+      <div id="step-7" class="step-pane hidden">
+        <div class="kicker mb-2">Review & Publish</div>
+        <p class="text-sm text-slate-300 mb-4">Review your gig details and publish when ready</p>
+
+        <div class="soft p-4 mb-4">
+          <div class="font-semibold mb-2">Publishing Checklist</div>
+          <div id="checklist" class="space-y-2">
+            <div class="checklist-item">
+              <i class="fa-regular fa-circle"></i>
+              <span>Title is clear and descriptive</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-regular fa-circle"></i>
+              <span>Category and subcategory selected</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-regular fa-circle"></i>
+              <span>Pricing set appropriately</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-regular fa-circle"></i>
+              <span>Description is detailed and compelling</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-regular fa-circle"></i>
+              <span>At least 3 relevant skills added</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-regular fa-circle"></i>
+              <span>Images uploaded</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-regular fa-circle"></i>
+              <span>Bio completed</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <button type="button" id="btnSaveDraft" class="btn btn-plain">
+            <i class="fa-regular fa-floppy-disk"></i> Save Draft
+          </button>
+          <button type="button" id="btnPublish" class="btn btn-brand">
+            <i class="fa-solid fa-rocket"></i> Publish Gig
+          </button>
+        </div>
+
+        <div class="mt-4 soft p-3">
+          <div class="font-semibold mb-2">Gig Data (Debug)</div>
+          <pre id="debugJson" class="text-xs overflow-auto max-h-40 p-2 bg-black/20 rounded"></pre>
+        </div>
+      </div>
+    </form>
+
+    <div class="divider my-5"></div>
+
+    <div class="flex items-center justify-between gap-3">
+      <button id="btnPrev" class="btn btn-plain"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+      <div class="text-sm text-slate-300" id="stepNote">Step 1 of 7</div>
+      <button id="btnNext" class="btn btn-plain">Next <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+
+  </section>
+
+  <!-- RIGHT: sticky live preview + profile -->
+  <aside class="space-y-4">
+
+    <!-- Profile -->
+    <div class="glass p-4">
+      <div class="kicker mb-1">Your profile</div>
+      <div class="flex items-center gap-3">
+        <img id="uPhoto" class="w-12 h-12 rounded-full object-cover border border-white/10" src="https://via.placeholder.com/80" />
+        <div>
+          <div id="uName" class="font-extrabold">—</div>
+          <div id="uEmail" class="text-xs text-slate-300">—</div>
+        </div>
+      </div>
+      <div class="mt-3 text-sm text-slate-300">Your display name appears as seller name on your gig.</div>
+    </div>
+
+    <!-- Live Preview -->
+    <div class="glass p-4 stick" id="previewCard">
+      <div class="kicker mb-1">Live preview</div>
+      <div id="liveThumb" class="preview-cover" style="background-image:url('https://via.placeholder.com/1200x800?text=Preview');"></div>
+      <div class="mt-3">
+        <div class="text-slate-300 text-xs">Title</div>
+        <div id="pvTitle" class="font-extrabold text-white text-lg truncate">—</div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-2">
+        <div class="soft p-2">
+          <div class="text-[11px] text-slate-400">Category</div>
+          <div id="pvCat" class="font-semibold text-sm">—</div>
+        </div>
+        <div class="soft p-2">
+          <div class="text-[11px] text-slate-400">Delivery</div>
+          <div id="pvDel" class="font-semibold text-sm">—</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-2">
+        <div class="soft p-2">
+          <div class="text-[11px] text-slate-400">Price</div>
+          <div id="pvPrice" class="font-black text-emerald-300 text-base">₹0</div>
+        </div>
+        <div class="soft p-2">
+          <div class="text-[11px] text-slate-400">Revisions</div>
+          <div id="pvRev" class="font-semibold text-sm">—</div>
+        </div>
+      </div>
+      <div class="mt-2">
+        <div class="text-[11px] text-slate-400">Features</div>
+        <div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div>
+      </div>
+      <div id="pvSubscription" class="mt-2 hidden">
+        <div class="badge bg-emerald-900/30 text-emerald-300"><i class="fa-solid fa-repeat"></i> Subscription Available</div>
+      </div>
+    </div>
+
+    <div class="glass p-4">
+      <div class="kicker mb-1">Pro tips</div>
+      <ul class="list-disc list-inside text-sm text-slate-300 space-y-1">
+        <li>Use clear, high-res images of your work.</li>
+        <li>Set realistic delivery times.</li>
+        <li>Add 5–8 skills/tags for better discovery.</li>
+        <li>Keep title specific (niche works better).</li>
+        <li>Offer subscription options for recurring work.</li>
+        <li>Add FAQs to reduce repetitive questions.</li>
+        <li>Use all available image slots for better conversion.</li>
+      </ul>
+    </div>
+
+  </aside>
+</div>
+
+  </main>  <footer class="text-center py-8 text-slate-300">© 2025 Talent-Hub</footer>  <!-- Firebase App (core SDK is always required) -->  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>  <!-- Firebase Authentication -->  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>  <!-- Cloud Firestore -->  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>  <!-- Cloud Storage -->  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js"></script>  <script>
+    // ------------------------
+    // Firebase configuration
+    // ------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+      measurementId: "G-TYL2XF4WZY"
+    };
+
+    // Initialize Firebase (namespaced API)
+    if (!firebase.apps?.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    // Short selectors
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    // Elements & state
+    const stepPanes = {
+      1: $('#step-1'),
+      2: $('#step-2'),
+      3: $('#step-3'),
+      4: $('#step-4'),
+      5: $('#step-5'),
+      6: $('#step-6'),
+      7: $('#step-7')
+    };
+    const dots = {1:$('#dot-1'),2:$('#dot-2'),3:$('#dot-3'),4:$('#dot-4'),5:$('#dot-5'),6:$('#dot-6'),7:$('#dot-7')};
+    const btnPrev = $('#btnPrev'), btnNext = $('#btnNext'), stepNote = $('#stepNote');
+    const progressFill = $('#progressFill');
+
+    // Step fields
+    const titleEl = $('#title'), categoryEl = $('#category'), subcatEl = $('#subcategory'), deliveryEl = $('#delivery');
+    const tagsInput = $('#tagsInput'), tagsWrap = $('#tagsWrap');
+    const isSubscriptionEl = $('#isSubscription'), subscriptionOptions = $('#subscriptionOptions'), monthlyPriceEl = $('#monthlyPrice'), billingCycleEl = $('#billingCycle');
+
+    // packages
+    const priceEl = $('#price'), revisionsEl = $('#revisions'), sourceFilesEl = $('#sourceFiles'), pkgFeaturesEl = $('#pkgFeatures');
+    const basicPriceEl = $('#basicPrice'), basicFeaturesEl = $('#basicFeatures'), standardPriceEl = $('#standardPrice'), standardFeaturesEl = $('#standardFeatures'), premiumPriceEl = $('#premiumPrice'), premiumFeaturesEl = $('#premiumFeatures');
+    const aiPackageBtn = $('#aiPackageBtn'), aiPackageStatus = $('#aiPackageStatus');
+
+    // description & skills
+    const descEl = $('#description'), skillsInput = $('#skillsInput'), addSkillBtn = $('#addSkill'), clearSkillBtn = $('#clearSkill'), skillsWrap = $('#skillsWrap');
+    const charCount = $('#charCount');
+
+    // gallery
+    const imagesEl = $('#images'), imagePreview = $('#imagePreview'), videoEl = $('#video'), videoPreview = $('#videoPreview');
+
+    // about
+    const experienceEl = $('#experience'), languagesEl = $('#languages'), bioEl = $('#bio'), educationEl = $('#education'), portfolioEl = $('#portfolio');
+
+    // publish
+    const btnSaveDraft = $('#btnSaveDraft'), btnPublish = $('#btnPublish'), debugJson = $('#debugJson'), checklist = $('#checklist');
+
+    // preview elements
+    const pvTitle = $('#pvTitle'), pvCat = $('#pvCat'), pvDel = $('#pvDel'), pvPrice = $('#pvPrice'), pvRev = $('#pvRev'), pvFeat = $('#pvFeat'), pvSubscription = $('#pvSubscription'), liveThumb = $('#liveThumb');
+
+    // small util
+    function byId(id){ return document.getElementById(id); }
+
+    // state
+    let currentStep = 1, maxStep = 7;
+    let tags = [], skills = [], addons = [], faqs = [];
+    let uploadedImages = [], uploadedVideo = null;
+
+    // ------------
+    // Auth state listener (reliable)
+    // ------------
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        $('#loginStatus').textContent = `Logged in as ${user.email}`;
+        $('#btnLogout').classList.remove('hidden');
+        $('#loginBtnLink').classList.add('hidden');
+        // Set user info in preview
+        $('#uName').textContent = user.displayName || user.email;
+        $('#uEmail').textContent = user.email;
+        $('#uPhoto').src = user.photoURL || 'https://via.placeholder.com/80';
+      } else {
+        $('#loginStatus').textContent = "Not logged in";
+        $('#btnLogout').classList.add('hidden');
+        $('#loginBtnLink').classList.remove('hidden');
+        // Do not auto-redirect here — leave user on page
+        // window.location.href = 'login.html';
+      }
+    });
+
+    // Logout handler
+    $('#btnLogout').addEventListener('click', () => {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    });
+
+    // Show step
+    function gotoStep(n){
+      currentStep = Math.max(1, Math.min(maxStep, n));
+      for (let i=1;i<=maxStep;i++){
+        const pane = stepPanes[i];
+        if (pane) pane.classList.toggle('hidden', i!==currentStep);
+        const dot = dots[i];
+        if (dot) {
+          dot.classList.toggle('active', i<=currentStep);
+          // Mark previous steps as completed
+          dot.classList.toggle('completed', i<currentStep);
+        }
+      }
+      stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
+      // Update progress bar
+      progressFill.style.width = `${(currentStep / maxStep) * 100}%`;
+      if (currentStep <= 4) renderPreview();
+      if (currentStep === 7) buildChecklist();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    gotoStep(1);
+
+    // Next/Prev handlers: ensure pending tag/skill input are consumed before validation
+    btnPrev.addEventListener('click', ()=> {
+      if (currentStep === 1) return;
+      if (validateStep(currentStep)) {
+        gotoStep(currentStep-1);
+      }
+    });
+    btnNext.addEventListener('click', ()=> {
+      // Before validating, add any pending tags/skills the user hasn't "Enter"ed
+      consumePendingTagsFromInput();
+      consumePendingSkillsFromInput();
+      if (currentStep === maxStep) return;
+      if (validateStep(currentStep)) {
+        gotoStep(currentStep+1);
+      }
+    });
+
+    // Dot click — use keys to preserve correct mapping
+    Object.keys(dots).forEach(k=>{
+      const idx = parseInt(k);
+      const d = dots[idx];
+      if (!d) return;
+      d.addEventListener('click', ()=> {
+        // allow navigation backward anytime, forward only if current step validation passes
+        if (idx < currentStep || validateStep(currentStep)) {
+          gotoStep(idx);
+        }
+      });
+    });
+
+    // Step validation
+    function validateStep(step) {
+      let isValid = true;
+      const showError = (el, message) => {
+        isValid = false;
+        if (el) el.classList.add('danger');
+        if (message && el) {
+          let errorEl = el.nextElementSibling;
+          if (!errorEl || !errorEl.classList.contains('err')) {
+            errorEl = document.createElement('div');
+            errorEl.className = 'err';
+            el.parentNode.insertBefore(errorEl, el.nextSibling);
+          }
+          errorEl.textContent = message;
+        }
+      };
+      const removeError = (el) => {
+        if (!el) return;
+        el.classList.remove('danger');
+        const errorEl = el.nextElementSibling;
+        if (errorEl && errorEl.classList.contains('err')) {
+          errorEl.remove();
+        }
+      };
+
+      switch(step) {
+        case 1:
+          if (!titleEl.value.trim()) showError(titleEl, 'Title is required');
+          else removeError(titleEl);
+
+          if (!categoryEl.value) showError(categoryEl, 'Category is required');
+          else removeError(categoryEl);
+
+          if (!subcatEl.value.trim()) showError(subcatEl, 'Subcategory is required');
+          else removeError(subcatEl);
+
+          if (!deliveryEl.value.trim()) showError(deliveryEl, 'Delivery time is required');
+          else removeError(deliveryEl);
+
+          // Ensure we also pick up any tags typed but not committed
+          consumePendingTagsFromInput();
+          if (tags.length < 3) showError(tagsInput, 'Add at least 3 tags');
+          else removeError(tagsInput);
+
+          if (isSubscriptionEl.checked && !monthlyPriceEl.value) {
+            showError(monthlyPriceEl, 'Monthly price is required for subscription');
+          } else {
+            removeError(monthlyPriceEl);
+          }
+          break;
+
+        case 2:
+          if (!priceEl.value || priceEl.value <= 0) showError(priceEl, 'Valid price is required');
+          else removeError(priceEl);
+
+          if (!revisionsEl.value) showError(revisionsEl, 'Number of revisions is required');
+          else removeError(revisionsEl);
+
+          if (!sourceFilesEl.value) showError(sourceFilesEl, 'Please select an option');
+          else removeError(sourceFilesEl);
+
+          if (!pkgFeaturesEl.value.trim()) showError(pkgFeaturesEl, 'Features are required');
+          else removeError(pkgFeaturesEl);
+          break;
+
+        case 3:
+          // No strict validations for add-ons; always valid.
+          break;
+
+        case 4:
+          if (!descEl.value.trim() || descEl.value.trim().length < 120) {
+            showError(descEl, 'Description must be at least 120 characters');
+          } else {
+            removeError(descEl);
+          }
+
+          // Ensure pending skills consumed
+          consumePendingSkillsFromInput();
+          if (skills.length < 3) showError(skillsInput, 'Add at least 3 skills');
+          else removeError(skillsInput);
+          break;
+
+        case 5:
+          if (!imagesEl.files || imagesEl.files.length === 0) showError(imagesEl, 'At least one image is required');
+          else removeError(imagesEl);
+          break;
+
+        case 6:
+          if (!bioEl.value.trim()) showError(bioEl, 'Bio is required');
+          else removeError(bioEl);
+          break;
+
+        case 7:
+          // Final review - no additional checks here (validateAllSteps does full pass)
+          break;
+      }
+      return isValid;
+    }
+
+    // Helper: when user types tags but doesn't press Enter, pick them up
+    function consumePendingTagsFromInput() {
+      if (!tagsInput) return;
+      const raw = (tagsInput.value || '').trim();
+      if (!raw) return;
+      const parts = raw.split(',').map(s=>s.trim()).filter(Boolean);
+      parts.forEach(p=> { if (!tags.includes(p)) tags.push(p); });
+      tagsInput.value = '';
+      renderTags();
+    }
+
+    // TAGS handler
+    function renderTags(){
+      tagsWrap.innerHTML = '';
+      tags.forEach((t,i)=>{
+        const el = document.createElement('div'); el.className='tag';
+        el.innerText = t;
+        const btn = document.createElement('button'); btn.style.marginLeft='8px'; btn.style.background='transparent'; btn.style.border='none';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        btn.addEventListener('click', ()=> { tags.splice(i,1); renderTags(); });
+        el.appendChild(btn);
+        tagsWrap.appendChild(el);
+      });
+      renderPreview();
+    }
+    tagsInput.addEventListener('keyup', (e)=>{
+      if (e.key === 'Enter' || e.key === ','){
+        e.preventDefault();
+        const raw = tagsInput.value.trim().replace(/,+$/,'');
+        if (!raw) { tagsInput.value=''; return; }
+        const parts = raw.split(',').map(s=>s.trim()).filter(Boolean);
+        parts.forEach(p=> { if (!tags.includes(p)) tags.push(p); });
+        tagsInput.value=''; renderTags();
+      }
+    });
+    // Also on blur, consume pending tags
+    tagsInput.addEventListener('blur', ()=> consumePendingTagsFromInput());
+
+    // Subscription toggle
+    isSubscriptionEl?.addEventListener('change', ()=>{
+      if (isSubscriptionEl.checked) subscriptionOptions.classList.remove('hidden'); 
+      else subscriptionOptions.classList.add('hidden');
+      pvSubscription.classList.toggle('hidden', !isSubscriptionEl.checked);
+    });
+
+    // Character count for description
+    descEl.addEventListener('input', () => {
+      charCount.textContent = descEl.value.length;
+      if (descEl.value.length > 2000) {
+        charCount.classList.add('err');
+      } else {
+        charCount.classList.remove('err');
+      }
+    });
+
+    // Preview render
+    function renderPreview(){
+      pvTitle.textContent = titleEl?.value?.trim() || '—';
+      pvCat.textContent = categoryEl?.value || '—';
+      pvDel.textContent = deliveryEl?.value || '—';
+      pvPrice.textContent = '₹' + (Number(priceEl?.value || 0));
+      pvRev.textContent = (revisionsEl?.value || '—');
+      pvFeat.innerHTML = '';
+      const feats = (pkgFeaturesEl?.value || '').split(',').map(s=>s.trim()).filter(Boolean);
+      feats.forEach(f=>{
+        const x = document.createElement('div'); x.className='chip';
+        x.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`;
+        pvFeat.appendChild(x);
+      });
+      pvSubscription.classList.toggle('hidden', !isSubscriptionEl?.checked);
+    }
+    [titleEl, categoryEl, deliveryEl, priceEl, revisionsEl, pkgFeaturesEl].forEach(el=>{
+      if (!el) return;
+      el.addEventListener('input', renderPreview);
+      el.addEventListener('change', renderPreview);
+    });
+
+    // SKILLS
+    function consumePendingSkillsFromInput(){
+      const v = (skillsInput.value||'').trim();
+      if (!v) return;
+      const parts = v.split(',').map(s=>s.trim()).filter(Boolean);
+      parts.forEach(p=>{ if (!skills.includes(p)) skills.push(p); });
+      skillsInput.value = '';
+      renderSkills();
+    }
+    function renderSkills(){
+      skillsWrap.innerHTML='';
+      skills.forEach((s,i)=>{
+        const sp = document.createElement('div'); sp.className='skill-chip'; sp.textContent = s;
+        sp.title='Click to remove'; sp.style.cursor='pointer'; sp.addEventListener('click', ()=> { skills.splice(i,1); renderSkills(); });
+        skillsWrap.appendChild(sp);
+      });
+    }
+    addSkillBtn.addEventListener('click', ()=> {
+      consumePendingSkillsFromInput();
+    });
+    skillsInput.addEventListener('keyup', (e)=> { if (e.key==='Enter') addSkillBtn.click(); });
+    clearSkillBtn.addEventListener('click', ()=> { skills = []; renderSkills(); });
+
+    // FAQ Add
+    const addFaqBtn = $('#addFaq');
+    addFaqBtn.addEventListener('click', ()=>{
+      const container = $('#faqContainer');
+      const div = document.createElement('div'); div.className='faq-item mb-3';
+      div.innerHTML = `<input class="input mb-2 faq-q" placeholder="Question" /><textarea class="input faq-a" rows="2" placeholder="Answer"></textarea><div class="text-right mt-2"><button class="btn btn-plain remove-faq">Remove</button></div>`;container.appendChild(div);
+  div.querySelector('.remove-faq').addEventListener('click', ()=> div.remove());
+});
+
+// Initialize addons
+function initAddons() {
+  const addonList = $('#addonList');
+  const standardAddons = [
+    { id: 'priority', name: 'Priority Support', price: 499, description: 'Get your project prioritized in my queue' },
+    { id: 'extraRevision', name: 'Extra Revision', price: 299, description: 'One additional revision round' },
+    { id: 'sourceFiles', name: 'Source Files', price: 999, description: 'Get all source files and assets' },
+    { id: 'commercialUse', name: 'Commercial Use License', price: 1499, description: 'Full commercial rights to the deliverables' },
+    { id: 'rushDelivery', name: 'Rush Delivery (24h)', price: 1999, description: 'Get your project delivered within 24 hours' }
+  ];
+
+  standardAddons.forEach(addon => {
+    const div = document.createElement('div');
+    div.className = 'addon-card';
+    div.innerHTML = `
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="font-semibold">${addon.name}</div>
+          <div class="text-xs text-slate-400 mt-1">${addon.description}</div>
+        </div>
+        <div class="font-bold text-emerald-300">₹${addon.price}</div>
+      </div>
+      <div class="flex justify-between items-center mt-2">
+        <label class="flex items-center gap-2">
+          <input type="checkbox" data-id="${addon.id}" data-name="${addon.name}" data-price="${addon.price}">
+          <span class="text-xs">Include this add-on</span>
+        </label>
+      </div>
+    `;
+    addonList.appendChild(div);
+    const checkbox = div.querySelector('input[type="checkbox"]');
+    checkbox.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        addons.push({ id: addon.id, name: addon.name, price: addon.price, description: addon.description });
+        div.classList.add('selected');
+      } else {
+        addons = addons.filter(a => a.id !== addon.id);
+        div.classList.remove('selected');
+      }
+    });
+  });
+}
+initAddons();
+
+// Custom addon
+$('#addCustomAddon').addEventListener('click', () => {
+  const name = $('#customAddonName').value.trim();
+  const price = $('#customAddonPrice').value;
+  const description = $('#customAddonDesc').value.trim();
+  
+  if (!name || !price) {
+    alert('Please provide a name and price for your custom add-on');
+    return;
+  }
+  
+  const id = 'custom_' + Date.now();
+  addons.push({ id, name, price: parseInt(price), description, custom: true });
+  
+  const addonList = $('#addonList');
+  const div = document.createElement('div');
+  div.className = 'addon-card selected';
+  div.innerHTML = `
+    <div class="flex justify-between items-start">
+      <div>
+        <div class="font-semibold">${name} <span class="text-xs text-slate-400">(Custom)</span></div>
+        <div class="text-xs text-slate-400 mt-1">${description}</div>
+      </div>
+      <div class="font-bold text-emerald-300">₹${price}</div>
+    </div>
+    <div class="text-right mt-2">
+      <button type="button" class="text-xs text-red-400 remove-custom-addon" data-id="${id}">Remove</button>
+    </div>
+  `;
+  addonList.appendChild(div);
+  
+  div.querySelector('.remove-custom-addon').addEventListener('click', (e) => {
+    const idToRemove = e.target.dataset.id;
+    addons = addons.filter(a => a.id !== idToRemove);
+    div.remove();
+  });
+  
+  // Clear inputs
+  $('#customAddonName').value = '';
+  $('#customAddonPrice').value = '';
+  $('#customAddonDesc').value = '';
+});
+
+// Image preview
+imagesEl.addEventListener('change', (e) => {
+  imagePreview.innerHTML = '';
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  
+  uploadedImages = [];
+  for (let i = 0; i < Math.min(files.length, 6); i++) {
+    const file = files[i];
+    const reader = new FileReader();
+    
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      uploadedImages.push({ name: file.name, dataUrl });
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      thumb.style.backgroundImage = `url(${dataUrl})`;
+      
+      const removeBtn = document.createElement('div');
+      removeBtn.className = 'remove';
+      removeBtn.innerHTML = '<i class="fa-solid fa-times"></i>';
+      removeBtn.addEventListener('click', () => {
+        thumb.remove();
+        uploadedImages = uploadedImages.filter(img => img.dataUrl !== dataUrl);
+        // Rebuild file input from remaining files (best-effort)
+        const remaining = files.filter(f => f.name !== file.name);
+        const dt = new DataTransfer();
+        remaining.forEach(r => dt.items.add(r));
+        imagesEl.files = dt.files;
+      });
+      
+      thumb.appendChild(removeBtn);
+      imagePreview.appendChild(thumb);
+      
+      // Set first image as preview
+      if (i === 0) {
+        liveThumb.style.backgroundImage = `url(${dataUrl})`;
+      }
+    };
+    
+    reader.readAsDataURL(file);
+  }
+});
+
+// Video preview
+videoEl.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    uploadedVideo = { name: file.name, dataUrl: ev.target.result };
+    videoPreview.src = ev.target.result;
+    videoPreview.classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+});
+
+// Build checklist
+function buildChecklist() {
+  const items = checklist.querySelectorAll('.checklist-item');
+  
+  // Title
+  items[0].classList.toggle('completed', titleEl.value.trim().length > 0);
+  items[0].querySelector('i').className = titleEl.value.trim().length > 0 ? 
+    'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+  
+  // Category
+  items[1].classList.toggle('completed', categoryEl.value !== '');
+  items[1].querySelector('i').className = categoryEl.value !== '' ? 
+    'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+  
+  // Pricing
+  items[2].classList.toggle('completed', priceEl.value > 0);
+  items[2].querySelector('i').className = priceEl.value > 0 ? 
+    'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+  
+  // Description
+  items[3].classList.toggle('completed', descEl.value.trim().length >= 120);
+  items[3].querySelector('i').className = descEl.value.trim().length >= 120 ? 
+    'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+  
+  // Skills
+  items[4].classList.toggle('completed', skills.length >= 3);
+  items[4].querySelector('i').className = skills.length >= 3 ? 
+    'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+  
+  // Images
+  items[5].classList.toggle('completed', uploadedImages.length > 0);
+  items[5].querySelector('i').className = uploadedImages.length > 0 ? 
+    'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+  
+  // Bio
+  items[6].classList.toggle('completed', bioEl.value.trim().length > 0);
+  items[6].querySelector('i').className = bioEl.value.trim().length > 0 ? 
+    'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+}
+
+// Build payload for Firebase
+function buildGigPayload(status) {
+  const user = auth.currentUser;
+  if (!user) return null;
+  
+  // Gather FAQs
+  const faqItems = [];
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const question = item.querySelector('.faq-q').value.trim();
+    const answer = item.querySelector('.faq-a').value.trim();
+    if (question && answer) {
+      faqItems.push({ question, answer });
+    }
+  });
+  
+  // Package tiers
+  const packages = [];
+  if (basicPriceEl.value) {
+    packages.push({
+      name: 'Basic',
+      price: parseInt(basicPriceEl.value),
+      features: basicFeaturesEl.value.split('\n').filter(f => f.trim())
+    });
+  }
+  if (standardPriceEl.value) {
+    packages.push({
+      name: 'Standard',
+      price: parseInt(standardPriceEl.value),
+      features: standardFeaturesEl.value.split('\n').filter(f => f.trim())
+    });
+  }
+  if (premiumPriceEl.value) {
+    packages.push({
+      name: 'Premium',
+      price: parseInt(premiumPriceEl.value),
+      features: premiumFeaturesEl.value.split('\n').filter(f => f.trim())
+    });
+  }
+  
+  return {
+    title: titleEl.value.trim(),
+    category: categoryEl.value,
+    subcategory: subcatEl.value.trim(),
+    delivery: deliveryEl.value.trim(),
+    price: parseInt(priceEl.value) || 0,
+    revisions: parseInt(revisionsEl.value) || 0,
+    sourceFiles: sourceFilesEl.value,
+    features: pkgFeaturesEl.value.split(',').map(f => f.trim()).filter(f => f),
+    description: descEl.value.trim(),
+    skills: skills,
+    tags: tags,
+    isSubscription: isSubscriptionEl.checked,
+    subscription: isSubscriptionEl.checked ? {
+      monthlyPrice: parseInt(monthlyPriceEl.value) || 0,
+      billingCycle: billingCycleEl.value
+    } : null,
+    packages: packages,
+    addons: addons,
+    faqs: faqItems,
+    // Note: uploadedImages contains dataUrl objects in this local version. In production upload to storage and save URLs.
+    images: uploadedImages.map(i=> i.dataUrl || i),
+    video: uploadedVideo ? uploadedVideo.dataUrl : null,
+    experience: parseInt(experienceEl.value) || 0,
+    languages: (languagesEl.value||'').split(',').map(l => l.trim()).filter(l => l),
+    bio: bioEl.value.trim(),
+    education: educationEl.value.trim(),
+    portfolio: portfolioEl.value.trim(),
+    sellerName: user.displayName || user.email,
+    sellerPhoto: user.photoURL || '',
+    createdBy: user.uid,
+    status: status,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+}
+
+// Save draft
+btnSaveDraft.addEventListener('click', async () => {
+  if (!validateAllSteps()) {
+    alert('Please fix validation errors before saving');
+    return;
+  }
+  
+  const payload = buildGigPayload('draft');
+  if (!payload) { alert('You must be logged in to save.'); return; }
+  
+  try {
+    btnSaveDraft.disabled = true;
+    btnSaveDraft.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    
+    // Upload images to storage if needed (skipped here - TODO in production)
+    
+    const docRef = await db.collection('subho_gigs').add(payload);
+    console.log('Draft saved with ID: ', docRef.id);
+    
+    // Update debug view
+    debugJson.textContent = JSON.stringify({id: docRef.id, ...payload}, null, 2);
+    
+    alert('Draft saved successfully!');
+  } catch (error) {
+    console.error('Error saving draft: ', error);
+    alert('Error saving draft: ' + (error.message || error));
+  } finally {
+    btnSaveDraft.disabled = false;
+    btnSaveDraft.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Draft';
+  }
+});
+
+// Publish gig
+btnPublish.addEventListener('click', async () => {
+  if (!validateAllSteps()) {
+    alert('Please fix validation errors before publishing');
+    return;
+  }
+  
+  if (!confirm('Are you sure you want to publish this gig? It will be visible to all users.')) {
+    return;
+  }
+  
+  const payload = buildGigPayload('published');
+  if (!payload) { alert('You must be logged in to publish.'); return; }
+  
+  try {
+    btnPublish.disabled = true;
+    btnPublish.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
+    
+    // Upload images to storage if needed (skipped here - TODO in production)
+    
+    const docRef = await db.collection('subho_gigs').add(payload);
+    console.log('Gig published with ID: ', docRef.id);
+    
+    // Update debug view
+    debugJson.textContent = JSON.stringify({id: docRef.id, ...payload}, null, 2);
+    
+    alert('Gig published successfully!');
+    
+    // Redirect to gig page or home
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1200);
+  } catch (error) {
+    console.error('Error publishing gig: ', error);
+    alert('Error publishing gig: ' + (error.message || error));
+  } finally {
+    btnPublish.disabled = false;
+    btnPublish.innerHTML = '<i class="fa-solid fa-rocket"></i> Publish Gig';
+  }
+});
+
+// Validate all steps
+function validateAllSteps() {
+  for (let i = 1; i <= 6; i++) {
+    // consume pending inputs before each validation
+    consumePendingTagsFromInput();
+    consumePendingSkillsFromInput();
+    if (!validateStep(i)) {
+      gotoStep(i);
+      return false;
+    }
+  }
+  return true;
+}
+
+// AI Package Generator (simulation)
+aiPackageBtn?.addEventListener('click', async ()=>{
+  const title = (titleEl.value||'').trim(); const category = categoryEl.value || '';
+  if (!title || !category) { alert('Please provide a title and category first'); return; }
+  aiPackageStatus.classList.remove('hidden');
+  aiPackageStatus.innerHTML = '<span class="ai-loading"></span> Generating packages...';
+  aiPackageBtn.disabled = true;
+  try{
+    await new Promise(r=>setTimeout(r,1200));
+    let basicPrice, standardPrice, premiumPrice, basicFeatures, standardFeatures, premiumFeatures;
+    if (category.includes('Design') || title.toLowerCase().includes('design')){
+      basicPrice=1499; standardPrice=3499; premiumPrice=6999;
+      basicFeatures='1 concept\n2 revisions\nPNG/JPG'; standardFeatures='2 concepts\n4 revisions\nSource files'; premiumFeatures='3 concepts\nUnlimited revisions\nSource files\nMockups';
+    } else if (category.includes('Programming')||category.includes('Tech')||title.toLowerCase().includes('app')){
+      basicPrice=4999; standardPrice=8999; premiumPrice=14999;
+      basicFeatures='Basic functionality\n1 revision\nDocs'; standardFeatures='Advanced features\n3 revisions\nSource code'; premiumFeatures='Complete solution\nUnlimited revisions\nDeployment';
+    } else {
+      basicPrice=1999; standardPrice=3999; premiumPrice=7999;
+      basicFeatures='Basic service\n2 revisions'; standardFeatures='Enhanced service\n4 revisions'; premiumFeatures='Complete package\nPriority support';
+    }
+    basicPriceEl.value = basicPrice; basicFeaturesEl.value = basicFeatures;
+    standardPriceEl.value = standardPrice; standardFeaturesEl.value = standardFeatures;
+    premiumPriceEl.value = premiumPrice; premiumFeaturesEl.value = premiumFeatures;
+    priceEl.value = basicPrice;
+    aiPackageStatus.innerHTML = '<span class="ok">✓ Packages generated</span>';
+  }catch(err){
+    aiPackageStatus.innerHTML = `<span class="err">Failed: ${err?.message || err}</span>`;
+  }finally{
+    setTimeout(()=>{ aiPackageStatus.classList.add('hidden'); aiPackageBtn.disabled=false; }, 1400);
+  }
+});
+
+// Load from localStorage if available
+(function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem('talentHub_gig_draft');
+    if (!saved) return;
+    
+    const data = JSON.parse(saved);
+    
+    // Load basic fields
+    if (data.title) titleEl.value = data.title;
+    if (data.category) categoryEl.value = data.category;
+    if (data.subcategory) subcatEl.value = data.subcategory;
+    if (data.delivery) deliveryEl.value = data.delivery;
+    if (data.price) priceEl.value = data.price;
+    if (data.revisions) revisionsEl.value = data.revisions;
+    if (data.sourceFiles) sourceFilesEl.value = data.sourceFiles;
+    if (data.features) pkgFeaturesEl.value = Array.isArray(data.features) ? data.features.join(', ') : data.features;
+    if (data.description) descEl.value = data.description;
+    if (data.tags) {
+      tags = data.tags;
+      renderTags();
+    }
+    if (data.skills) {
+      skills = data.skills;
+      renderSkills();
+    }
+    if (data.isSubscription) {
+      isSubscriptionEl.checked = data.isSubscription;
+      if (data.isSubscription) {
+        subscriptionOptions.classList.remove('hidden');
+        if (data.subscription) {
+          monthlyPriceEl.value = data.subscription.monthlyPrice;
+          billingCycleEl.value = data.subscription.billingCycle;
+        }
+      }
+    }
+    
+    // Load packages
+    if (data.packages) {
+      data.packages.forEach(pkg => {
+        if (pkg.name === 'Basic') {
+          basicPriceEl.value = pkg.price;
+          basicFeaturesEl.value = Array.isArray(pkg.features) ? pkg.features.join('\n') : pkg.features;
+        } else if (pkg.name === 'Standard') {
+          standardPriceEl.value = pkg.price;
+          standardFeaturesEl.value = Array.isArray(pkg.features) ? pkg.features.join('\n') : pkg.features;
+        } else if (pkg.name === 'Premium') {
+          premiumPriceEl.value = pkg.price;
+          premiumFeaturesEl.value = Array.isArray(pkg.features) ? pkg.features.join('\n') : pkg.features;
+        }
+      });
+    }
+    
+    // Load addons
+    if (data.addons) {
+      addons = data.addons;
+      // Note: This would need more complex UI synchronization
+    }
+    
+    renderPreview();
+    console.log('Loaded draft from localStorage');
+  } catch (error) {
+    console.error('Error loading from storage:', error);
+  }
+})();
+
+// Auto-save to localStorage
+setInterval(() => {
+  try {
+    const payload = buildGigPayload('draft');
+    if (payload) {
+      localStorage.setItem('talentHub_gig_draft', JSON.stringify(payload));
+    }
+  } catch (error) {
+    console.error('Error auto-saving:', error);
+  }
+}, 10000);
+
+// Expose functions for debugging
+window.debugGig = {
+  buildGigPayload,
+  validateAllSteps,
+  gotoStep
+};
+
+  </script></body>
+</html>
