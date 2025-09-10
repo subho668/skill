@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Gig — Talent-Hub (Modified)</title>
+  <meta name="description" content="Create a new gig — Modern multi-step form (unique, dark theme)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root{
+      --bg1:#0b1220; --bg2:#07101a; --card:#0e1a2b; --muted:#9fb0cc; --ink:#e6eef8;
+      --glass: rgba(255,255,255,.02); --b: rgba(255,255,255,.04);
+      --accent: linear-gradient(90deg,#7c3aed,#06b6d4); --accent-solid:#06b6d4;
+      --brand:#06b6d4; --brand-ink:#042029; --err:#ff6b6b; --success:#22c55e;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background: linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--ink); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .glass{background:var(--glass);backdrop-filter: blur(6px); border-radius:12px; border:1px solid var(--b)}
+    .card{background:var(--card); border-radius:12px; padding:14px;}
+    .input{width:100%; padding:10px 14px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,.05); color:var(--ink);}
+    .input:focus{outline:none; box-shadow:0 4px 18px rgba(6,182,212,0.08); border-color:var(--brand);}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;}
+    .btn-plain{background:transparent;border:1px solid rgba(255,255,255,.06); color:var(--ink)}
+    .btn-accent{background:var(--accent-solid); color:#001517; border: none;}
+    .btn-danger{background:var(--err); color:white;}
+    .step-dot{width:38px;height:38px;border-radius:999px;border:2px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center}
+    .step-dot.active{background:linear-gradient(180deg, rgba(6,182,212,0.12), rgba(124,58,237,0.06)); border-color:transparent; box-shadow: 0 6px 20px rgba(3,105,161,0.12)}
+    .progress{height:8px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+    .progress-fill{height:100%; background:var(--accent-solid); transition: width .45s ease;}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);font-size:13px}
+    .tag, .skill-chip{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.02);margin:4px;font-size:13px}
+    .thumb{width:110px;height:74px;border-radius:10px;background:#081022 center/cover no-repeat;border:1px solid rgba(255,255,255,.04);position:relative;overflow:hidden}
+    .thumb .remove{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.5);width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .err{color:var(--err);font-size:13px}
+    .ok{color:var(--success);font-size:13px}
+    .soft{background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.03);padding:12px;border-radius:10px}
+    .addon-card{background:transparent;border:1px solid rgba(255,255,255,.04);padding:12px;border-radius:10px}
+    .addon-card.selected{border-color:rgba(6,182,212,.25); background: linear-gradient(90deg, rgba(6,182,212,0.04), transparent)}
+    .preview-cover{aspect-ratio:16/10;background:#071627 center/cover;border-radius:12px;border:1px solid rgba(255,255,255,.04)}
+    .tooltip{position:relative}
+    .tooltip .tooltip-text{position:absolute;left:50%;transform:translateX(-50%);bottom:120%;background:#0b1720;color:#fff;padding:8px;border-radius:6px;white-space:nowrap;display:none}
+    .tooltip:hover .tooltip-text{display:block}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:900px){ .grid-3{grid-template-columns:1fr} .step-dot{width:32px;height:32px} }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav style="position:sticky;top:0;z-index:40" class="glass">
+    <div style="max-width:1100px;margin:0 auto;padding:10px 18px;display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-weight:800;font-size:18px;color:var(--accent-solid);display:flex;align-items:center;gap:8px"><i class="fa-solid fa-rocket"></i> Talent-Hub</div>
+        <div style="font-size:13px;color:var(--muted)">Create gig</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="loginStatus" class="chip">Checking auth…</span>
+        <a id="loginBtnLink" href="login.html" class="btn btn-plain">Login</a>
+        <button id="btnLogout" class="btn btn-plain" style="display:none">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main style="max-width:1100px;margin:18px auto;padding:14px">
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start">
+      <!-- LEFT: form -->
+      <section class="card">
+        <!-- header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div>
+            <div style="font-size:13px;color:var(--muted)">Create new gig</div>
+            <div style="font-size:20px;font-weight:800;margin-top:6px">Make your service stand out — step by step</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="width:200px" class="soft">
+              <div style="font-size:12px;color:var(--muted)">Progress</div>
+              <div class="progress" style="margin-top:6px"><div id="progressFill" class="progress-fill" style="width: 16%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- steps row -->
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+          <div id="dot-1" class="step-dot active" title="Overview">1</div>
+          <div id="dot-2" class="step-dot" title="Pricing">2</div>
+          <div id="dot-3" class="step-dot" title="Description">3</div>
+          <div id="dot-4" class="step-dot" title="Requirements">4</div>
+          <div id="dot-5" class="step-dot" title="Gallery">5</div>
+          <div id="dot-6" class="step-dot" title="Publish">6</div>
+        </div>
+
+        <form id="gigForm" style="display:block">
+
+          <!-- STEP 1: Overview -->
+          <div id="step-1" class="step-pane">
+            <div style="font-weight:700;margin-bottom:8px">Overview</div>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px">
+              <div>
+                <label>Gig Title</label>
+                <input id="title" class="input" maxlength="120" placeholder="I will design a striking brand logo" />
+                <div style="font-size:12px;color:var(--muted);margin-top:6px">Be clear and specific — 120 characters max</div>
+              </div>
+              <div>
+                <label>Category</label>
+                <select id="category" class="input">
+                  <option value="">Select category</option>
+                  <option>Graphics & Design</option>
+                  <option>Programming & Tech</option>
+                  <option>Digital Marketing</option>
+                  <option>Video & Animation</option>
+                  <option>Writing & Translation</option>
+                </select>
+                <label style="margin-top:10px">Subcategory</label>
+                <input id="subcategory" class="input" placeholder="e.g., Logo Design / Web App" />
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label>Search tags (comma separated)</label>
+              <input id="tagsInput" class="input" placeholder="logo, brand, minimalist" />
+              <div id="tagsWrap" style="margin-top:8px"></div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+              <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="isSubscription" /> Subscription service</label>
+              <div id="subscriptionOptions" style="display:none;flex:1">
+                <div style="display:flex;gap:8px">
+                  <input id="monthlyPrice" class="input" placeholder="Monthly price (₹)" type="number" />
+                  <select id="billingCycle" class="input" style="width:160px">
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- STEP 2: Packages & Pricing (Unique dropdown apply system) -->
+          <div id="step-2" class="step-pane" style="display:none">
+            <div style="font-weight:700;margin-bottom:8px">Packages & Pricing</div>
+
+            <!-- quick-apply toolbar -->
+            <div class="soft" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div style="display:flex;gap:8px;align-items:center">
+                <label style="font-size:13px;color:var(--muted)">Delivery</label>
+                <select id="selDelivery" class="input" style="width:150px">
+                  <option value="">Choose delivery</option>
+                  <option>1 Day</option><option>2 Days</option><option>3 Days</option><option>5 Days</option><option>7 Days</option>
+                </select>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <label style="font-size:13px;color:var(--muted)">Revisions</label>
+                <select id="selRevisions" class="input" style="width:140px">
+                  <option value="">Choose</option><option>0</option><option>1</option><option>2</option><option>3</option><option>Unlimited</option>
+                </select>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <label style="font-size:13px;color:var(--muted)">Source files</label>
+                <select id="selSourceFiles" class="input" style="width:120px">
+                  <option value="">Choose</option><option>Yes</option><option>No</option>
+                </select>
+              </div>
+
+              <div style="display:flex;gap:6px">
+                <button type="button" class="btn btn-plain" id="applyStarter">Apply to Starter</button>
+                <button type="button" class="btn btn-plain" id="applyGrowth">Apply to Growth</button>
+                <button type="button" class="btn btn-plain" id="applyPro">Apply to Pro</button>
+              </div>
+
+              <div style="margin-left:auto;display:flex;gap:8px">
+                <button id="aiPackageBtn" type="button" class="btn btn-plain"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Suggest</button>
+                <div id="aiPackageStatus" style="display:none;font-size:13px;color:var(--muted)"></div>
+              </div>
+            </div>
+
+            <div style="margin-top:12px" class="grid-3">
+              <!-- Starter -->
+              <div class="soft">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-weight:700">Starter</div>
+                  <div style="font-size:12px;color:var(--muted)">Best for quick tasks</div>
+                </div>
+                <div style="margin-top:8px">
+                  <label>Price (₹)</label>
+                  <input id="starterPrice" class="input" type="number" placeholder="499" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Delivery</label>
+                  <input id="starterDelivery" class="input" placeholder="3 Days" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Revisions</label>
+                  <input id="starterRevisions" class="input" placeholder="1" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Source files</label>
+                  <input id="starterSource" class="input" placeholder="No" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Features (one per line)</label>
+                  <textarea id="starterFeatures" class="input" rows="3" placeholder="Feature 1&#10;Feature 2"></textarea>
+                </div>
+              </div>
+
+              <!-- Growth -->
+              <div class="soft">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-weight:700">Growth</div>
+                  <div style="font-size:12px;color:var(--muted)">Most popular</div>
+                </div>
+                <div style="margin-top:8px">
+                  <label>Price (₹)</label>
+                  <input id="growthPrice" class="input" type="number" placeholder="1499" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Delivery</label>
+                  <input id="growthDelivery" class="input" placeholder="5 Days" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Revisions</label>
+                  <input id="growthRevisions" class="input" placeholder="2" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Source files</label>
+                  <input id="growthSource" class="input" placeholder="Yes" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Features (one per line)</label>
+                  <textarea id="growthFeatures" class="input" rows="3" placeholder="Feature 1&#10;Feature 2"></textarea>
+                </div>
+              </div>
+
+              <!-- Pro -->
+              <div class="soft">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-weight:700">Pro</div>
+                  <div style="font-size:12px;color:var(--muted)">For full solutions</div>
+                </div>
+                <div style="margin-top:8px">
+                  <label>Price (₹)</label>
+                  <input id="proPrice" class="input" type="number" placeholder="4999" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Delivery</label>
+                  <input id="proDelivery" class="input" placeholder="7 Days" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Revisions</label>
+                  <input id="proRevisions" class="input" placeholder="Unlimited" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Source files</label>
+                  <input id="proSource" class="input" placeholder="Yes" />
+                </div>
+                <div style="margin-top:8px">
+                  <label>Features (one per line)</label>
+                  <textarea id="proFeatures" class="input" rows="3" placeholder="Feature 1&#10;Feature 2"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add-on list (existing behavior) -->
+            <div style="margin-top:12px">
+              <div style="font-weight:700;margin-bottom:8px">Add-ons</div>
+              <div id="addonList"></div>
+
+              <div style="margin-top:12px" class="soft">
+                <div style="font-weight:700">Custom add-on</div>
+                <div style="display:grid;grid-template-columns:1fr 120px;gap:8px;margin-top:8px">
+                  <input id="customAddonName" class="input" placeholder="Add-on name" />
+                  <input id="customAddonPrice" class="input" type="number" placeholder="Price ₹" />
+                </div>
+                <textarea id="customAddonDesc" class="input" rows="2" placeholder="Description" style="margin-top:8px"></textarea>
+                <div style="margin-top:8px"><button id="addCustomAddon" type="button" class="btn btn-plain">+ Add</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: Description & FAQ -->
+          <div id="step-3" class="step-pane" style="display:none">
+            <div style="font-weight:700;margin-bottom:8px">Description & FAQs</div>
+            <div>
+              <label>Description</label>
+              <textarea id="description" class="input" rows="8" placeholder="Describe what you will deliver, process, requirements..."></textarea>
+              <div style="font-size:12px;color:var(--muted);margin-top:6px">Minimum 120 characters recommended for clarity</div>
+              <div style="text-align:right;font-size:12px;margin-top:6px;color:var(--muted)"><span id="charCount">0</span>/2000</div>
+            </div>
+
+            <div style="margin-top:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:700">FAQs</div>
+                <button id="addFaq" type="button" class="btn btn-plain">+ Add FAQ</button>
+              </div>
+              <div id="faqContainer" style="margin-top:8px">
+                <div class="card" style="margin-bottom:8px">
+                  <input class="input faq-q" placeholder="Question" />
+                  <textarea class="input faq-a" rows="2" placeholder="Answer" style="margin-top:8px"></textarea>
+                  <div style="margin-top:8px;text-align:right"><button class="btn btn-plain remove-faq" type="button">Remove</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: Requirements -->
+          <div id="step-4" class="step-pane" style="display:none">
+            <div style="font-weight:700;margin-bottom:8px">Requirements</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:8px">What should the buyer provide? Make each requirement clear and mark it required if needed.</div>
+            <div id="requirementsList">
+              <div class="card" style="margin-bottom:8px;display:flex;gap:8px;align-items:center">
+                <div style="flex:1">
+                  <input class="input req-q" placeholder="Request necessary details (e.g., logo files, text, examples)" />
+                  <select class="input req-type" style="margin-top:6px">
+                    <option value="text">Free text</option>
+                    <option value="file">File upload</option>
+                    <option value="choice">Multiple choice</option>
+                  </select>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:13px;color:var(--muted)"><input type="checkbox" class="req-required" /> Required</label>
+                  <button type="button" class="btn btn-plain remove-req">Remove</button>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:8px"><button id="addReq" type="button" class="btn btn-plain">+ Add Requirement</button></div>
+          </div>
+
+          <!-- STEP 5: Gallery -->
+          <div id="step-5" class="step-pane" style="display:none">
+            <div style="font-weight:700;margin-bottom:8px">Gallery</div>
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="flex:1">
+                <label>Upload images (up to 6)</label>
+                <input id="images" type="file" accept="image/*" multiple class="input" />
+                <div id="imagePreview" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+              </div>
+              <div style="width:260px">
+                <label>Upload video (optional)</label>
+                <input id="video" type="file" accept="video/*" class="input" />
+                <video id="videoPreview" controls class="preview-cover" style="margin-top:8px;display:none"></video>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 6: Publish -->
+          <div id="step-6" class="step-pane" style="display:none">
+            <div style="font-weight:700;margin-bottom:8px">Review & Publish</div>
+            <div class="soft" style="display:flex;align-items:center;gap:12px">
+              <div style="flex:1">
+                <div style="font-size:13px;color:var(--muted)">Checklist</div>
+                <div id="checklist" style="margin-top:8px">
+                  <div class="card checklist-item"><i class="fa-regular fa-circle"></i> Title</div>
+                  <div class="card checklist-item"><i class="fa-regular fa-circle"></i> Packages</div>
+                  <div class="card checklist-item"><i class="fa-regular fa-circle"></i> Description</div>
+                  <div class="card checklist-item"><i class="fa-regular fa-circle"></i> Requirements</div>
+                  <div class="card checklist-item"><i class="fa-regular fa-circle"></i> Gallery</div>
+                </div>
+              </div>
+              <div style="width:260px">
+                <div style="font-weight:700">Live Preview</div>
+                <div style="margin-top:8px" id="debugPreview" class="card">
+                  <div id="pvTitle" style="font-weight:800">—</div>
+                  <div id="pvPrice" style="margin-top:6px;color:var(--muted)">₹0</div>
+                  <div id="pvFeat" style="margin-top:6px"></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button id="btnSaveDraft" type="button" class="btn btn-plain"><i class="fa-regular fa-floppy-disk"></i> Save Draft</button>
+              <button id="btnPublish" type="button" class="btn btn-accent"><i class="fa-solid fa-rocket"></i> Publish Gig</button>
+              <div style="margin-left:auto;color:var(--muted);font-size:13px" id="formStatus"></div>
+            </div>
+
+            <div style="margin-top:12px">
+              <div style="font-weight:700">Gig Data (Debug)</div>
+              <pre id="debugJson" style="max-height:200px;overflow:auto;background:#07121a;padding:8px;border-radius:8px;margin-top:8px;color:var(--muted)"></pre>
+            </div>
+          </div>
+
+        </form>
+
+        <!-- Navigation -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+          <button id="btnPrev" class="btn btn-plain"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+          <div id="stepNote" style="color:var(--muted)">Step 1 of 6</div>
+          <button id="btnNext" class="btn btn-plain">Next <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </section>
+
+      <!-- RIGHT: profile + live preview -->
+      <aside style="display:flex;flex-direction:column;gap:12px">
+        <div class="card">
+          <div style="display:flex;gap:10px;align-items:center">
+            <img id="uPhoto" src="https://via.placeholder.com/80" style="width:56px;height:56px;border-radius:999px" />
+            <div>
+              <div id="uName" style="font-weight:800">—</div>
+              <div id="uEmail" style="font-size:13px;color:var(--muted)">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:8px">Live preview</div>
+          <div id="liveThumb" class="preview-cover" style="background-image:url('https://via.placeholder.com/1200x800?text=Preview')"></div>
+          <div style="margin-top:8px">
+            <div id="pvTitleSide" style="font-weight:800">—</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <div class="soft" style="flex:1"><div style="font-size:12px;color:var(--muted)">Category</div><div id="pvCat" style="font-weight:700">—</div></div>
+              <div class="soft" style="flex:1"><div style="font-size:12px;color:var(--muted)">Delivery</div><div id="pvDel" style="font-weight:700">—</div></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <div class="soft" style="flex:1"><div style="font-size:12px;color:var(--muted)">Price</div><div id="pvPriceSide" style="font-weight:800;color:var(--accent-solid)">₹0</div></div>
+              <div class="soft" style="flex:1"><div style="font-size:12px;color:var(--muted)">Revisions</div><div id="pvRevSide" style="font-weight:700">—</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:700">Pro tips</div>
+          <ul style="margin-top:8px;color:var(--muted);font-size:13px">
+            <li>Write a clear title so buyers find you fast.</li>
+            <li>Use high-quality images in Gallery.</li>
+            <li>Set fair delivery time & clear requirements.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer style="text-align:center;padding:24px;color:var(--muted)">© 2025 Talent-Hub — Crafted by you</footer>
+
+  <!-- Firebase modular SDK (v10) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // ---------- Firebase config (same as you provided) ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+      measurementId: "G-TYL2XF4WZY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // ---------- Selectors ----------
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    const stepPanes = {
+      1: $('#step-1'),2: $('#step-2'),3: $('#step-3'),4: $('#step-4'),5: $('#step-5'),6: $('#step-6')
+    };
+    const dots = {1:$('#dot-1'),2:$('#dot-2'),3:$('#dot-3'),4:$('#dot-4'),5:$('#dot-5'),6:$('#dot-6')};
+    const btnPrev = $('#btnPrev'), btnNext = $('#btnNext'), stepNote = $('#stepNote'), progressFill = $('#progressFill');
+
+    // Step1
+    const titleEl = $('#title'), categoryEl = $('#category'), subcatEl = $('#subcategory');
+    const tagsInput = $('#tagsInput'), tagsWrap = $('#tagsWrap');
+    const isSubscriptionEl = $('#isSubscription'), subscriptionOptions = $('#subscriptionOptions'), monthlyPriceEl = $('#monthlyPrice'), billingCycleEl = $('#billingCycle');
+
+    // Step2 (packages)
+    const selDelivery = $('#selDelivery'), selRevisions = $('#selRevisions'), selSourceFiles = $('#selSourceFiles');
+    const applyStarter = $('#applyStarter'), applyGrowth = $('#applyGrowth'), applyPro = $('#applyPro');
+    const starterPrice = $('#starterPrice'), starterDelivery = $('#starterDelivery'), starterRevisions = $('#starterRevisions'), starterSource = $('#starterSource'), starterFeatures = $('#starterFeatures');
+    const growthPrice = $('#growthPrice'), growthDelivery = $('#growthDelivery'), growthRevisions = $('#growthRevisions'), growthSource = $('#growthSource'), growthFeatures = $('#growthFeatures');
+    const proPrice = $('#proPrice'), proDelivery = $('#proDelivery'), proRevisions = $('#proRevisions'), proSource = $('#proSource'), proFeatures = $('#proFeatures');
+    const aiPackageBtn = $('#aiPackageBtn'), aiPackageStatus = $('#aiPackageStatus');
+    const addonList = $('#addonList'), addCustomAddon = $('#addCustomAddon'), customAddonName = $('#customAddonName'), customAddonPrice = $('#customAddonPrice'), customAddonDesc = $('#customAddonDesc');
+
+    // Step3
+    const descEl = $('#description'), charCount = $('#charCount');
+    const addFaqBtn = $('#addFaq'), faqContainer = $('#faqContainer');
+
+    // Step4
+    const requirementsList = $('#requirementsList'), addReq = $('#addReq');
+
+    // Step5
+    const imagesEl = $('#images'), imagePreview = $('#imagePreview'), videoEl = $('#video'), videoPreview = $('#videoPreview');
+
+    // Step6
+    const btnSaveDraft = $('#btnSaveDraft'), btnPublish = $('#btnPublish'), debugJson = $('#debugJson'), formStatus = $('#formStatus');
+    const pvTitle = $('#pvTitle'), pvTitleSide = $('#pvTitleSide'), pvCat = $('#pvCat'), pvDel = $('#pvDel'), pvPriceSide = $('#pvPriceSide'), pvRevSide = $('#pvRevSide'), pvFeat = $('#pvFeat');
+    const liveThumb = $('#liveThumb');
+
+    // profile
+    const loginStatus = $('#loginStatus'), loginBtnLink = $('#loginBtnLink'), btnLogout = $('#btnLogout'), uPhoto = $('#uPhoto'), uName = $('#uName'), uEmail = $('#uEmail');
+
+    // state
+    let currentStep = 1, maxStep = 6;
+    let tags = [], skills = [], addons = [], faqs = [];
+    let uploadedImages = [], uploadedVideo = null;
+    let currentUser = null;
+
+    // ---------- AUTH ----------
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        loginStatus.textContent = 'Not logged in';
+        loginBtnLink.style.display = 'inline-flex';
+        btnLogout.style.display = 'none';
+        // redirect to login and preserve next
+        const next = encodeURIComponent(window.location.pathname.split('/').pop());
+        window.location.href = `login.html?next=${next}`;
+        return;
+      }
+      currentUser = user;
+      loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`;
+      loginBtnLink.style.display = 'none';
+      btnLogout.style.display = 'inline-flex';
+
+      uName.textContent = user.displayName || (user.email ? user.email.split('@')[0] : user.uid);
+      uEmail.textContent = user.email || user.uid;
+      uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
+
+      if (!user.displayName && user.email) {
+        try { await updateProfile(user, { displayName: user.email.split('@')[0] }); } catch (e) { /*noop*/ }
+      }
+    });
+
+    btnLogout.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (e) { alert('Logout failed'); }
+    });
+
+    // ---------- Navigation (FREE NAVIGATION: no validation gating) ----------
+    function gotoStep(n) {
+      currentStep = Math.max(1, Math.min(maxStep, n));
+      for (let i = 1; i <= maxStep; i++) {
+        const pane = stepPanes[i];
+        if (pane) pane.style.display = (i === currentStep ? 'block' : 'none');
+        const dot = dots[i];
+        if (dot) {
+          dot.classList.toggle('active', i === currentStep);
+        }
+      }
+      stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
+      progressFill.style.width = `${Math.round((currentStep / maxStep) * 100)}%`;
+      // update preview for first steps
+      renderPreview();
+      if (currentStep === maxStep) buildChecklist();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    gotoStep(1);
+
+    // Prev/Next simply move steps (no validation block)
+    btnPrev.addEventListener('click', () => gotoStep(currentStep - 1));
+    btnNext.addEventListener('click', () => gotoStep(currentStep + 1));
+    Object.values(dots).forEach((d, idx) => { d.addEventListener('click', () => gotoStep(idx + 1)); });
+
+    // ---------- Free-form Validation: only at publish ----------
+    function softValidate() {
+      // visual hints only, not blocking navigation
+      // implemented as optional (we only use for checklist)
+      return;
+    }
+
+    // ---------- TAGS ----------
+    function renderTags() {
+      tagsWrap.innerHTML = '';
+      tags.forEach((t, i) => {
+        const el = document.createElement('div'); el.className = 'tag';
+        el.textContent = t;
+        const btn = document.createElement('button'); btn.style.marginLeft = '8px'; btn.style.background = 'transparent'; btn.style.border = 'none';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        btn.addEventListener('click', () => { tags.splice(i, 1); renderTags(); });
+        el.appendChild(btn);
+        tagsWrap.appendChild(el);
+      });
+      renderPreview();
+    }
+    tagsInput.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const raw = tagsInput.value.trim().replace(/,+$/, '');
+        if (!raw) { tagsInput.value = ''; return; }
+        const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+        parts.forEach(p => { if (!tags.includes(p)) tags.push(p); });
+        tagsInput.value = ''; renderTags();
+      }
+    });
+
+    // ---------- Subscription toggle ----------
+    isSubscriptionEl.addEventListener('change', () => {
+      if (isSubscriptionEl.checked) subscriptionOptions.style.display = 'block'; else subscriptionOptions.style.display = 'none';
+    });
+
+    // ---------- Packages: apply selectors to specific package -->
+    function applyToPackage(which) {
+      const delivery = selDelivery.value || '';
+      const revisions = selRevisions.value || '';
+      const source = selSourceFiles.value || '';
+      if (which === 'starter') {
+        if (delivery) starterDelivery.value = delivery;
+        if (revisions) starterRevisions.value = revisions;
+        if (source) starterSource.value = source;
+      } else if (which === 'growth') {
+        if (delivery) growthDelivery.value = delivery;
+        if (revisions) growthRevisions.value = revisions;
+        if (source) growthSource.value = source;
+      } else if (which === 'pro') {
+        if (delivery) proDelivery.value = delivery;
+        if (revisions) proRevisions.value = revisions;
+        if (source) proSource.value = source;
+      }
+      renderPreview();
+    }
+    applyStarter.addEventListener('click', () => applyToPackage('starter'));
+    applyGrowth.addEventListener('click', () => applyToPackage('growth'));
+    applyPro.addEventListener('click', () => applyToPackage('pro'));
+
+    // ---------- AI Package (simulation) ----------
+    aiPackageBtn?.addEventListener('click', async () => {
+      const title = (titleEl.value || '').trim(); const category = categoryEl.value || '';
+      if (!title || !category) { alert('Please add title & category first'); return; }
+      aiPackageStatus.style.display = 'inline-block'; aiPackageStatus.textContent = 'Generating…';
+      aiPackageBtn.disabled = true;
+      try { await new Promise(r => setTimeout(r, 900));
+        // sample presets
+        starterPrice.value = 699; starterFeatures.value = 'Simple deliverable\n2 revisions';
+        growthPrice.value = 1999; growthFeatures.value = 'Extended deliverable\n4 revisions\nSource files';
+        proPrice.value = 4999; proFeatures.value = 'Complete solution\nUnlimited revisions\nPriority support';
+        aiPackageStatus.textContent = 'Done ✓';
+      } catch (err) { aiPackageStatus.textContent = 'Failed'; }
+      setTimeout(() => { aiPackageBtn.disabled = false; aiPackageStatus.style.display = 'none'; }, 1200);
+      renderPreview();
+    });
+
+    // ---------- ADDONS ----------
+    function initAddons() {
+      const standardAddons = [
+        { id: 'priority', name: 'Priority Support', price: 799, description: 'Get your project prioritized' },
+        { id: 'extraRevision', name: 'Extra Revision', price: 299, description: 'One more revision round' },
+        { id: 'sourceFiles', name: 'Source Files', price: 499, description: 'All source files' }
+      ];
+      addonList.innerHTML = '';
+      standardAddons.forEach(addon => {
+        const div = document.createElement('div'); div.className = 'addon-card'; div.style.marginBottom = '8px';
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">${addon.name}</div>
+              <div style="font-size:13px;color:var(--muted)">${addon.description}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-weight:800;color:var(--accent-solid)">₹${addon.price}</div>
+              <label style="display:block;margin-top:6px"><input type="checkbox" data-id="${addon.id}" /> Include</label>
+            </div>
+          </div>
+        `;
+        addonList.appendChild(div);
+        const checkbox = div.querySelector('input[type="checkbox"]');
+        checkbox.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            addons.push({ id: addon.id, name: addon.name, price: addon.price, description: addon.description });
+            div.classList.add('selected');
+          } else {
+            addons = addons.filter(a => a.id !== addon.id);
+            div.classList.remove('selected');
+          }
+        });
+      });
+    }
+    initAddons();
+
+    addCustomAddon.addEventListener('click', () => {
+      const name = customAddonName.value.trim(), price = customAddonPrice.value, desc = customAddonDesc.value.trim();
+      if (!name || !price) { alert('Provide name & price'); return; }
+      const id = 'custom_' + Date.now();
+      addons.push({ id, name, price: Number(price), description: desc, custom: true });
+      // append visually
+      const div = document.createElement('div'); div.className = 'addon-card selected'; div.style.marginTop = '8px';
+      div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700">${name} <span style="font-size:12px;color:var(--muted)">(Custom)</span></div><div style="font-size:13px;color:var(--muted)">${desc}</div></div><div style="text-align:right"><div style="font-weight:800;color:var(--accent-solid)">₹${price}</div><button type="button" class="btn btn-plain remove-custom" data-id="${id}">Remove</button></div></div>`;
+      addonList.appendChild(div);
+      div.querySelector('.remove-custom').addEventListener('click', (e) => {
+        addons = addons.filter(a => a.id !== id); div.remove();
+      });
+      customAddonName.value = ''; customAddonPrice.value = ''; customAddonDesc.value = '';
+    });
+
+    // ---------- FAQ ----------
+    addFaqBtn.addEventListener('click', () => {
+      const div = document.createElement('div'); div.className = 'card'; div.style.marginTop = '8px';
+      div.innerHTML = `<input class="input faq-q" placeholder="Question" /><textarea class="input faq-a" rows="2" placeholder="Answer" style="margin-top:8px"></textarea><div style="text-align:right;margin-top:8px"><button class="btn btn-plain remove-faq">Remove</button></div>`;
+      faqContainer.appendChild(div);
+      div.querySelector('.remove-faq').addEventListener('click', () => div.remove());
+    });
+    // remove handler for default faq
+    faqContainer.addEventListener('click', (e) => { if (e.target.classList.contains('remove-faq')) e.target.closest('.card').remove(); });
+
+    // ---------- Requirements ----------
+    addReq.addEventListener('click', () => {
+      const div = document.createElement('div'); div.className = 'card'; div.style.marginTop = '8px';
+      div.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div style="flex:1"><input class="input req-q" placeholder="Requirement question" /><select class="input req-type" style="margin-top:8px"><option value="text">Free text</option><option value="file">File upload</option><option value="choice">Multiple choice</option></select></div><div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:13px;color:var(--muted)"><input type="checkbox" class="req-required" /> Required</label><button type="button" class="btn btn-plain remove-req">Remove</button></div></div>`;
+      requirementsList.appendChild(div);
+      div.querySelector('.remove-req').addEventListener('click', () => div.remove());
+    });
+    // remove handlers for initial reqs
+    requirementsList.addEventListener('click', (e) => { if (e.target.classList.contains('remove-req')) e.target.closest('.card').remove(); });
+
+    // ---------- Image preview with removal (DataTransfer approach) ----------
+    imagesEl.addEventListener('change', (e) => {
+      imagePreview.innerHTML = ''; uploadedImages = [];
+      const files = Array.from(e.target.files || []).slice(0,6);
+      files.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          uploadedImages.push({ name: file.name, data: ev.target.result, file });
+          const div = document.createElement('div'); div.className = 'thumb';
+          div.style.backgroundImage = `url(${ev.target.result})`;
+          const rm = document.createElement('div'); rm.className = 'remove'; rm.innerHTML = '<i class="fa-solid fa-times"></i>';
+          rm.addEventListener('click', () => {
+            // rebuild file input excluding this file
+            const dt = new DataTransfer();
+            const remaining = (Array.from(imagesEl.files || [])).filter(f => f.name !== file.name || f.size !== file.size);
+            remaining.forEach(f => dt.items.add(f));
+            imagesEl.files = dt.files;
+            uploadedImages = uploadedImages.filter(u => u.name !== file.name || u.size !== file.size);
+            div.remove();
+            renderPreview();
+          });
+          div.appendChild(rm);
+          imagePreview.appendChild(div);
+          if (idx === 0) liveThumb.style.backgroundImage = `url(${ev.target.result})`;
+          renderPreview();
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    // ---------- Video preview ----------
+    videoEl.addEventListener('change', (e) => {
+      const file = e.target.files[0]; if (!file) { uploadedVideo = null; videoPreview.style.display='none'; return; }
+      const reader = new FileReader();
+      reader.onload = (ev) => { uploadedVideo = { name: file.name, data: ev.target.result, file }; videoPreview.src = ev.target.result; videoPreview.style.display = 'block'; renderPreview(); };
+      reader.readAsDataURL(file);
+    });
+
+    // ---------- Preview rendering ----------
+    function renderPreview() {
+      pvTitle.textContent = titleEl.value.trim() || '—';
+      pvTitleSide.textContent = titleEl.value.trim() || '—';
+      pvCat.textContent = categoryEl.value || '—';
+      pvDel.textContent = starterDelivery.value || growthDelivery.value || proDelivery.value || '—';
+      // price: prefer starter price if set, else growth, else pro
+      const price = Number(starterPrice.value) || Number(growthPrice.value) || Number(proPrice.value) || 0;
+      pvPriceSide.textContent = '₹' + price;
+      pvRevSide.textContent = starterRevisions.value || growthRevisions.value || proRevisions.value || '—';
+      pvFeat.innerHTML = '';
+      const feats = (starterFeatures.value || '').split('\n').concat((growthFeatures.value || '').split('\n')).concat((proFeatures.value || '').split('\n')).filter(Boolean);
+      feats.slice(0,6).forEach(f => {
+        const el = document.createElement('div'); el.className = 'chip'; el.style.marginRight='6px'; el.style.display='inline-block';
+        el.textContent = f;
+        pvFeat.appendChild(el);
+      });
+      // debug preview
+      pvTitleSide.textContent = titleEl.value.trim() || '—';
+      // live thumb left unchanged unless images uploaded
+      if (uploadedImages.length) liveThumb.style.backgroundImage = `url(${uploadedImages[0].data})`;
+      // debug JSON preview update lightly (not full payload)
+      debugPreviewUpdate();
+    }
+
+    function debugPreviewUpdate() {
+      const small = { title: titleEl.value.trim(), priceGuess: Number(starterPrice.value) || Number(growthPrice.value) || Number(proPrice.value), tags };
+      $('#debugPreview') && ($('#debugPreview').innerText = JSON.stringify(small, null, 2));
+      // update debug JSON area later on saves/publish
+    }
+
+    // wire basic inputs to renderPreview
+    [titleEl, categoryEl, subcatEl, starterPrice, growthPrice, proPrice, starterDelivery, growthDelivery, proDelivery, starterRevisions, growthRevisions, proRevisions, starterFeatures, growthFeatures, proFeatures].forEach(el => {
+      el && el.addEventListener('input', renderPreview);
+      el && el.addEventListener('change', renderPreview);
+    });
+
+    descEl.addEventListener('input', () => { charCount.textContent = descEl.value.length; });
+
+    // ---------- Checklist builder (visual only) ----------
+    function buildChecklist() {
+      const items = $('#checklist').querySelectorAll('.checklist-item');
+      if (!items.length) return;
+      items[0].querySelector('i').className = titleEl.value.trim() ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+      items[1].querySelector('i').className = (starterPrice.value || growthPrice.value || proPrice.value) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+      items[2].querySelector('i').className = (descEl.value.trim().length >= 120) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+      items[3].querySelector('i').className = ($('#requirementsList').children.length > 0) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+      items[4].querySelector('i').className = (uploadedImages.length > 0) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+    }
+
+    // ---------- Helpers (upload) ----------
+    async function uploadFilesToStorage(fileList, uid, folder = 'gigs') {
+      const urls = [];
+      const arr = Array.from(fileList || []).slice(0, 8);
+      for (let i = 0; i < arr.length; i++) {
+        const f = arr[i];
+        const path = `${folder}/${uid}/${Date.now()}_${i}_${f.name}`;
+        const ref = storageRef(storage, path);
+        await uploadBytes(ref, f);
+        const url = await getDownloadURL(ref);
+        urls.push(url);
+      }
+      return urls;
+    }
+
+    // ---------- Build payload ----------
+    function valOrDefault(v) { const s = String(v || '').trim(); return s === '' ? 'Not Provided' : s; }
+
+    function gatherFaqs() {
+      const out = [];
+      document.querySelectorAll('.faq-item, #faqContainer .card').forEach(item => {
+        const q = item.querySelector('.faq-q') ? item.querySelector('.faq-q').value.trim() : '';
+        const a = item.querySelector('.faq-a') ? item.querySelector('.faq-a').value.trim() : '';
+        if (q && a) out.push({ question: q, answer: a });
+      });
+      return out;
+    }
+
+    function gatherRequirements() {
+      const out = [];
+      document.querySelectorAll('#requirementsList .card').forEach(item => {
+        const qEl = item.querySelector('.req-q');
+        if (!qEl) return;
+        const q = qEl.value.trim();
+        const type = item.querySelector('.req-type') ? item.querySelector('.req-type').value : 'text';
+        const required = item.querySelector('.req-required') ? item.querySelector('.req-required').checked : false;
+        if (q) out.push({ question: q, type, required });
+      });
+      return out;
+    }
+
+    function buildGigPayload(status = 'published', imageUrls = [], videoUrl = '') {
+      const user = currentUser || auth.currentUser;
+      if (!user) return null;
+      const faqItems = gatherFaqs();
+      const requirements = gatherRequirements();
+      const packages = [];
+      if (starterPrice.value) packages.push({ name: 'Starter', price: Number(starterPrice.value), delivery: starterDelivery.value, revisions: starterRevisions.value, sourceFiles: starterSource.value, features: (starterFeatures.value||'').split('\n').filter(Boolean) });
+      if (growthPrice.value) packages.push({ name: 'Growth', price: Number(growthPrice.value), delivery: growthDelivery.value, revisions: growthRevisions.value, sourceFiles: growthSource.value, features: (growthFeatures.value||'').split('\n').filter(Boolean) });
+      if (proPrice.value) packages.push({ name: 'Pro', price: Number(proPrice.value), delivery: proDelivery.value, revisions: proRevisions.value, sourceFiles: proSource.value, features: (proFeatures.value||'').split('\n').filter(Boolean) });
+
+      const payload = {
+        title: valOrDefault(titleEl.value),
+        category: valOrDefault(categoryEl.value),
+        subcategory: valOrDefault(subcatEl.value),
+        tags: tags,
+        isSubscription: isSubscriptionEl.checked,
+        subscription: isSubscriptionEl.checked ? { monthlyPrice: Number(monthlyPriceEl.value||0), billingCycle: billingCycleEl.value } : null,
+        packages,
+        addons,
+        description: valOrDefault(descEl.value),
+        faqs: faqItems,
+        requirements,
+        images: imageUrls.length ? imageUrls : (uploadedImages.map(i => i.data) || []),
+        video: videoUrl || (uploadedVideo ? uploadedVideo.data : null),
+        experience: Number($('#experience') ? $('#experience').value : 0) || 0,
+        languages: ($('#languages') ? $('#languages').value.split(',').map(s=>s.trim()).filter(Boolean) : []),
+        bio: valOrDefault($('#bio') ? $('#bio').value : ''),
+        education: valOrDefault($('#education') ? $('#education').value : ''),
+        portfolio: valOrDefault($('#portfolio') ? $('#portfolio').value : ''),
+        sellerName: user.displayName || user.email || 'Freelancer',
+        sellerPhoto: user.photoURL || '',
+        createdByUid: user.uid,
+        createdByEmail: user.email || '',
+        status,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      return payload;
+    }
+
+    // ---------- Save Draft (NO strict validation) ----------
+    btnSaveDraft.addEventListener('click', async () => {
+      if (!currentUser) { alert('Please login to save'); return; }
+      try {
+        btnSaveDraft.disabled = true; btnSaveDraft.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        // Upload images if any
+        const fileList = imagesEl.files || [];
+        const imageUrls = fileList.length ? await uploadFilesToStorage(fileList, currentUser.uid) : [];
+        // upload video
+        let videoUrl = '';
+        if (videoEl.files && videoEl.files[0]) {
+          const v = videoEl.files[0];
+          const vurls = await uploadFilesToStorage([v], currentUser.uid, 'gigs');
+          videoUrl = vurls[0] || '';
+        }
+        const payload = buildGigPayload('draft', imageUrls, videoUrl);
+        if (!payload) { alert('User not authenticated'); return; }
+        const docRef = await addDoc(collection(db, 'subho_gigs'), payload);
+        debugJson.textContent = JSON.stringify({ draftId: docRef.id, ...payload }, null, 2);
+        formStatus.textContent = 'Draft saved ✓';
+      } catch (e) {
+        console.error(e); alert('Draft save failed: ' + (e.message || e));
+        formStatus.textContent = 'Save failed';
+      } finally {
+        btnSaveDraft.disabled = false; btnSaveDraft.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Draft';
+      }
+    });
+
+    // ---------- Publish (STRICT validation here) ----------
+    btnPublish.addEventListener('click', async () => {
+      // Validate required fields here only:
+      const missing = [];
+      if (!titleEl.value.trim()) missing.push('Title');
+      if (!(starterPrice.value || growthPrice.value || proPrice.value)) missing.push('At least one package price');
+      if (!descEl.value.trim() || descEl.value.trim().length < 120) missing.push('Description (min 120 chars)');
+      if (!$('#requirementsList').children.length) missing.push('Requirements');
+      if (missing.length) {
+        alert('Please complete before publishing:\n' + missing.join('\n'));
+        // jump to first missing
+        if (missing.includes('Title')) gotoStep(1);
+        else if (missing.includes('At least one package price')) gotoStep(2);
+        else if (missing.includes('Description')) gotoStep(3);
+        else if (missing.includes('Requirements')) gotoStep(4);
+        return;
+      }
+
+      if (!confirm('Publish this gig? It will be visible to all users.')) return;
+      if (!currentUser) { alert('Login required'); return; }
+
+      try {
+        btnPublish.disabled = true; btnPublish.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
+        // upload images & video
+        const fileList = imagesEl.files || [];
+        const imageUrls = fileList.length ? await uploadFilesToStorage(fileList, currentUser.uid) : [];
+        let videoUrl = '';
+        if (videoEl.files && videoEl.files[0]) {
+          const vurls = await uploadFilesToStorage([videoEl.files[0]], currentUser.uid);
+          videoUrl = vurls[0] || '';
+        }
+        const payload = buildGigPayload('published', imageUrls, videoUrl);
+        if (!payload) throw new Error('User not authenticated');
+
+        const docRef = await addDoc(collection(db, 'subho_gigs'), payload);
+        debugJson.textContent = JSON.stringify({ id: docRef.id, ...payload }, null, 2);
+        formStatus.textContent = 'Published ✓';
+        alert('Gig published successfully!');
+        setTimeout(() => { window.location.href = `index.html?id=${encodeURIComponent(docRef.id)}`; }, 900);
+      } catch (e) {
+        console.error('Publish failed', e); alert('Publish failed: ' + (e.message || e));
+      } finally {
+        btnPublish.disabled = false; btnPublish.innerHTML = '<i class="fa-solid fa-rocket"></i> Publish Gig';
+      }
+    });
+
+    // ---------- LocalStorage auto-save (lightweight) ----------
+    setInterval(() => {
+      try {
+        const payload = buildGigPayload('draft');
+        if (payload) localStorage.setItem('talentHub_gig_draft', JSON.stringify(payload));
+      } catch (e) { console.error('Auto-save failed', e); }
+    }, 12000);
+
+    // ---------- Load from storage ----------
+    (function loadFromStorage() {
+      try {
+        const saved = localStorage.getItem('talentHub_gig_draft');
+        if (!saved) return;
+        const data = JSON.parse(saved);
+        if (data.title) titleEl.value = data.title;
+        if (data.category) categoryEl.value = data.category;
+        if (data.subcategory) subcatEl.value = data.subcategory;
+        if (data.tags) { tags = data.tags; renderTags(); }
+        if (data.packages) {
+          data.packages.forEach(p => {
+            if (p.name === 'Starter') { starterPrice.value = p.price; starterDelivery.value = p.delivery; starterRevisions.value = p.revisions; starterSource.value = p.sourceFiles; starterFeatures.value = (p.features || []).join('\n'); }
+            if (p.name === 'Growth') { growthPrice.value = p.price; growthDelivery.value = p.delivery; growthRevisions.value = p.revisions; growthSource.value = p.sourceFiles; growthFeatures.value = (p.features || []).join('\n'); }
+            if (p.name === 'Pro') { proPrice.value = p.price; proDelivery.value = p.delivery; proRevisions.value = p.revisions; proSource.value = p.sourceFiles; proFeatures.value = (p.features || []).join('\n'); }
+          });
+        }
+        if (data.description) descEl.value = data.description;
+        renderPreview();
+        console.log('Loaded draft from localStorage');
+      } catch (e) { console.error('Load from storage failed', e); }
+    })();
+
+    // expose debug
+    window.debugGig = { buildGigPayload, gotoStep, renderPreview };
+
+  </script>
+</body>
+</html>
