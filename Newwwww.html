@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Gig — Talent-Hub (Pro) — Fixed</title>
+  <meta name="description" content="Create a professional gig — Talent-Hub. Fixed, improved, category-driven features." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+  <style>
+    :root{--bg1:#07102a;--bg2:#040718;--ink:#e6eefb;--muted:#9db2cf;--glass:rgba(255,255,255,.04);--b:rgba(255,255,255,.06);--brand:#34d399;--brand-ink:#062d22}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--ink)}
+    .glass{background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--b);border-radius:12px}
+    .input{width:100%;padding:10px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:var(--ink)}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;font-weight:700}
+    .btn-brand{background:var(--brand);color:var(--brand-ink)}
+    .thumb{width:100px;height:74px;border-radius:8px;background:#0e1836 center/cover no-repeat;border:1px solid rgba(255,255,255,.08)}
+    .step-dot{width:26px;height:26px;border-radius:999px;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center}
+    .step-dot.active{background:var(--brand);color:var(--brand-ink);border-color:transparent}
+    .preview-cover{aspect-ratio:16/9;background:#12102b center/cover no-repeat;border-radius:8px;border:1px solid rgba(255,255,255,.06)}
+    .danger{border-color:rgba(255,100,100,.45)!important}
+    .soft{background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.04);padding:12px;border-radius:10px}
+    .code{font-family:ui-monospace,Menlo,monospace}
+    .dropzone{border:2px dashed rgba(255,255,255,.06);padding:18px;border-radius:10px;text-align:center;cursor:pointer}
+    .progress{height:8px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),#59e3b0);width:0%}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);font-size:12px}
+    .plan-column{background:rgba(255,255,255,.02);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.04)}
+  </style>
+</head>
+<body class="min-h-screen">
+
+<nav class="glass sticky top-0 z-40 px-4 py-3 max-w-6xl mx-auto mt-3 flex items-center justify-between">
+  <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub Pro</a>
+  <div class="flex items-center gap-2">
+    <span id="loginStatus" class="px-3 py-1 rounded-full text-sm" aria-live="polite">Checking auth…</span>
+    <a id="loginBtnLink" href="login.html" class="btn">Login</a>
+    <button id="btnLogout" class="btn hidden">Logout</button>
+  </div>
+</nav>
+
+<main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
+  <section class="lg:col-span-2 glass p-5 space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-xs uppercase tracking-wide text-slate-300">Create new gig</div>
+        <h1 class="text-2xl font-extrabold mt-1">Build a pro gig — Fixed</h1>
+      </div>
+      <div class="text-right text-sm text-slate-300">Autosave: <span id="autosaveStatus">Idle</span></div>
+    </div>
+
+    <div class="flex gap-2 overflow-x-auto">
+      <button data-step="1" class="step-tab btn">1 Overview</button>
+      <button data-step="2" class="step-tab btn">2 Pricing</button>
+      <button data-step="3" class="step-tab btn">3 Description & FAQ</button>
+      <button data-step="4" class="step-tab btn">4 Requirements</button>
+      <button data-step="5" class="step-tab btn">5 Media</button>
+      <button data-step="6" class="step-tab btn">6 Publish</button>
+    </div>
+
+    <form id="gigForm" class="space-y-6">
+      <!-- STEP 1 -->
+      <div id="step-1" class="step-pane">
+        <label class="block mb-1">Gig Title</label>
+        <input id="title" class="input" maxlength="120" placeholder="I will design a professional logo or ad" />
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+          <div>
+            <label class="block mb-1">Category</label>
+            <select id="category" class="input">
+              <option value="">Choose a category</option>
+              <option value="graphic">Graphics & Design</option>
+              <option value="web">Programming & Tech</option>
+              <option value="marketing">Digital Marketing</option>
+              <option value="video">Video & Animation</option>
+              <option value="writing">Writing & Translation</option>
+              <option value="music">Music & Audio</option>
+              <option value="ai">AI Services</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1">Subcategory</label>
+            <select id="subcategory" class="input"><option value="">Choose subcategory</option></select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+          <div>
+            <label class="block mb-1">Tags (comma)</label>
+            <input id="tags" class="input" placeholder="branding, logo, minimal" />
+          </div>
+          <div>
+            <label class="block mb-1">Platform</label>
+            <select id="platform" class="input"><option value="">Any</option><option>YouTube</option><option>TikTok</option><option>Instagram</option></select>
+          </div>
+        </div>
+
+        <div class="mt-3 soft">
+          <div class="font-semibold">SEO & Keywords</div>
+          <div class="text-sm mt-2">Suggested keywords: <span id="kwSuggestions">—</span></div>
+          <div class="text-xs mt-2">Quality score: <span id="qualityScore">0</span>%</div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div id="step-2" class="step-pane hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="plan-column">
+            <div class="text-center mb-2">
+              <input class="input text-center plan-name" value="Basic" />
+              <div class="mt-2">₹ <input type="number" class="input inline w-28 plan-price" value="999" /></div>
+              <textarea class="input mt-2 plan-desc" rows="3">Essential package</textarea>
+            </div>
+            <div class="space-y-2 plan-features-list"></div>
+          </div>
+
+          <div class="plan-column">
+            <div class="text-center mb-2">
+              <input class="input text-center plan-name" value="Standard" />
+              <div class="mt-2">₹ <input type="number" class="input inline w-28 plan-price" value="1999" /></div>
+              <textarea class="input mt-2 plan-desc" rows="3">Popular package</textarea>
+            </div>
+            <div class="space-y-2 plan-features-list"></div>
+          </div>
+
+          <div class="plan-column">
+            <div class="text-center mb-2">
+              <input class="input text-center plan-name" value="Premium" />
+              <div class="mt-2">₹ <input type="number" class="input inline w-28 plan-price" value="2999" /></div>
+              <textarea class="input mt-2 plan-desc" rows="3">Full package</textarea>
+            </div>
+            <div class="space-y-2 plan-features-list"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+          <div>
+            <label class="block mb-1">Delivery Time (days)</label>
+            <select id="deliveryTime" class="input"><option>1</option><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+          </div>
+          <div>
+            <label class="block mb-1">Auto-price: Base hourly (₹)</label>
+            <input id="baseHourly" type="number" class="input" placeholder="e.g., 500" />
+          </div>
+          <div class="flex items-end">
+            <button id="btnGeneratePrices" type="button" class="btn btn-brand">Generate Packages</button>
+          </div>
+        </div>
+
+        <div class="mt-3 text-sm text-slate-300">Pick features (these will appear as checkboxes per plan). They adapt to selected category.</div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div id="step-3" class="step-pane hidden">
+        <label class="block mb-1">Description (Rich editor)</label>
+        <div id="quillEditor" style="height:220px;background:#fff;border-radius:8px;overflow:hidden"></div>
+        <div class="mt-2 text-xs text-slate-300">Use formatting — headings, bullet points, links.</div>
+
+        <div class="mt-4">
+          <label class="block mb-1">FAQ</label>
+          <div id="faqContainer"></div>
+          <button type="button" id="addFaqBtn" class="btn mt-2">+ Add FAQ</button>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div id="step-4" class="step-pane hidden">
+        <label class="block mb-1">Buyer Requirements</label>
+        <div id="requirementsContainer"></div>
+        <button id="addRequirementBtn" type="button" class="btn mt-2">+ Add Requirement</button>
+
+        <div class="mt-4 soft">
+          <label class="block mb-1">Smart Templates</label>
+          <select id="tplSelect" class="input"><option value="">Choose template</option><option value="video-editing">Video Editing (footage, brief)</option><option value="logo-design">Logo Design (brand name, colors)</option><option value="web-dev">Web Dev (hosting, brief)</option><option value="audio">Audio (reference, script)</option></select>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div id="step-5" class="step-pane hidden">
+        <label class="block mb-1">Upload Cover Images / Videos</label>
+        <div id="dropzone" class="dropzone">Drag & drop images or click to browse<br><small>Up to 8 images + 1 cover video (max 30MB per file)</small></div>
+        <input id="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" />
+        <div id="mediaPreview" class="mt-3 flex gap-2 flex-wrap"></div>
+
+        <div class="mt-4 soft">
+          <div class="font-semibold">AI Quality Check</div>
+          <div class="text-sm mt-2" id="aiQuality">No media uploaded</div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div id="step-6" class="step-pane hidden">
+        <div class="soft">
+          <div class="font-bold">SEO Optimization</div>
+          <div class="mt-2 text-sm" id="seoChecklist"></div>
+        </div>
+
+        <div class="mt-4 flex gap-2">
+          <button id="btnSaveDraft" type="button" class="btn">Save Draft</button>
+          <button id="btnPublish" type="button" class="btn btn-brand">Publish Gig</button>
+          <button id="btnReset" type="button" class="btn">Reset</button>
+        </div>
+
+        <div id="formStatus" class="mt-3 text-sm"></div>
+        <div class="mt-4 soft"><div class="font-semibold">Preview JSON (debug)</div><pre id="debugJson" class="code text-xs p-2 overflow-auto"></pre></div>
+      </div>
+
+    </form>
+
+    <div class="flex items-center justify-between mt-4">
+      <button id="btnPrev" class="btn">← Prev</button>
+      <div class="text-sm text-slate-300" id="stepNote">Step 1 of 6</div>
+      <button id="btnNext" class="btn">Next →</button>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <aside class="space-y-4">
+    <div class="glass p-4">
+      <div class="text-xs text-slate-300">Your profile</div>
+      <div class="flex items-center gap-3 mt-2">
+        <img id="uPhoto" class="w-12 h-12 rounded-full object-cover" src="https://via.placeholder.com/80" />
+        <div>
+          <div id="uName" class="font-bold">—</div>
+          <div id="uEmail" class="text-xs text-slate-300">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass p-4 stick">
+      <div class="text-xs text-slate-300">Live preview</div>
+      <div id="liveThumb" class="preview-cover mt-2" style="background-image:url('https://via.placeholder.com/1200x800?text=Preview')"></div>
+      <div class="mt-3">
+        <div class="text-slate-300 text-xs">Title</div>
+        <div id="pvTitle" class="font-extrabold text-lg truncate">—</div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <div class="soft p-2"><div class="text-[11px] text-slate-400">Category</div><div id="pvCat" class="font-semibold text-sm">—</div></div>
+        <div class="soft p-2"><div class="text-[11px] text-slate-400">Delivery</div><div id="pvDel" class="font-semibold text-sm">—</div></div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <div class="soft p-2"><div class="text-[11px] text-slate-400">Price</div><div id="pvPrice" class="font-black text-emerald-300 text-base">₹0</div></div>
+        <div class="soft p-2"><div class="text-[11px] text-slate-400">Revisions</div><div id="pvRev" class="font-semibold text-sm">—</div></div>
+      </div>
+      <div class="mt-2 text-[11px] text-slate-400">Features</div>
+      <div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div>
+    </div>
+
+    <div class="glass p-4">
+      <div class="text-xs text-slate-300">Pro tips</div>
+      <ul class="list-disc list-inside text-sm text-slate-300 mt-2">
+        <li>High-res images increase clicks.</li>
+        <li>Use 5–8 tags and a clear title.</li>
+        <li>Offer a short intro video for higher conversions.</li>
+      </ul>
+    </div>
+  </aside>
+</main>
+
+<footer class="text-center py-8 text-slate-300">© 2025 Talent-Hub Pro — Fixed</footer>
+
+<!-- FIREBASE + LOGIC -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  // Firebase config (user's)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+    authDomain: "skillspot-pro.firebaseapp.com",
+    projectId: "skillspot-pro",
+    storageBucket: "skillspot-pro.appspot.com",
+    messagingSenderId: "600467343030",
+    appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+    measurementId: "G-TYL2XF4WZY"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // helpers
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  // elements
+  const loginStatus = $('#loginStatus');
+  const loginBtnLink = $('#loginBtnLink');
+  const btnLogout = $('#btnLogout');
+  const uPhoto = $('#uPhoto'); const uName = $('#uName'); const uEmail = $('#uEmail');
+
+  const titleEl = $('#title'); const categoryEl = $('#category'); const subcatEl = $('#subcategory');
+  const tagsEl = $('#tags'); const platformEl = $('#platform'); const deliveryEl = $('#deliveryTime');
+  const baseHourlyEl = $('#baseHourly');
+
+  const kwSuggestions = $('#kwSuggestions'); const qualityScoreEl = $('#qualityScore'); const seoChecklist = $('#seoChecklist');
+  const autosaveStatus = $('#autosaveStatus');
+
+  const btnPrev = $('#btnPrev'); const btnNext = $('#btnNext'); const stepNote = $('#stepNote'); const stepTabs = $$('.step-tab');
+  const btnGeneratePrices = $('#btnGeneratePrices');
+
+  const btnSaveDraft = $('#btnSaveDraft'); const btnPublish = $('#btnPublish'); const btnReset = $('#btnReset');
+  const formStatus = $('#formStatus'); const debugJson = $('#debugJson');
+
+  const pvTitle = $('#pvTitle'); const pvCat = $('#pvCat'); const pvDel = $('#pvDel'); const pvPrice = $('#pvPrice');
+  const pvRev = $('#pvRev'); const pvFeat = $('#pvFeat'); const liveThumb = $('#liveThumb');
+
+  const dropzone = $('#dropzone'); const fileInput = $('#fileInput'); const mediaPreview = $('#mediaPreview');
+  const aiQuality = $('#aiQuality');
+
+  let currentUser = null;
+  let currentStep = 1; const maxStep = 6;
+  const GIGS_COLLECTION = 'subho_gigs';
+
+  // quill
+  const quill = new Quill('#quillEditor', { theme: 'snow', placeholder: 'Explain what you will deliver...' });
+
+  // categories -> subcategories & features map
+  const CATEGORY_MAP = {
+    graphic: {
+      subs: ['Logo Design','Brand Style','Illustration'],
+      features: ['Source Files','Vector files','3 Revisions','Favicon','Mockups']
+    },
+    web: {
+      subs: ['Landing Page','Full Website','Bug Fixes'],
+      features: ['Responsive','SEO basic','CMS','1 Month Support','Source Code']
+    },
+    marketing: {
+      subs: ['Social Media','Ads','Strategy'],
+      features: ['3 Creatives','Ad Copy','A/B Variations','Targeting Suggestion','Analytics Report']
+    },
+    video: {
+      subs: ['Video Editing','Motion Graphics','Intro/Outro'],
+      features: ['Color Grade','Sound Mix','Captions','Intro Animation','Source Files']
+    },
+    writing: {
+      subs: ['Article','Product Description','Proofreading'],
+      features: ['SEO keywords','Meta tags','Plagiarism check','2 Revisions','References']
+    },
+    music: {
+      subs: ['Voice Over','Track Production','Mixing'],
+      features: ['Stem Files','Mastered','Commercial License','Multiple Takes','Lyrics']
+    },
+    ai: {
+      subs: ['Chatbot','Prompt Engineering','Automation'],
+      features: ['Model Selection','Dataset Prep','API Integration','2 Iterations','Docs']
+    }
+  };
+
+  // Auth guard (no redirect while editing) - only update UI
+  onAuthStateChanged(auth, async (user)=>{
+    if(!user){
+      loginStatus.textContent = 'Not logged in';
+      btnLogout.classList.add('hidden');
+      loginBtnLink.classList.remove('hidden');
+      currentUser = null;
+      uName.textContent = '—'; uEmail.textContent = '—'; uPhoto.src='https://via.placeholder.com/80';
+      return;
+    }
+    currentUser = user;
+    loginStatus.textContent = `Logged in: ${user.email||user.displayName||user.uid}`;
+    btnLogout.classList.remove('hidden'); loginBtnLink.classList.add('hidden');
+    uName.textContent = user.displayName || (user.email? user.email.split('@')[0]:user.uid);
+    uEmail.textContent = user.email || user.uid;
+    uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
+    if(!user.displayName && user.email){ try{ await updateProfile(user,{displayName:user.email.split('@')[0]}); }catch(e){} }
+  });
+
+  btnLogout.addEventListener('click', async ()=>{ try{ await signOut(auth); location.href='index.html'; }catch(e){alert('Logout failed')} });
+
+  // Steps nav
+  function gotoStep(n){
+    currentStep = Math.max(1, Math.min(maxStep, n));
+    for(let i=1;i<=maxStep;i++){
+      const pane = document.getElementById('step-'+i);
+      if(pane) pane.classList.toggle('hidden', i!==currentStep);
+    }
+    stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
+    stepTabs.forEach(btn=>{ const target = Number(btn.dataset.step); btn.classList.toggle('btn-brand', target===currentStep); });
+    if(currentStep===6){ buildSEOChecklist(); renderDebug(); }
+    renderPreview();
+  }
+  stepTabs.forEach(btn => btn.addEventListener('click', ()=>gotoStep(Number(btn.dataset.step))));
+  btnPrev.addEventListener('click', ()=>gotoStep(currentStep-1));
+  btnNext.addEventListener('click', ()=>gotoStep(currentStep+1));
+  gotoStep(1);
+
+  // Populate subcategory & feature lists when category changes
+  categoryEl.addEventListener('change', ()=>{
+    const cat = categoryEl.value;
+    populateSubcategories(cat);
+    populatePlanFeatureLists(cat);
+    computeKeywordsAndScore();
+    autosaveNow('category');
+  });
+
+  function populateSubcategories(cat){
+    subcatEl.innerHTML = '<option value=\"\">Choose subcategory</option>';
+    if(!cat || !CATEGORY_MAP[cat]) return;
+    CATEGORY_MAP[cat].subs.forEach(s => {
+      const o = document.createElement('option'); o.value = s; o.textContent = s; subcatEl.appendChild(o);
+    });
+  }
+
+  function populatePlanFeatureLists(cat){
+    const features = (cat && CATEGORY_MAP[cat]) ? CATEGORY_MAP[cat].features : ['Source Files','Revisions','Support','Custom Request'];
+    document.querySelectorAll('.plan-column').forEach(col => {
+      const container = col.querySelector('.plan-features-list');
+      container.innerHTML = '';
+      features.forEach((f, idx) => {
+        const id = `feat-${Math.random().toString(36).slice(2,8)}`;
+        const wrap = document.createElement('label');
+        wrap.className = 'flex items-center gap-2';
+        wrap.innerHTML = `<input type='checkbox' class='feat-chk' data-feature='${f}' ${idx===0?'checked':''}/> ${f}`;
+        container.appendChild(wrap);
+      });
+    });
+    renderPreview();
+  }
+
+  // initial populate
+  populatePlanFeatureLists('');
+
+  // Generate packages (fixed)
+  btnGeneratePrices.addEventListener('click', ()=>{
+    const base = Number(baseHourlyEl.value || 0);
+    let prices;
+    if(base <= 0){
+      prices = [999,1999,2999];
+    } else {
+      // reasonable multipliers
+      prices = [
+        Math.max(99, Math.round(base * 1.8)),   // Basic
+        Math.max(199, Math.round(base * 3.4)),  // Standard
+        Math.max(299, Math.round(base * 5.5))   // Premium
+      ];
+    }
+    const priceInputs = document.querySelectorAll('.plan-price');
+    priceInputs.forEach((p, i) => p.value = prices[i] || 0);
+    renderPreview();
+    autosaveNow('pricing');
+  });
+
+  // FAQ add/remove
+  $('#addFaqBtn').addEventListener('click', ()=>{
+    const c = $('#faqContainer');
+    const i = document.createElement('div'); i.className='mt-2 soft p-3';
+    i.innerHTML = `<input class='input faq-q mb-2' placeholder='Question' /><textarea class='input faq-a' rows='2' placeholder='Answer'></textarea><div class='mt-2'><button class='btn remove-faq'>Remove</button></div>`;
+    c.appendChild(i);
+    i.querySelector('.remove-faq').addEventListener('click', ()=>{ i.remove(); autosaveNow('faq'); });
+    autosaveNow('faq');
+  });
+
+  // Requirements add/remove and templates
+  $('#addRequirementBtn').addEventListener('click', ()=>{
+    const c = $('#requirementsContainer');
+    const n = document.createElement('div'); n.className='mt-2 soft p-3';
+    n.innerHTML = `<select class='input mb-2'><option value='text'>Text</option><option value='file'>File</option><option value='choice'>Multiple Choice</option></select><input class='input req-q' placeholder='Question or instruction' /><div class='mt-2'><button class='btn remove-req'>Remove</button></div>`;
+    c.appendChild(n);
+    n.querySelector('.remove-req').addEventListener('click', ()=>{ n.remove(); autosaveNow('req'); });
+    autosaveNow('req');
+  });
+
+  $('#tplSelect').addEventListener('change', (e)=>{
+    const v = e.target.value;
+    const c = $('#requirementsContainer');
+    if(v==='video-editing'){
+      c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Please upload raw video (mp4), script (if any), timestamps of cuts</label></div>`;
+    } else if(v==='logo-design'){
+      c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Provide brand name, colors, references, preferred style</label></div>`;
+    } else if(v==='web-dev'){
+      c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Provide hosting details, design references, functionalities required</label></div>`;
+    } else if(v==='audio'){
+      c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Provide script, reference voice style, music preferences</label></div>`;
+    }
+    autosaveNow('tpl');
+  });
+
+  // Media drag/drop + preview, limits 8 images + 1 video
+  let mediaFiles = [];
+  dropzone.addEventListener('click', ()=>fileInput.click());
+  dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('ring'); });
+  dropzone.addEventListener('dragleave', e=>{ dropzone.classList.remove('ring'); });
+  dropzone.addEventListener('drop', e=>{ e.preventDefault(); dropzone.classList.remove('ring'); handleFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', ()=>handleFiles(fileInput.files));
+
+  function handleFiles(list){
+    const arr = Array.from(list);
+    const imagesOnly = arr.filter(f=>f.type.startsWith('image/'));
+    const videos = arr.filter(f=>f.type.startsWith('video/'));
+    // current counts
+    const currentImgs = mediaFiles.filter(m=>m.type.startsWith('image/')).length;
+    const currentVideos = mediaFiles.filter(m=>m.type.startsWith('video/')).length;
+    const imgToAdd = imagesOnly.slice(0, Math.max(0, 8 - currentImgs));
+    const vidToAdd = videos.slice(0, Math.max(0, 1 - currentVideos));
+    const toAdd = [...imgToAdd, ...vidToAdd];
+    toAdd.forEach(f=>{
+      if(f.size > 30*1024*1024) {
+        alert(`${f.name} is larger than 30MB and was skipped.`);
+        return;
+      }
+      mediaFiles.push(f);
+    });
+    renderMediaPreview();
+    runAIQualityCheck();
+    autosaveNow('media');
+  }
+
+  function renderMediaPreview(){
+    mediaPreview.innerHTML = '';
+    mediaFiles.forEach((f, idx) => {
+      const wrap = document.createElement('div'); wrap.className='p-1';
+      if(f.type.startsWith('image/')){
+        const url = URL.createObjectURL(f);
+        const d = document.createElement('div'); d.className='thumb'; d.style.backgroundImage = `url('${url}')`;
+        wrap.appendChild(d);
+      } else {
+        const video = document.createElement('video'); video.controls=true; video.width=160; video.height=90; video.src = URL.createObjectURL(f); video.style.borderRadius='8px';
+        wrap.appendChild(video);
+      }
+      const rem = document.createElement('div'); rem.className='mt-1'; rem.innerHTML = `<button data-idx='${idx}' class='btn text-xs'>Remove</button>`;
+      rem.querySelector('button').addEventListener('click', ()=>{ mediaFiles.splice(idx,1); renderMediaPreview(); runAIQualityCheck(); autosaveNow('media'); });
+      wrap.appendChild(rem);
+      mediaPreview.appendChild(wrap);
+    });
+    if(mediaFiles.length){
+      const first = mediaFiles.find(m=>m.type.startsWith('image/')) || mediaFiles[0];
+      liveThumb.style.backgroundImage = `url('${URL.createObjectURL(first)}')`;
+    } else {
+      liveThumb.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Preview')";
+    }
+  }
+
+  function runAIQualityCheck(){
+    if(mediaFiles.length===0){ aiQuality.textContent = 'No media uploaded'; return; }
+    const issues = [];
+    mediaFiles.forEach(f=>{
+      if(f.size < 4*1024) issues.push(`${f.name}: very small`);
+      if(f.size > 30*1024*1024) issues.push(`${f.name}: >30MB`);
+      if(f.type.startsWith('image/') && f.size < 10*1024) issues.push(`${f.name}: suspiciously tiny`);
+    });
+    if(issues.length) aiQuality.textContent = issues.join(' | ');
+    else aiQuality.textContent = `Good — ${mediaFiles.length} files, total ${(mediaFiles.reduce((s,m)=>s+m.size,0)/1024/1024).toFixed(2)} MB`;
+  }
+
+  // Render preview robustly
+  function getFirstPlanPrice(){
+    const nodes = document.querySelectorAll('.plan-price');
+    if(!nodes || nodes.length===0) return 0;
+    return Number(nodes[0].value || 0);
+  }
+  function getFirstPlanRevisions(){
+    // look for text containing 'Revision' inside first plan-column
+    const first = document.querySelectorAll('.plan-column')[0];
+    if(!first) return '—';
+    // check plan-desc and features list for 'Revision'
+    const desc = first.querySelector('.plan-desc')?.value || '';
+    if(/revision/i.test(desc)) return desc.split('\n').find(l=>/revision/i.test(l)) || '—';
+    const featLabels = Array.from(first.querySelectorAll('.plan-features-list label')).map(l=>l.textContent || '');
+    const rev = featLabels.find(t => /revision/i.test(t));
+    return rev || '—';
+  }
+
+  function renderPreview(){
+    pvTitle.textContent = titleEl.value.trim() || '—';
+    const catText = (categoryEl.options[categoryEl.selectedIndex]?.text || '');
+    pvCat.textContent = (catText || '—') + (subcatEl.value ? ` / ${subcatEl.value}` : '');
+    pvDel.textContent = (deliveryEl.value || '—') + ' Days';
+    pvPrice.textContent = '₹' + getFirstPlanPrice();
+    pvRev.textContent = getFirstPlanRevisions();
+    pvFeat.innerHTML = '';
+    const feats = Array.from(document.querySelectorAll('.plan-column .feat-chk:checked')).map(el=>el.dataset.feature || (el.nextSibling?el.nextSibling.textContent.trim():''));
+    feats.forEach(f=>{
+      const span = document.createElement('span'); span.className='badge'; span.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`; pvFeat.appendChild(span);
+    });
+  }
+
+  // inputs triggering preview & SEO
+  [titleEl, categoryEl, subcatEl, tagsEl, platformEl, deliveryEl].forEach(el=>{
+    el.addEventListener('input', ()=>{ renderPreview(); computeKeywordsAndScore(); autosaveNow('fields'); });
+    el.addEventListener('change', ()=>{ renderPreview(); computeKeywordsAndScore(); autosaveNow('fields'); });
+  });
+  document.addEventListener('input', (e)=>{ if(e.target.closest('.plan-column')) renderPreview(); });
+
+  quill.on('text-change', ()=>{ computeKeywordsAndScore(); autosaveNow('description'); });
+
+  // SEO / keywords & score
+  function computeKeywordsAndScore(){
+    const text = (titleEl.value + ' ' + (quill.root.innerText||'')).toLowerCase();
+    const words = text.match(/[a-z0-9]+/g) || [];
+    const freq = {};
+    words.forEach(w => { if(w.length<3) return; freq[w] = (freq[w]||0)+1; });
+    const sorted = Object.keys(freq).sort((a,b)=>freq[b]-freq[a]).slice(0,6);
+    kwSuggestions.textContent = sorted.join(', ') || '—';
+    // score heuristic
+    const tlen = Math.min(40, titleEl.value.length);
+    const dlen = Math.min(1000, (quill.root.innerText||'').length);
+    const tagsCount = tagsEl.value.split(',').filter(t=>t.trim()).length;
+    const score = Math.max(10, Math.min(95, Math.round((tlen/40)*30 + (dlen/1000)*50 + Math.min(1,tagsCount/6)*20)));
+    qualityScoreEl.textContent = score;
+    return {keywords: sorted, score};
+  }
+
+  function buildSEOChecklist(){
+    const kv = computeKeywordsAndScore();
+    const items = [];
+    items.push(kv.score > 50 ? 'Title & description: OK' : 'Improve title/description');
+    items.push(tagsEl.value.split(',').filter(t=>t.trim()).length >= 3 ? 'Tags OK' : 'Add 3–8 tags');
+    items.push(mediaFiles.length > 0 ? 'Media uploaded' : 'Add at least one image');
+    seoChecklist.innerHTML = items.map(i => `• ${i}`).join('<br>');
+  }
+
+  // Autosave (localStorage) — improved: small non-flashy indicator
+  const AUTOSAVE_KEY = 'th_gig_autosave_v2';
+  let autosaveTimer = null;
+  function autosaveNow(section){
+    clearTimeout(autosaveTimer);
+    autosaveStatus.textContent = 'Saving…';
+    autosaveTimer = setTimeout(()=>{
+      try{
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(buildLocalPayload()));
+        autosaveStatus.textContent = 'Saved';
+        setTimeout(()=> autosaveStatus.textContent = 'Idle', 900);
+      }catch(e){
+        autosaveStatus.textContent = 'Error';
+      }
+    }, 700);
+  }
+  setInterval(()=>{ autosaveNow('periodic'); }, 15000);
+
+  function buildLocalPayload(){
+    return {
+      title: titleEl.value, category: categoryEl.value, subcategory: subcatEl.value, tags: tagsEl.value, platform: platformEl.value,
+      delivery: deliveryEl.value, plans: Array.from(document.querySelectorAll('.plan-column')).map(col=>({
+        name: col.querySelector('.plan-name').value, price: Number(col.querySelector('.plan-price').value||0), desc: col.querySelector('.plan-desc').value,
+        features: Array.from(col.querySelectorAll('.plan-features-list input:checked')).map(i=>i.dataset.feature || i.nextSibling?.textContent?.trim())
+      })), description: quill.root.innerHTML, requirements: Array.from($$('.req-q')).map(i=>i.value), faq: Array.from($$('.faq-q')).map((q,i)=>({q: q.value, a: $$('.faq-a')[i]?.value})), mediaCount: mediaFiles.length, timestamp: Date.now()
+    };
+  }
+
+  function restoreAutosave(){
+    const raw = localStorage.getItem(AUTOSAVE_KEY);
+    if(!raw) return;
+    try{
+      const p = JSON.parse(raw);
+      if(confirm('Restore autosaved draft?')) applyLocalPayload(p);
+    }catch(e){}
+  }
+
+  function applyLocalPayload(p){
+    titleEl.value = p.title || ''; categoryEl.value = p.category || ''; subcatEl.value = p.subcategory || '';
+    tagsEl.value = p.tags || ''; platformEl.value = p.platform || ''; deliveryEl.value = p.delivery || '';
+    populateSubcategories(p.category); populatePlanFeatureLists(p.category);
+    (p.plans||[]).forEach((pl,i)=>{ const col = document.querySelectorAll('.plan-column')[i]; if(!col) return; col.querySelector('.plan-name').value = pl.name || col.querySelector('.plan-name').value; col.querySelector('.plan-price').value = pl.price || col.querySelector('.plan-price').value; col.querySelector('.plan-desc').value = pl.desc || col.querySelector('.plan-desc').value; });
+    quill.root.innerHTML = p.description || quill.root.innerHTML;
+    renderPreview(); renderMediaPreview(); computeKeywordsAndScore();
+  }
+
+  // Build payload (Not Provided defaults)
+  function valOrDefault(v){ const s = String(v||'').trim(); return s === '' ? 'Not Provided' : s; }
+  function buildGigPayload(status='published', imageUrls=[]){
+    const plans = Array.from(document.querySelectorAll('.plan-column')).map(col=>({
+      name: valOrDefault(col.querySelector('.plan-name').value),
+      price: Number(col.querySelector('.plan-price').value || 0),
+      description: valOrDefault(col.querySelector('.plan-desc').value),
+      features: Array.from(col.querySelectorAll('.plan-features-list input:checked')).map(i=>i.dataset.feature || i.nextSibling?.textContent?.trim())
+    }));
+    const payload = {
+      title: valOrDefault(titleEl.value),
+      category: valOrDefault(categoryEl.value),
+      subcategory: valOrDefault(subcatEl.value),
+      tags: tagsEl.value.split(',').map(t=>t.trim()).filter(Boolean),
+      platform: valOrDefault(platformEl.value),
+      delivery: valOrDefault(deliveryEl.value),
+      plans,
+      description: valOrDefault(quill.root.innerHTML),
+      images: imageUrls.length ? imageUrls : ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'],
+      sellerName: currentUser?.displayName || (currentUser?.email? currentUser.email.split('@')[0] : 'Freelancer'),
+      sellerPhoto: currentUser?.photoURL || '',
+      status,
+      createdByUid: currentUser?.uid || '',
+      createdByEmail: currentUser?.email || '',
+      rating: 0,
+      reviews: 0,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    return payload;
+  }
+
+  // Upload files with progress, returns urls
+  async function uploadFiles(files, uid, onProgress){
+    const urls = [];
+    for(let i=0;i<files.length;i++){
+      const f = files[i];
+      try{
+        const path = `gigs/${uid}/${Date.now()}_${i}_${f.name.replace(/[^a-z0-9\\.\\-\\_]/gi,'')}`;
+        const ref = storageRef(storage, path);
+        const task = uploadBytesResumable(ref, f);
+        await new Promise((res, rej)=>{
+          task.on('state_changed', snap=>{
+            const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+            onProgress && onProgress({index:i, pct, name: f.name});
+          }, err=>{ console.error('upload err', err); rej(err); }, async ()=>{
+            const url = await getDownloadURL(task.snapshot.ref);
+            urls.push(url);
+            res();
+          });
+        });
+      }catch(e){ console.error('file upload failed', e); }
+    }
+    return urls;
+  }
+
+  // Save draft
+  $('#btnSaveDraft').addEventListener('click', async ()=>{
+    if(!currentUser){ alert('Please login to save draft to server. Local autosave is available.'); return; }
+    btnSaveDraft.disabled = true; formStatus.textContent = 'Saving draft...';
+    try{
+      const urls = mediaFiles.length ? await uploadFiles(mediaFiles, currentUser.uid, ({index,pct,name})=>{ formStatus.textContent = `Uploading ${name} ${pct}%`; }) : [];
+      const payload = buildGigPayload('draft', urls);
+      const ref = await addDoc(collection(db, GIGS_COLLECTION), payload);
+      formStatus.textContent = 'Draft saved ✓';
+      debugJson.textContent = JSON.stringify({draftId: ref.id, payload}, null, 2);
+    }catch(e){ formStatus.textContent = 'Save draft failed: ' + (e.message || e); }
+    finally{ btnSaveDraft.disabled = false; }
+  });
+
+  // Publish (works even if blanks)
+  $('#btnPublish').addEventListener('click', async ()=>{
+    if(!currentUser){ if(!confirm('You are not logged in. Publish will not be saved to cloud. Continue and show final payload?')){ return; } }
+    btnPublish.disabled = true; formStatus.textContent = 'Publishing...';
+    try{
+      const urls = currentUser && mediaFiles.length ? await uploadFiles(mediaFiles, currentUser.uid, ({index,pct,name})=>{ formStatus.textContent = `Uploading ${name} ${pct}%`; }) : mediaFiles.map(f=>f.name);
+      const payload = buildGigPayload('published', urls);
+      if(currentUser){
+        const ref = await addDoc(collection(db, GIGS_COLLECTION), payload);
+        formStatus.textContent = 'Published ✓ Redirecting…';
+        debugJson.textContent = JSON.stringify({id: ref.id, payload}, null, 2);
+        setTimeout(()=> location.href = `index.html?id=${encodeURIComponent(ref.id)}`, 700);
+      } else {
+        // not logged - show debug JSON (local preview)
+        formStatus.textContent = 'Preview (not saved to server) — see JSON below';
+        debugJson.textContent = JSON.stringify({previewPayload: payload}, null, 2);
+      }
+    }catch(e){ formStatus.textContent = 'Publish failed: ' + (e.message || e); }
+    finally{ btnPublish.disabled = false; }
+  });
+
+  // Reset with confirm
+  $('#btnReset').addEventListener('click', ()=>{ if(!confirm('Reset the entire form? This will clear autosaved draft locally.')) return; localStorage.removeItem(AUTOSAVE_KEY); location.reload(); });
+
+  // Debug renderer
+  function renderDebug(){ debugJson.textContent = JSON.stringify(buildGigPayload('preview', mediaFiles.map(f=>f.name)), null, 2); }
+
+  // restore autosave on load
+  window.addEventListener('load', ()=>{ restoreAutosave(); renderPreview(); computeKeywordsAndScore(); renderDebug(); });
+
+</script>
+</body>
+</html>
