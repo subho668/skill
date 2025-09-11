@@ -1,0 +1,1254 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Create Gig — Talent-Hub</title>
+    <meta name="description"
+        content="Create a new gig — Talent-Hub. Multi-step wizard, optional images, real-time preview." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --bg1: #0a1024;
+            --bg2: #050a1a;
+            --ink: #e9f0fb;
+            --muted: #a8b6d3;
+            --glass: rgba(255, 255, 255, .04);
+            --b: rgba(255, 255, 255, .08);
+            --brand: #34d399;
+            --brand-ink: #062d22;
+            --warn: #ffcc66;
+            --err: #ff8a8a;
+        }
+
+        body {
+            font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+            color: var(--ink)
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--b);
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .28)
+        }
+
+        .pill {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            font-size: 12px;
+            color: #b9c6db
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
+            transition: transform .12s ease, filter .12s ease
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(.99)
+        }
+
+        .btn-brand {
+            background: var(--brand);
+            color: var(--brand-ink)
+        }
+
+        .btn-plain {
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: #fff
+        }
+
+        .kicker {
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #9db2cf;
+            font-size: 11px
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #9fb0cc
+        }
+
+        .tip {
+            font-size: 11px;
+            color: #a9bad6
+        }
+
+        .chip {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            font-size: 12px
+        }
+
+        .thumb {
+            width: 100px;
+            height: 74px;
+            border-radius: 10px;
+            background: #0e1836 center/cover no-repeat;
+            border: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .err {
+            color: var(--err);
+            font-size: 12px
+        }
+
+        .ok {
+            color: #9be7c4;
+            font-size: 12px
+        }
+
+        .warn {
+            color: var(--warn);
+            font-size: 12px
+        }
+
+        .step-dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            border: 2px solid rgba(255, 255, 255, .15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900
+        }
+
+        .step-dot.active {
+            background: var(--brand);
+            color: var(--brand-ink);
+            border-color: transparent;
+            box-shadow: 0 6px 16px rgba(52, 211, 153, .3)
+        }
+
+        .step-line {
+            height: 2px;
+            background: rgba(255, 255, 255, .1)
+        }
+
+        .soft {
+            background: rgba(255, 255, 255, .03);
+            border: 1px dashed rgba(255, 255, 255, .08);
+            border-radius: 12px
+        }
+
+        .stick {
+            position: sticky;
+            top: 90px
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(80, 55, 55, 0.06);
+            border: 1px solid rgba(255, 255, 255, .08);
+            font-size: 12px
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(122, 29, 29, 0.05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: rgb(187, 179, 179)
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: rgba(12, 12, 12, 0.25)
+        }
+
+        .danger {
+            border-color: rgba(255, 100, 100, .45) !important
+        }
+
+        .preview-cover {
+            aspect-ratio: 16/10;
+            background: #1b1752 center/cover no-repeat;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+        }
+        
+        .feature-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 6px;
+            cursor: pointer;
+        }
+        
+        .feature-checkbox:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        
+        .plan-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .plan-column {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .plan-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .plan-price {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--brand);
+            margin: 8px 0;
+        }
+        
+        .plan-features {
+            margin-top: 16px;
+        }
+        
+        .requirement-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .add-requirement-btn {
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        
+        .add-requirement-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        
+        .faq-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .add-faq-btn {
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        
+        .add-faq-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- NAV -->
+    <nav class="glass sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub</a>
+            <div class="flex items-center gap-2">
+                
+                <span id="loginStatus" class="pill">Checking auth…</span>
+                <a id="loginBtnLink" href="login.html" class="btn btn-plain text-sm">Login</a>
+                <button id="btnLogout" class="btn btn-plain text-sm hidden">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PROGRESS BAR -->
+    <header class="max-w-6xl mx-auto px-4 md:px-6 mt-5">
+        <div class="glass p-3 md:p-4">
+            <div class="flex items-center gap-3">
+                <div id="dot-1" class="step-dot active">1</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-2" class="step-dot">2</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-3" class="step-dot">3</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-4" class="step-dot">4</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-5" class="step-dot">5</div>
+                <div class="flex-1 step-line"></div>
+                <div id="dot-6" class="step-dot">6</div>
+            </div>
+            <div class="mt-2 grid grid-cols-6 text-center text-[11px] text-slate-300/80">
+                <div>Overview</div>
+                <div>Pricing</div>
+                <div>Description & FAQ</div>
+                <div>Requirements</div>
+                <div>Gallery</div>
+                <div>Publish</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- LEFT: multi-step form -->
+            <section class="lg:col-span-2 glass p-4 md:p-5">
+
+                <div class="kicker">Create new gig</div>
+                <h1 class="text-xl md:text-2xl font-extrabold mt-1 mb-2">Tell clients what you'll deliver</h1>
+                <p class="hint">Free navigation: aage ke steps dekh sakte ho; Publish hamesha active hai.</p>
+
+                <div class="divider my-4"></div>
+
+                <!-- STEPS NAV -->
+                <div class="flex gap-2 flex-wrap mb-4">
+                    <button data-step="1" class="btn btn-plain step-tab">1. Overview</button>
+                    <button data-step="2" class="btn btn-plain step-tab">2. Pricing</button>
+                    <button data-step="3" class="btn btn-plain step-tab">3. Description & FAQ</button>
+                    <button data-step="4" class="btn btn-plain step-tab">4. Requirements</button>
+                    <button data-step="5" class="btn btn-plain step-tab">5. Gallery</button>
+                    <button data-step="6" class="btn btn-plain step-tab">6. Publish</button>
+                </div>
+
+                <form id="gigForm" class="space-y-6">
+
+                    <!-- STEP 1: Overview Tab -->
+                    <div id="step-1" class="step-pane">
+                        <div class="kicker mb-2">Overview</div>
+                        
+                        <div class="mb-4">
+                            <label class="block mb-1">Gig Title (with AI Suggestions)</label>
+                            <input id="title" maxlength="120" class="input"
+                                placeholder="I will design a professional minimalist logo">
+                            <div class="tip mt-1">Max 120 characters. AI will suggest titles as you type.</div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label class="block mb-1">Category (Smart Filter)</label>
+                                <select id="category" class="input">
+                                    <option value="">Select Category</option>
+                                    <option>Graphics & Design</option>
+                                    <option>Programming & Tech</option>
+                                    <option>Digital Marketing</option>
+                                    <option>Video & Animation</option>
+                                    <option>Writing & Translation</option>
+                                    <option>Music & Audio</option>
+                                    <option>AI Services</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-1">Sub-category</label>
+                                <select id="subcategory" class="input">
+                                    <option value="">Select Sub-category</option>
+                                    <option>Logo Design</option>
+                                    <option>Web Development</option>
+                                    <option>Social Media Marketing</option>
+                                    <option>Video Editing</option>
+                                    <option>Content Writing</option>
+                                    <option>Voice Over</option>
+                                    <option>AI Chatbots</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block mb-1">Tags (SEO boost)</label>
+                            <input id="tags" class="input" placeholder="Enter tags (comma separated)">
+                            <div class="tip mt-1">AI will auto-generate relevant tags. Competition level: <span class="text-emerald-400">Medium demand</span></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block mb-1">Platform</label>
+                                <select id="platform" class="input">
+                                    <option value="">Select Platform</option>
+                                    <option>YouTube</option>
+                                    <option>TikTok</option>
+                                    <option>Instagram</option>
+                                    <option>Website</option>
+                                    <option>Facebook</option>
+                                    <option>Twitter</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-1">Video Type</label>
+                                <select id="videoType" class="input">
+                                    <option value="">Select Type</option>
+                                    <option>Animated</option>
+                                    <option>Live-action</option>
+                                    <option>Motion graphics</option>
+                                    <option>Screen recording</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                            <div>
+                                <label class="block mb-1">Orientation</label>
+                                <select id="orientation" class="input">
+                                    <option value="">Select Orientation</option>
+                                    <option>Landscape</option>
+                                    <option>Portrait</option>
+                                    <option>Square</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-1">Target Audience</label>
+                                <select id="targetAudience" class="input">
+                                    <option value="">Select Audience</option>
+                                    <option>Businesses</option>
+                                    <option>Content Creators</option>
+                                    <option>E-commerce</option>
+                                    <option>Startups</option>
+                                    <option>Individuals</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Pricing Tab -->
+                    <div id="step-2" class="step-pane hidden">
+                        <div class="kicker mb-2">Pricing (Smart Plans)</div>
+                        
+                        <div class="plan-table">
+                            <!-- Basic Plan -->
+                            <div class="plan-column">
+                                <div class="plan-header">
+                                    <input type="text" class="input text-center mb-2" value="Basic" placeholder="Plan Name">
+                                    <div class="plan-price">₹<input type="number" class="input inline w-20" value="999"></div>
+                                    <textarea class="input text-sm h-16" placeholder="Plan description">Essential service package for basic needs</textarea>
+                                </div>
+                                <div class="plan-features">
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Video Editing</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox">
+                                        <span>Script Writing</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox">
+                                        <span>Revisions (1)</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox">
+                                        <span>Background Music</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox">
+                                        <span>Subtitles</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Standard Plan -->
+                            <div class="plan-column">
+                                <div class="plan-header">
+                                    <input type="text" class="input text-center mb-2" value="Standard" placeholder="Plan Name">
+                                    <div class="plan-price">₹<input type="number" class="input inline w-20" value="1999"></div>
+                                    <textarea class="input text-sm h-16" placeholder="Plan description">Popular package with enhanced features</textarea>
+                                </div>
+                                <div class="plan-features">
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Video Editing</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Script Writing</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Revisions (3)</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Background Music</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox">
+                                        <span>Subtitles</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Premium Plan -->
+                            <div class="plan-column">
+                                <div class="plan-header">
+                                    <input type="text" class="input text-center mb-2" value="Premium" placeholder="Plan Name">
+                                    <div class="plan-price">₹<input type="number" class="input inline w-20" value="2999"></div>
+                                    <textarea class="input text-sm h-16" placeholder="Plan description">Complete package with all premium features</textarea>
+                                </div>
+                                <div class="plan-features">
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Video Editing</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Script Writing</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Unlimited Revisions</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Background Music</span>
+                                    </div>
+                                    <div class="feature-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>Subtitles</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="soft p-3 mt-4">
+                            <div class="font-semibold mb-2">Delivery Time</div>
+                            <select id="deliveryTime" class="input">
+                                <option value="1">1 Day</option>
+                                <option value="2">2 Days</option>
+                                <option value="3" selected>3 Days</option>
+                                <option value="5">5 Days</option>
+                                <option value="7">7 Days</option>
+                                <option value="10">10 Days</option>
+                                <option value="14">14 Days</option>
+                                <option value="21">21 Days</option>
+                                <option value="30">30 Days</option>
+                            </select>
+                            <div class="tip mt-1">Longer delivery times may qualify for lower pricing</div>
+                        </div>
+                        
+                        <div class="soft p-3 mt-4">
+                            <div class="font-semibold mb-2">Add-on Services</div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="feature-checkbox">
+                                    <input type="checkbox">
+                                    <span>Extra running time (+₹500)</span>
+                                </div>
+                                <div class="feature-checkbox">
+                                    <input type="checkbox">
+                                    <span>Extra variations (+₹300)</span>
+                                </div>
+                                <div class="feature-checkbox">
+                                    <input type="checkbox">
+                                    <span>Subtitles (+₹200)</span>
+                                </div>
+                                <div class="feature-checkbox">
+                                    <input type="checkbox">
+                                    <span>Priority delivery (+₹800)</span>
+                                </div>
+                                <div class="feature-checkbox">
+                                    <input type="checkbox">
+                                    <span>Source files (+₹1000)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="soft p-3 mt-4">
+                            <div class="font-semibold mb-2">Auto-Price Calculator</div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block mb-1">Base Hourly Rate (₹)</label>
+                                    <input type="number" class="input" placeholder="e.g., 1000">
+                                </div>
+                                <div>
+                                    <label class="block mb-1">Estimated Hours</label>
+                                    <input type="number" class="input" placeholder="e.g., 5">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-plain mt-3">Calculate Pricing</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Description & FAQ Tab -->
+                    <div id="step-3" class="step-pane hidden">
+                        <div class="kicker mb-2">Description & FAQ</div>
+                        
+                        <div class="mb-4">
+                            <label class="block mb-1">Description (Rich Editor)</label>
+                            <textarea id="description" rows="8" class="input"
+                                placeholder="Explain what you will deliver, process, requirements, and what makes you unique..."></textarea>
+                            <div class="tip mt-1">Add process, deliverables, tools & stack. AI grammar check available.</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block mb-1">FAQ Section</label>
+                            <div id="faqContainer">
+                                <div class="faq-item">
+                                    <input type="text" class="input mb-2" placeholder="Question">
+                                    <textarea class="input" rows="2" placeholder="Answer"></textarea>
+                                </div>
+                            </div>
+                            <div class="add-faq-btn" id="addFaqBtn">
+                                <i class="fa-solid fa-plus"></i> Add FAQ
+                            </div>
+                            <div class="tip mt-1">AI can suggest common questions and answers for your category</div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Requirements Tab -->
+                    <div id="step-4" class="step-pane hidden">
+                        <div class="kicker mb-2">Requirements</div>
+                        
+                        <div class="mb-4">
+                            <label class="block mb-1">What information do you need from buyers?</label>
+                            <div id="requirementsContainer">
+                                <div class="requirement-item">
+                                    <select class="input mb-2">
+                                        <option value="text">Text Input</option>
+                                        <option value="file">File Upload</option>
+                                        <option value="choice">Multiple Choice</option>
+                                    </select>
+                                    <input type="text" class="input" placeholder="Question or instruction for buyer">
+                                </div>
+                            </div>
+                            <div class="add-requirement-btn" id="addRequirementBtn">
+                                <i class="fa-solid fa-plus"></i> Add Requirement
+                            </div>
+                            <div class="tip mt-1">Define what information or files you need from buyers to start working</div>
+                        </div>
+                        
+                        <div class="soft p-3 mt-4">
+                            <div class="font-semibold mb-2">Smart Templates</div>
+                            <select class="input">
+                                <option value="">Select a template</option>
+                                <option value="video-editing">Video Editing Template</option>
+                                <option value="logo-design">Logo Design Template</option>
+                                <option value="web-development">Web Development Template</option>
+                                <option value="content-writing">Content Writing Template</option>
+                            </select>
+                            <div class="tip mt-1">Templates pre-fill common requirements for specific service types</div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: Gallery Tab -->
+                    <div id="step-5" class="step-pane hidden">
+                        <div class="kicker mb-2">Gallery</div>
+                        <label class="block mb-1">Upload Portfolio Images & Videos</label>
+                        <input id="images" type="file" accept="image/*,video/*" multiple class="input">
+                        <div class="tip mt-1">Up to 10 images + 5 videos + PDFs allowed. Drag & drop supported.</div>
+                        <div id="preview" class="mt-3 flex gap-2 flex-wrap"></div>
+                        
+                        <div class="soft p-3 mt-4">
+                            <div class="font-semibold mb-2">AI Quality Check</div>
+                            <div class="text-sm">Uploaded media will be checked for quality issues like blurriness or low resolution.</div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 6: Publish Tab -->
+                    <div id="step-6" class="step-pane hidden">
+                        <div class="kicker mb-2">Review & Publish</div>
+
+                        <div class="soft p-3">
+                            <div class="font-bold mb-2">SEO Optimization Checker</div>
+                            <ul class="text-sm text-slate-200 space-y-1">
+                                <li><span class="ok">✓</span> Title contains keywords</li>
+                                <li><span class="ok">✓</span> Description is comprehensive</li>
+                                <li><span class="warn">⚠</span> Could add more tags for better discovery</li>
+                                <li><span class="ok">✓</span> Category selected appropriately</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="soft p-3 mt-4">
+                            <div class="font-bold mb-2">Gig Quality Score: 78%</div>
+                            <div class="w-full bg-slate-700 rounded-full h-2.5">
+                                <div class="bg-emerald-400 h-2.5 rounded-full" style="width: 78%"></div>
+                            </div>
+                            <div class="text-sm mt-2">Complete these items to improve your score:</div>
+                            <ul class="text-sm text-slate-200 space-y-1 mt-1">
+                                <li><span class="warn">•</span> Add at least 3 portfolio images</li>
+                                <li><span class="warn">•</span> Consider adding a introductory video</li>
+                            </ul>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                            <button id="btnSaveDraft" type="button" class="btn btn-plain">Save Draft</button>
+                            <button id="btnPublish" type="button" class="btn btn-brand"><i class="fa-solid fa-bolt"></i>
+                                Publish Gig</button>
+                            <button id="btnReset" type="reset" class="btn btn-plain">Reset</button>
+                        </div>
+
+                        <div id="formStatus" class="mt-2 text-sm"></div>
+
+                        <div class="mt-4">
+                            <div class="kicker mb-1">Preview</div>
+                            <div class="text-sm mb-2">See how your gig will appear to buyers:</div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn btn-plain text-sm">Desktop Preview</button>
+                                <button type="button" class="btn btn-plain text-sm">Mobile Preview</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="kicker mb-1">Debug (for devs)</div>
+                            <pre id="debugJson" class="soft p-3 text-xs code overflow-auto"></pre>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- bottom nav -->
+                <div class="divider my-5"></div>
+                <div class="flex items-center justify-between gap-3">
+                    <button id="btnPrev" class="btn btn-plain"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+                    <div class="text-sm text-slate-300" id="stepNote">Step 1 of 6</div>
+                    <button id="btnNext" class="btn btn-plain">Next <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+            </section>
+
+            <!-- RIGHT: sticky live preview + profile -->
+            <aside class="space-y-4">
+
+                <!-- Profile -->
+                <div class="glass p-4">
+                    <div class="kicker mb-1">Your profile</div>
+                    <div class="flex items-center gap-3">
+                        <img id="uPhoto" class="w-12 h-12 rounded-full object-cover border border-white/10"
+                            src="https://via.placeholder.com/80" />
+                        <div>
+                            <div id="uName" class="font-extrabold">—</div>
+                            <div id="uEmail" class="text-xs text-slate-300">—</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-sm text-slate-300">Your display name appears as seller name on your gig.</div>
+                </div>
+
+                <!-- Live Preview -->
+                <div class="glass p-4 stick" id="previewCard">
+                    <div class="kicker mb-1">Live preview</div>
+                    <div id="liveThumb" class="preview-cover"
+                        style="background-image:url('https://via.placeholder.com/1200x800?text=Preview');"></div>
+                    <div class="mt-3">
+                        <div class="text-slate-300 text-xs">Title</div>
+                        <div id="pvTitle" class="font-extrabold text-white text-lg truncate">—</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Category</div>
+                            <div id="pvCat" class="font-semibold text-sm">—</div>
+                        </div>
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Delivery</div>
+                            <div id="pvDel" class="font-semibold text-sm">—</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Price</div>
+                            <div id="pvPrice" class="font-black text-emerald-300 text-base">₹0</div>
+                        </div>
+                        <div class="soft p-2">
+                            <div class="text-[11px] text-slate-400">Revisions</div>
+                            <div id="pvRev" class="font-semibold text-sm">—</div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="text-[11px] text-slate-400">Features</div>
+                        <div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="glass p-4">
+                    <div class="kicker mb-1">Pro tips</div>
+                    <ul class="list-disc list-inside text-sm text-slate-300 space-y-1">
+                        <li>Use clear, high-res images of your work.</li>
+                        <li>Set realistic delivery times.</li>
+                        <li>Add 5–8 skills/tags for better discovery.</li>
+                        <li>Keep title specific (niche works better).</li>
+                    </ul>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+    <footer class="text-center py-8 text-slate-300">© 2025 Talent-Hub</footer>
+
+    <!-- FIREBASE + LOGIC -->
+    <script type="module">
+        // Firebase v10 modular
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import {
+            getAuth, onAuthStateChanged, signOut, updateProfile
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import {
+            getFirestore, collection, addDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import {
+            getStorage, ref as storageRef, uploadBytes, getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+        // --- Firebase config (tumhara project) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+            authDomain: "skillspot-pro.firebaseapp.com",
+            projectId: "skillspot-pro",
+            storageBucket: "skillspot-pro.appspot.com",
+            messagingSenderId: "600467343030",
+            appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+            measurementId: "G-TYL2XF4WZY"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // --- helpers & elements ---
+        const $ = s => document.querySelector(s);
+        const $$ = s => document.querySelectorAll(s);
+
+        const loginStatus = $('#loginStatus');
+        const loginBtnLink = $('#loginBtnLink');
+        const btnLogout = $('#btnLogout');
+        const uPhoto = $('#uPhoto'); const uName = $('#uName'); const uEmail = $('#uEmail');
+
+        // form els
+        const form = $('#gigForm');
+        const titleEl = $('#title');
+        const priceEl = $('#price');
+        const categoryEl = $('#category');
+        const subcatEl = $('#subcategory');
+        const deliveryEl = $('#deliveryTime');
+        const tagsEl = $('#tags');
+        const platformEl = $('#platform');
+        const videoTypeEl = $('#videoType');
+        const orientationEl = $('#orientation');
+        const targetAudienceEl = $('#targetAudience');
+
+        const descEl = $('#description');
+
+        const imagesEl = $('#images');
+        const preview = $('#preview');
+
+        const btnPrev = $('#btnPrev');
+        const btnNext = $('#btnNext');
+        const stepNote = $('#stepNote');
+        const stepTabs = $$('.step-tab');
+
+        const btnSaveDraft = $('#btnSaveDraft');
+        const btnPublish = $('#btnPublish');
+        const btnReset = $('#btnReset');
+        const formStatus = $('#formStatus');
+        const debugJson = $('#debugJson');
+
+        // live preview
+        const pvTitle = $('#pvTitle');
+        const pvCat = $('#pvCat');
+        const pvDel = $('#pvDel');
+        const pvPrice = $('#pvPrice');
+        const pvRev = $('#pvRev');
+        const pvFeat = $('#pvFeat');
+        const liveThumb = $('#liveThumb');
+
+        let currentUser = null;
+        let currentStep = 1;
+        const maxStep = 6;
+
+        // --- AUTH GUARD ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                loginStatus.textContent = "Not logged in";
+                btnLogout.classList.add('hidden');
+                loginBtnLink.classList.remove('hidden');
+                // Redirect to login preserving next
+                location.href = 'login.html?next=create-gig.html';
+                return;
+            }
+            currentUser = user;
+            loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`;
+            btnLogout.classList.remove('hidden');
+            loginBtnLink.classList.add('hidden');
+
+            // Fill profile card
+            uName.textContent = user.displayName || (user.email ? user.email.split('@')[0] : user.uid);
+            uEmail.textContent = user.email || user.uid;
+            uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
+
+            // Optional: set displayName if missing
+            if (!user.displayName && user.email) {
+                try { await updateProfile(user, { displayName: user.email.split('@')[0] }); } catch (e) { /*noop*/ }
+            }
+        });
+
+        btnLogout.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                location.href = 'index.html';
+            } catch (e) { alert('Logout failed'); }
+        });
+
+        // --- STEP NAV (free navigation) ---
+        function gotoStep(n) {
+            currentStep = Math.max(1, Math.min(maxStep, n));
+            for (let i = 1; i <= maxStep; i++) {
+                const pane = document.getElementById('step-' + i);
+                if (pane) pane.classList.toggle('hidden', i !== currentStep);
+                const dot = document.getElementById('dot-' + i);
+                if (dot) dot.classList.toggle('active', i <= currentStep);
+            }
+            stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
+            stepTabs.forEach(btn => {
+                const target = Number(btn.dataset.step);
+                if (target === currentStep) {
+                    btn.classList.add('btn-brand');
+                    btn.classList.remove('btn-plain');
+                } else {
+                    btn.classList.add('btn-plain');
+                    btn.classList.remove('btn-brand');
+                }
+            });
+            if (currentStep === 6) { buildChecklist(); renderDebug(); }
+        }
+
+        btnPrev.addEventListener('click', () => gotoStep(currentStep - 1));
+        btnNext.addEventListener('click', () => gotoStep(currentStep + 1));
+        stepTabs.forEach(btn => btn.addEventListener('click', () => gotoStep(Number(btn.dataset.step))));
+        gotoStep(1);
+
+        // --- IMAGE PREVIEW ---
+        imagesEl.addEventListener('change', () => {
+            preview.innerHTML = '';
+            const files = imagesEl.files || [];
+            const arr = [...files].slice(0, 6);
+            arr.forEach(file => {
+                const url = URL.createObjectURL(file);
+                const d = document.createElement('div');
+                d.className = 'thumb';
+                d.style.backgroundImage = `url('${url.replaceAll("'", "%27")}')`;
+                preview.appendChild(d);
+            });
+            if (arr[0]) {
+                const first = URL.createObjectURL(arr[0]);
+                liveThumb.style.backgroundImage = `url('${first.replaceAll("'", "%27")}')`;
+            }
+        });
+
+        // --- PREVIEW BINDINGS ---
+        function renderPreview() {
+            pvTitle.textContent = (titleEl.value || '—');
+            pvCat.textContent = (categoryEl.value || '—') + (subcatEl.value ? ` / ${subcatEl.value}` : '');
+            pvDel.textContent = (deliveryEl.value || '—') + ' Days';
+            
+            // Get price from the first plan (Basic)
+            const basicPrice = document.querySelector('.plan-column:first-child .plan-price input');
+            pvPrice.textContent = '₹' + (basicPrice ? Number(basicPrice.value || 0) : 0);
+            
+            // Get revisions from features
+            const revisionsFeature = document.querySelector('.plan-column:first-child .plan-features input[type="checkbox"]:nth-child(3)');
+            pvRev.textContent = revisionsFeature?.nextElementSibling?.textContent || '—';
+
+            // features
+            pvFeat.innerHTML = '';
+            const feats = Array.from(document.querySelectorAll('.plan-column:first-child .feature-checkbox input:checked'))
+                .map(input => input.nextElementSibling.textContent);
+                
+            feats.forEach(f => {
+                const x = document.createElement('span');
+                x.className = 'badge';
+                x.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`;
+                pvFeat.appendChild(x);
+            });
+        }
+        
+        // Add event listeners to update preview when form values change
+        [titleEl, categoryEl, subcatEl, deliveryEl].forEach(el => {
+            el.addEventListener('input', renderPreview);
+            el.addEventListener('change', renderPreview);
+        });
+        
+        // Also listen for changes in plan features and prices
+        document.addEventListener('input', (e) => {
+            if (e.target.closest('.plan-column')) {
+                renderPreview();
+            }
+        });
+        
+        document.addEventListener('change', (e) => {
+            if (e.target.closest('.plan-column')) {
+                renderPreview();
+            }
+        });
+
+        // --- SOFT VALIDATION (just highlights, does not block) ---
+        function softValidate() {
+            const missing = [];
+            const fields = [
+                [titleEl, 'Title'],
+                [categoryEl, 'Category'],
+                [subcatEl, 'Subcategory'],
+                [deliveryEl, 'Delivery'],
+                [descEl, 'Description']
+            ];
+            fields.forEach(([el, name]) => {
+                const empty = !String(el.value || '').trim();
+                el.classList.toggle('danger', empty);
+                if (empty) missing.push(name);
+            });
+            return missing;
+        }
+
+        // --- CHECKLIST FOR STEP 6 ---
+        function buildChecklist() {
+            const checklist = $('#checklist');
+            const missing = softValidate();
+            checklist.innerHTML = '';
+            const items = [
+                ['Title', !!titleEl.value.trim()],
+                ['Category', !!categoryEl.value.trim()],
+                ['Subcategory', !!subcatEl.value.trim()],
+                ['Delivery', !!deliveryEl.value.trim()],
+                ['Description', !!descEl.value.trim()],
+            ];
+            items.forEach(([label, ok]) => {
+                const li = document.createElement('li');
+                li.innerHTML = ok
+                    ? `<span class="ok">✔</span> ${label}`
+                    : `<span class="warn">•</span> ${label} — Not Provided (will be saved as "Not Provided")`;
+                checklist.appendChild(li);
+            });
+        }
+
+        // --- UPLOAD IMAGES (optional) ---
+        async function uploadImagesAndGetUrls(files, uid) {
+            const urls = [];
+            const arr = [...files].slice(0, 6);
+            for (let i = 0; i < arr.length; i++) {
+                const f = arr[i];
+                const path = `gigs/${uid}/${Date.now()}_${i}_${f.name}`;
+                const ref = storageRef(storage, path);
+                await uploadBytes(ref, f);
+                const url = await getDownloadURL(ref);
+                urls.push(url);
+            }
+            return urls;
+        }
+
+        // --- PAYLOAD BUILDER (blanks => "Not Provided") ---
+        function valOrDefault(v) {
+            const s = String(v || '').trim();
+            if (s === '') return 'Not Provided';
+            return s;
+        }
+        
+        function buildGigPayload(status = 'published', imageUrls = []) {
+            const sellerName = currentUser?.displayName || (currentUser?.email ? currentUser.email.split('@')[0] : 'Freelancer');
+            const sellerPhoto = currentUser?.photoURL || '';
+            
+            // Get plan data
+            const plans = Array.from(document.querySelectorAll('.plan-column')).map(planCol => {
+                return {
+                    name: planCol.querySelector('.plan-header input[type="text"]').value,
+                    price: Number(planCol.querySelector('.plan-price input').value || 0),
+                    description: planCol.querySelector('.plan-header textarea').value,
+                    features: Array.from(planCol.querySelectorAll('.feature-checkbox input:checked'))
+                        .map(input => input.nextElementSibling.textContent)
+                };
+            });
+
+            let finalImages = imageUrls;
+            if (finalImages.length === 0) {
+                finalImages = ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'];
+            }
+
+            const payload = {
+                title: valOrDefault(titleEl.value),
+                category: valOrDefault(categoryEl.value),
+                subcategory: valOrDefault(subcatEl.value),
+                tags: (tagsEl.value || '').split(',').map(t => t.trim()).filter(t => t),
+                platform: valOrDefault(platformEl.value),
+                videoType: valOrDefault(videoTypeEl.value),
+                orientation: valOrDefault(orientationEl.value),
+                targetAudience: valOrDefault(targetAudienceEl.value),
+                delivery: valOrDefault(deliveryEl.value),
+                plans: plans,
+                description: valOrDefault(descEl.value),
+                images: finalImages,
+
+                // seller / creator fields
+                sellerName,
+                sellerPhoto,
+                sellerSince: new Date().getFullYear().toString(),
+                createdByUid: currentUser?.uid || '',
+                createdByEmail: currentUser?.email || '',
+
+                rating: 0,
+                reviews: 0,
+                status,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            };
+            return payload;
+        }
+
+        // --- DEBUG JSON ---
+        function renderDebug() {
+            const draftPayload = buildGigPayload('preview', []);
+            debugJson.textContent = JSON.stringify(draftPayload, null, 2);
+        }
+
+        // --- REQUIREMENTS & FAQ FUNCTIONALITY ---
+        $('#addRequirementBtn').addEventListener('click', () => {
+            const reqContainer = $('#requirementsContainer');
+            const newReq = document.createElement('div');
+            newReq.className = 'requirement-item';
+            newReq.innerHTML = `
+                <select class="input mb-2">
+                    <option value="text">Text Input</option>
+                    <option value="file">File Upload</option>
+                    <option value="choice">Multiple Choice</option>
+                </select>
+                <input type="text" class="input" placeholder="Question or instruction for buyer">
+                <button type="button" class="btn btn-plain mt-2 text-xs remove-req">Remove</button>
+            `;
+            reqContainer.appendChild(newReq);
+            
+            newReq.querySelector('.remove-req').addEventListener('click', () => {
+                newReq.remove();
+            });
+        });
+        
+        $('#addFaqBtn').addEventListener('click', () => {
+            const faqContainer = $('#faqContainer');
+            const newFaq = document.createElement('div');
+            newFaq.className = 'faq-item';
+            newFaq.innerHTML = `
+                <input type="text" class="input mb-2" placeholder="Question">
+                <textarea class="input" rows="2" placeholder="Answer"></textarea>
+                <button type="button" class="btn btn-plain mt-2 text-xs remove-faq">Remove</button>
+            `;
+            faqContainer.appendChild(newFaq);
+            
+            newFaq.querySelector('.remove-faq').addEventListener('click', () => {
+                newFaq.remove();
+            });
+        });
+
+        // --- ACTIONS ---
+        btnSaveDraft?.addEventListener('click', async () => {
+            if (!currentUser) { alert('Please login'); return; }
+            try {
+                btnSaveDraft.disabled = true;
+                btnSaveDraft.innerHTML = 'Saving draft…';
+                formStatus.className = '';
+                formStatus.textContent = 'Preparing draft…';
+
+                const files = imagesEl.files || [];
+                const urls = files.length ? await uploadImagesAndGetUrls(files, currentUser.uid) : [];
+                // ✅ DRAFT status
+                const payload = buildGigPayload('draft', urls);
+                const ref = await addDoc(collection(db, 'subho_gigs'), payload);
+
+                formStatus.className = 'ok';
+                formStatus.textContent = 'Draft saved ✓ (You can publish later from your dashboard)';
+                debugJson.textContent = JSON.stringify({ draftId: ref.id, ...payload }, null, 2);
+            } catch (e) {
+                formStatus.className = 'err';
+                formStatus.textContent = 'Failed to save draft: ' + (e.message || e);
+            } finally {
+                btnSaveDraft.disabled = false;
+                btnSaveDraft.innerHTML = 'Save Draft';
+            }
+        });
+
+        btnPublish?.addEventListener('click', async () => {
+            if (!currentUser) { alert('Please login'); return; }
+            try {
+                btnPublish.disabled = true;
+                btnPublish.innerHTML = 'Publishing…';
+                formStatus.className = '';
+                formStatus.textContent = 'Uploading images (if any)…';
+
+                const files = imagesEl.files || [];
+                const urls = files.length ? await uploadImagesAndGetUrls(files, currentUser.uid) : [];
+
+                formStatus.textContent = 'Saving gig…';
+                const payload = buildGigPayload('published', urls);
+                const docRef = await addDoc(collection(db, 'subho_gigs'), payload);
+
+                formStatus.className = 'ok';
+                formStatus.textContent = 'Gig published ✓ Redirecting to detail…';
+                setTimeout(() => { location.href = `index.html?id=${encodeURIComponent(docRef.id)}`; }, 700);
+            } catch (e) {
+                formStatus.className = 'err';
+                formStatus.textContent = 'Publish failed: ' + (e.message || e);
+            } finally {
+                btnPublish.disabled = false;
+                btnPublish.innerHTML = '<i class="fa-solid fa-bolt"></i> Publish Gig';
+            }
+        });
+
+        btnReset?.addEventListener('click', () => {
+            preview.innerHTML = '';
+            liveThumb.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Preview')";
+            formStatus.textContent = '';
+            [titleEl, categoryEl, subcatEl, deliveryEl, descEl].forEach(el => el.classList.remove('danger'));
+            renderPreview(); buildChecklist(); renderDebug();
+        });
+
+        // soft validate periodically
+        setInterval(() => { if (currentStep !== 6) softValidate(); }, 1500);
+
+    </script>
+</body>
+
+</html>
