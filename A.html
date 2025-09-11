@@ -1,125 +1,29 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Gig Details</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-  <style>
-    body{margin:0;font-family:sans-serif;background:#0a0f15;color:#eee}
-    .container{max-width:1000px;margin:auto;padding:16px}
-    .card{background:#111b25;border-radius:10px;padding:16px;margin-bottom:16px}
-    .title{font-size:22px;font-weight:700}
-    .muted{color:#9aa}
-    .btn{padding:10px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
-    .btn-primary{background:#00d084;color:#000}
-    .btn-like{background:transparent;border:1px solid #444;color:#fff;padding:8px 12px}
-    .btn-like.liked{background:#00d084;color:#000}
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="card">
-      <div class="title" id="gigTitle">Loading...</div>
-      <div class="muted" id="gigSeller"></div>
-      <p id="gigDesc">Fetching gig details...</p>
-      <div><strong>Price:</strong> <span id="gigPrice">₹0</span></div>
-      <div style="margin-top:12px">
-        <button id="likeBtn" class="btn btn-like"><i class="fa-regular fa-heart"></i> <span id="likeCount">0</span></button>
-        <button id="continueBtn" class="btn btn-primary">Continue</button>
-      </div>
-      <div id="status" class="muted" style="margin-top:10px"></div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
-      authDomain: "skillspot-pro.firebaseapp.com",
-      projectId: "skillspot-pro",
-      storageBucket: "skillspot-pro.appspot.com",
-      messagingSenderId: "600467343030",
-      appId: "1:600467343030:web:ad985d8e95b3ea99c64817"
+graphic: {
+        subs: ['Logo Design', 'Brand Style Guides', 'Illustration', 'Business Cards','Social Media Design','Book Covers','Packaging Design'],
+        features: ['Source Files', 'Vector files', '3 Revisions', 'Favicon', 'Mockups']
+      },
+      web: {
+        subs: ['Website Development', 'App Development', 'Game Development','E-commerce Development', 'Cybersecurity', 'AI Development'],
+        features: ['Responsive', 'SEO basic', 'CMS', '1 Month Support', 'Source Code']
+      },
+      marketing: {
+        subs: ['Social Media Marketing', 'SEO', 'Content Marketing', 'Email Marketing', 'Influencer Marketing', 'Video Marketing','Affiliate Marketing'],
+        features: ['3 Creatives', 'Ad Copy', 'A/B Variations', 'Targeting Suggestion', 'Analytics Report']
+      },
+      video: {
+        subs: ['Video Editing', '2D Animation', '3D Animation', 'Whiteboard Animation', 'Short Video Ads', 'Intro/Outro'],
+        features: ['Color Grade', 'Sound Mix', 'Captions', 'Intro Animation', 'Source Files']
+      },
+      writing: {
+        subs: ['Articles & Blogs', 'Copywriting', 'Translation', 'Proofreading', 'Technical Writing', 'Resume Writing'],
+        features: ['SEO keywords', 'Meta tags', 'Plagiarism check', '2 Revisions', 'References']
+      },
+      music: {
+        subs: ['Voice Over', 'Mixing & Mastering', 'Podcast Editing', 'Jingles', 'Sound Effects'],
+        features: ['Stem Files', 'Mastered', 'Commercial License', 'Multiple Takes', 'Lyrics']
+      },
+      ai: {
+        subs: ['AI Art', 'AI Content Writing', 'AI Chatbot', 'AI Automation', 'AI Video Creation'],
+        features: ['Model Selection', 'Dataset Prep', 'API Integration', '2 Iterations', 'Docs']
+      }
     };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Elements
-    const gigTitle = document.getElementById('gigTitle');
-    const gigSeller = document.getElementById('gigSeller');
-    const gigDesc = document.getElementById('gigDesc');
-    const gigPrice = document.getElementById('gigPrice');
-    const likeBtn = document.getElementById('likeBtn');
-    const likeCountEl = document.getElementById('likeCount');
-    const continueBtn = document.getElementById('continueBtn');
-    const statusEl = document.getElementById('status');
-
-    // Helpers
-    const getParam = (k)=>new URL(location).searchParams.get(k);
-    const GIG_ID = getParam("id");
-    if(!GIG_ID){ gigTitle.textContent="No gig id in URL"; throw new Error("No id"); }
-
-    const gigRef = doc(db,"subho_gigs",GIG_ID);
-    const aggRef = doc(db,"gig_likes_agg",GIG_ID);
-
-    let currentUser=null;
-
-    // Load gig realtime
-    onSnapshot(gigRef,(snap)=>{
-      if(!snap.exists()){ gigTitle.textContent="Gig not found"; return; }
-      const g=snap.data();
-      gigTitle.textContent=g.title||"Untitled Gig";
-      gigSeller.textContent="By "+(g.sellerName||"Seller");
-      gigDesc.textContent=g.description||"No description";
-      gigPrice.textContent="₹"+(g.price||0);
-    });
-
-    // Load likes count realtime
-    onSnapshot(aggRef,(snap)=>{
-      likeCountEl.textContent = snap.exists() ? (snap.data().count||0) : 0;
-    });
-
-    // Auth state
-    onAuthStateChanged(auth,(user)=>{
-      currentUser=user;
-      if(user){ statusEl.textContent="Logged in as "+(user.email||user.uid); }
-      else{ statusEl.textContent="Not logged in"; }
-    });
-
-    // Toggle like
-    likeBtn.onclick=async()=>{
-      if(!currentUser){ alert("Please login first!"); return; }
-      const uid=currentUser.uid;
-      const uRef=doc(db,"gig_likes_user",uid+"_"+GIG_ID);
-      const rRef=doc(db,"gig_likes",GIG_ID+"_"+uid);
-      try{
-        await runTransaction(db,async(t)=>{
-          const uSnap=await t.get(uRef);
-          const aSnap=await t.get(aggRef);
-          let count=aSnap.exists()?aSnap.data().count||0:0;
-          if(uSnap.exists()){
-            t.delete(uRef); t.delete(rRef); count=Math.max(0,count-1);
-          } else {
-            t.set(uRef,{uid,gid:GIG_ID,createdAt:serverTimestamp()});
-            t.set(rRef,{uid,gid:GIG_ID,createdAt:serverTimestamp()});
-            count++;
-          }
-          t.set(aggRef,{count},{merge:true});
-        });
-      }catch(e){ alert("Like failed: "+e.message); }
-    };
-
-    // Continue button
-    continueBtn.onclick=()=>{
-      if(!currentUser){ alert("Please login first!"); return; }
-      location.href="continue.html?id="+GIG_ID;
-    };
-  </script>
-</body>
-</html>
