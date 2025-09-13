@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Gig — Talent-Hub Pro (Fixed)</title>
+  <meta name="description" content="Create and publish professional gigs on Talent-Hub Pro. Responsive pricing, silent autosave, SEO-ready listing." />
+  <meta name="keywords" content="freelance,gig,logo design,video editing,marketplace,talent-hub" />
+  <!-- Open Graph / Twitter (keeps previous behavior) -->
+  <meta property="og:title" content="Create Gig — Talent-Hub Pro" />
+  <meta property="og:description" content="Create and publish professional gigs on Talent-Hub Pro." />
+  <meta property="og:image" content="https://via.placeholder.com/1200x800.png?text=Talent-Hub+Pro" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+  <style>
+    /* ========= THEME / BASE ========= */
+    :root{
+      --bg1:#07102a; --bg2:#040718; --ink:#e9f2ff; --muted:#98abc7;
+      --glass:rgba(255,255,255,.03); --b:rgba(255,255,255,.06);
+      --brand:#34d399; --brand-ink:#042819;
+    }
+    html,body{height:100%}
+    body{
+      font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--ink); margin:0; -webkit-font-smoothing:antialiased;
+    }
+    .glass{background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--b);border-radius:12px}
+    .input{width:100%;padding:10px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);color:var(--ink);box-sizing:border-box}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-weight:700;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:var(--ink);cursor:pointer}
+    .btn-brand{background:var(--brand);color:var(--brand-ink)}
+    .thumb{width:100px;height:74px;border-radius:8px;background:#0e1836 center/cover no-repeat;border:1px solid rgba(255,255,255,.06)}
+    .preview-cover{aspect-ratio:16/9;background:#12102b center/cover no-repeat;border-radius:8px;border:1px solid rgba(255,255,255,.06);overflow:hidden}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);font-size:12px}
+    .soft{background:rgba(255,255,255,.01);border-radius:8px;padding:12px;border:1px dashed rgba(255,255,255,.03)}
+    .code{font-family:ui-monospace,Menlo,monospace}
+
+    /* ========= PRICING FIXES =========
+       Key changes:
+       - plan-container is a flex row with equal-height columns
+       - each plan-column uses flex and min-height so tall content doesn't overlap
+       - extras area has max-height + scroll to prevent whole card growing too large
+       - price input made larger (bigger font + padding)
+    */
+    .plan-grid{display:flex;gap:12px;align-items:stretch}
+    .plan-column{
+      flex:1; display:flex; flex-direction:column; gap:10px; min-height:260px;
+      background:rgba(255,255,255,.02);border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,.04);
+    }
+    .plan-header{text-align:center}
+    .plan-price-input{font-size:20px;font-weight:800;padding:6px 10px;border-radius:8px}
+    .plan-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+    .plan-extras{margin-top:8px;display:flex;flex-direction:column;gap:8px;max-height:150px;overflow:auto;padding-right:6px}
+    .extra-row{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:rgba(255,255,255,.015);gap:8px;min-width:0}
+    .extra-left{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .extra-right{display:flex;align-items:center;gap:8px}
+    .segmented{display:inline-flex;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.04)}
+    .segmented button{padding:6px 8px;border:0;background:transparent;color:var(--ink);font-weight:600;cursor:pointer}
+    .segmented button.active{background:rgba(255,255,255,.06)}
+    /* small screens: stack columns */
+    @media (max-width:900px){ .plan-grid{flex-direction:column} .plan-extras{max-height:120px} .plan-column{min-height:0} }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NAV -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub Pro</a>
+      <div class="flex items-center gap-3">
+        <span id="loginStatus" class="text-sm px-3 py-1 rounded-full">Checking auth…</span>
+        <a id="loginBtnLink" href="login.html" class="btn">Login</a>
+        <button id="btnLogout" class="btn hidden">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
+    <!-- LEFT: form -->
+    <section class="lg:col-span-2 glass p-5 space-y-4">
+
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xs text-slate-300 uppercase">Create new gig</div>
+          <h1 id="pageH1" class="text-2xl font-extrabold">Create a professional gig — step-by-step</h1>
+          <div class="text-sm text-slate-300">You can move forward even if fields are blank — they'll be saved as "Not Provided".</div>
+        </div>
+        <!-- SUBTLE AUTOSAVE STATUS (silent by default) -->
+        <div class="text-sm text-slate-300">Autosave: <span id="autosaveStatus">Idle</span></div>
+      </div>
+
+      <!-- STEP BAR (unchanged) -->
+      <div class="glass p-3">
+        <div class="flex items-center gap-3">
+          <div id="dot-1" class="step-dot active">1</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-2" class="step-dot">2</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-3" class="step-dot">3</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-4" class="step-dot">4</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-5" class="step-dot">5</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-6" class="step-dot">6</div>
+        </div>
+        <div class="mt-2 grid grid-cols-6 text-xs text-slate-300 text-center">
+          <div>Overview</div><div>Pricing</div><div>Description</div><div>Requirements</div><div>Media</div><div>Publish</div>
+        </div>
+      </div>
+
+      <!-- STEP TABS -->
+      <div class="flex gap-2 flex-wrap">
+        <button data-step="1" class="step-tab btn">1. Overview</button>
+        <button data-step="2" class="step-tab btn">2. Pricing</button>
+        <button data-step="3" class="step-tab btn">3. Description</button>
+        <button data-step="4" class="step-tab btn">4. Requirements</button>
+        <button data-step="5" class="step-tab btn">5. Media</button>
+        <button data-step="6" class="step-tab btn">6. Publish</button>
+      </div>
+
+      <form id="gigForm" class="space-y-6" autocomplete="off">
+        <!-- STEP 1 (Overview) — unchanged structure for brevity -->
+        <div id="step-1" class="step-pane">
+          <h2 class="text-lg font-semibold">Overview</h2>
+          <label class="block mt-2">Gig Title <span class="text-xs text-slate-400">(max 50 chars)</span></label>
+          <input id="title" class="input" placeholder="e.g., I will design a modern minimalist logo" maxlength="50" />
+          <div class="text-xs mt-1 text-slate-300">Characters: <span id="titleCount">0/50</span></div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+            <div>
+              <label class="block mb-1">Category</label>
+              <select id="category" class="input"><option value="">Select category</option>
+                <option value="logo-design">Logo & Branding</option>
+                <option value="video-editing">Video & Animation</option>
+                <option value="writing">Writing & Translation</option>
+                <option value="web">Web Development</option>
+                <option value="marketing">Digital Marketing</option>
+                <option value="music">Music & Audio</option>
+                <option value="ai">AI Services</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1">Subcategory</label>
+              <select id="subcategory" class="input"><option value="">Select subcategory</option></select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+            <div>
+              <label class="block mb-1">Tags (positive) — press Enter/comma to add (max 6)</label>
+              <div id="tagsWrap" class="p-2 rounded" style="background:rgba(255,255,255,.01)"></div>
+              <input id="tagsInput" class="input mt-2" placeholder="Add tag and press Enter" aria-label="Add tags" />
+            </div>
+            <div>
+              <label class="block mb-1">Platform</label>
+              <select id="platform" class="input"><option value="">Any</option><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>Website</option></select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STEP 2: PRICING (HERE WE APPLY FIXES) -->
+        <div id="step-2" class="step-pane hidden">
+          <h2 class="text-lg font-semibold">Pricing</h2>
+
+          <!-- PLAN GRID: each .plan-column is equal height and responsive -->
+          <div class="plan-grid" id="planGrid">
+            <div class="plan-column" aria-label="Starter plan">
+              <div class="plan-header">
+                <input class="input plan-name text-center mb-2" value="Starter" aria-label="Starter name" />
+                <div style="display:flex;align-items:center;gap:8px;justify-content:center">
+                  <div class="text-xs text-slate-300">Price</div>
+                  <div>₹ <input type="number" class="plan-price plan-price-input" value="499" aria-label="Starter price" /></div>
+                </div>
+                <textarea class="input plan-desc mt-2" rows="2" placeholder="Short description">Basic delivery</textarea>
+              </div>
+
+              <!-- delivery / revisions row -->
+              <div class="plan-row">
+                <div style="flex:1">
+                  <label class="text-xs">Delivery days</label>
+                  <input class="input plan-delivery" type="number" min="1" value="3" />
+                </div>
+                <div style="flex:1;margin-left:8px">
+                  <label class="text-xs">Revisions</label>
+                  <input class="input plan-revisions" type="text" placeholder="e.g., 1 or Unlimited" value="1" />
+                </div>
+              </div>
+
+              <!-- EXTRAS: THIS AREA IS SCROLLABLE if many extras -->
+              <div class="plan-extras" aria-label="Starter extras"></div>
+
+              <!-- allow adding custom extras under a scrollable area -->
+              <div class="plan-custom-extras"></div>
+            </div>
+
+            <!-- Standard / Premium -->
+            <div class="plan-column" aria-label="Growth plan">
+              <div class="plan-header">
+                <input class="input plan-name text-center mb-2" value="Growth" />
+                <div style="display:flex;align-items:center;gap:8px;justify-content:center">
+                  <div class="text-xs text-slate-300">Price</div>
+                  <div>₹ <input type="number" class="plan-price plan-price-input" value="1499" /></div>
+                </div>
+                <textarea class="input plan-desc mt-2" rows="2">Popular package</textarea>
+              </div>
+              <div class="plan-row">
+                <div style="flex:1"><label class="text-xs">Delivery days</label><input class="input plan-delivery" type="number" min="1" value="5" /></div>
+                <div style="flex:1;margin-left:8px"><label class="text-xs">Revisions</label><input class="input plan-revisions" type="text" placeholder="e.g., 3 or Unlimited" value="3" /></div>
+              </div>
+              <div class="plan-extras" aria-label="Growth extras"></div>
+              <div class="plan-custom-extras"></div>
+            </div>
+
+            <div class="plan-column" aria-label="Elite plan">
+              <div class="plan-header">
+                <input class="input plan-name text-center mb-2" value="Elite" />
+                <div style="display:flex;align-items:center;gap:8px;justify-content:center">
+                  <div class="text-xs text-slate-300">Price</div>
+                  <div>₹ <input type="number" class="plan-price plan-price-input" value="2999" /></div>
+                </div>
+                <textarea class="input plan-desc mt-2" rows="2">Complete premium</textarea>
+              </div>
+              <div class="plan-row">
+                <div style="flex:1"><label class="text-xs">Delivery days</label><input class="input plan-delivery" type="number" min="1" value="7" /></div>
+                <div style="flex:1;margin-left:8px"><label class="text-xs">Revisions</label><input class="input plan-revisions" type="text" placeholder="e.g., Unlimited" value="Unlimited" /></div>
+              </div>
+              <div class="plan-extras" aria-label="Elite extras"></div>
+              <div class="plan-custom-extras"></div>
+            </div>
+          </div>
+
+          <!-- generate prices + custom extra UI -->
+          <div class="grid md:grid-cols-3 gap-3 mt-4">
+            <div>
+              <label class="block mb-1">Base hourly (optional)</label>
+              <input id="baseHourly" type="number" class="input" placeholder="e.g., 500" />
+            </div>
+            <div class="flex items-end"><button id="btnGeneratePrices" type="button" class="btn btn-brand">Generate Packages</button></div>
+            <div class="text-sm text-slate-300">Customize each plan; extras scroll inside card if many.</div>
+          </div>
+
+          <div class="mt-3 soft">
+            <div class="font-semibold">Add custom extra (per plan)</div>
+            <div class="grid md:grid-cols-3 gap-2 mt-2">
+              <div><input id="customExtraTitle" class="input" placeholder="Extra title (e.g., Rush Delivery)" /></div>
+              <div><input id="customExtraPrice" type="number" class="input" placeholder="Price (₹)" /></div>
+              <div><button id="addCustomExtraBtn" class="btn">Add extra to all plans</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Description -->
+        <div id="step-3" class="step-pane hidden">
+          <h2 class="text-lg font-semibold">Description & FAQ</h2>
+          <label class="block mb-1">Description (max 1200 characters)</label>
+          <div id="descriptionEditor"></div>
+          <div class="text-xs mt-1 text-slate-300">Characters: <span id="descCount">0 / 1200</span></div>
+
+          <div class="mt-4">
+            <label class="block mb-1">FAQ</label>
+            <div id="faqContainer" class="space-y-2"></div>
+            <button id="addFaqBtn" type="button" class="btn mt-2">+ Add FAQ</button>
+          </div>
+        </div>
+
+        <!-- STEP 4,5,6... rest unchanged except autosave behavior changed in JS -->
+        <div id="step-4" class="step-pane hidden">
+          <h2 class="text-lg font-semibold">Requirements</h2>
+          <div id="requirementsContainer" class="space-y-2"></div>
+          <div class="flex gap-2 mt-2">
+            <button id="addRequirementBtn" type="button" class="btn">+ Add Requirement</button>
+            <button id="btnSmartReq" type="button" class="btn btn-brand">Smart Requirements (Auto)</button>
+          </div>
+          <div class="text-xs text-slate-300 mt-2">Ask the buyer for files/links/choices you need to start work.</div>
+        </div>
+
+        <div id="step-5" class="step-pane hidden">
+          <h2 class="text-lg font-semibold">Gallery / Media</h2>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <div id="dropzone" class="dropzone" aria-label="Drop media here">Drag & drop images or click to browse<br><small>Images: 2–6 files, each ≤1 MB. Video: 1 file ≤30 MB.</small></div>
+              <input id="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" />
+              <div id="mediaPreview" class="mt-3 flex gap-3 flex-wrap" aria-live="polite"></div>
+            </div>
+            <div>
+              <div class="soft">
+                <div class="font-semibold">AI Quality Check</div>
+                <div id="aiQuality" class="text-sm mt-2">No media uploaded</div>
+                <div class="mt-2 text-xs text-slate-300">Set one cover (image or video). Reorder to control gallery order.</div>
+              </div>
+              <div class="mt-3">
+                <label class="block mb-1">Set cover from uploaded media</label>
+                <div id="coverPreview" class="preview-cover" role="img" aria-label="Cover preview"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="step-6" class="step-pane hidden">
+          <h2 class="text-lg font-semibold">Review & Publish</h2>
+
+          <div class="soft">
+            <div class="font-bold">SEO & Checklist</div>
+            <div id="seoChecklist" class="text-sm mt-2"></div>
+          </div>
+
+          <div class="mt-4 grid md:grid-cols-3 gap-3">
+            <button id="btnSaveDraft" type="button" class="btn">Save Draft</button>
+            <button id="btnPublish" type="button" class="btn btn-brand">Publish Gig</button>
+            <button id="btnReset" type="button" class="btn">Reset</button>
+          </div>
+
+          <div id="formStatus" class="mt-3 text-sm"></div>
+          <div class="mt-4 soft"><div class="font-semibold">Preview JSON</div><pre id="debugJson" class="code p-2 text-xs overflow-auto"></pre></div>
+        </div>
+
+      </form>
+
+      <!-- bottom nav -->
+      <div class="flex items-center justify-between mt-4">
+        <button id="btnPrev" class="btn">← Prev</button>
+        <div id="stepNote" class="text-sm text-slate-300">Step 1 of 6</div>
+        <button id="btnNext" class="btn">Next →</button>
+      </div>
+
+    </section>
+
+    <!-- RIGHT: preview + profile (unchanged) -->
+    <aside class="space-y-4">
+      <div class="glass p-4">
+        <div class="text-xs text-slate-300">Your profile</div>
+        <div class="flex items-center gap-3 mt-2">
+          <img id="uPhoto" class="w-12 h-12 rounded-full object-cover" src="https://via.placeholder.com/80" alt="Profile photo" />
+          <div>
+            <div id="uName" class="font-bold">—</div>
+            <div id="uEmail" class="text-xs text-slate-300">—</div>
+          </div>
+        </div>
+        <div class="mt-2">
+          <button id="editProfileBtn" class="btn text-sm">Edit profile</button>
+        </div>
+      </div>
+
+      <div class="glass p-4 stick">
+        <div class="text-xs text-slate-300">Live preview</div>
+        <div id="liveThumb" class="preview-cover mt-2" style="background-image:url('https://via.placeholder.com/1200x800?text=Preview')" role="img" aria-label="Gig cover preview"></div>
+        <div class="mt-3">
+          <div class="text-slate-300 text-xs">Title</div>
+          <div id="pvTitle" class="font-extrabold text-lg truncate">—</div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <div class="soft p-2"><div class="text-[11px] text-slate-400">Category</div><div id="pvCat" class="font-semibold text-sm">—</div></div>
+          <div class="soft p-2"><div class="text-[11px] text-slate-400">Delivery</div><div id="pvDel" class="font-semibold text-sm">—</div></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <div class="soft p-2"><div class="text-[11px] text-slate-400">Price</div><div id="pvPrice" class="font-black text-emerald-300 text-base">₹0</div></div>
+          <div class="soft p-2"><div class="text-[11px] text-slate-400">Revisions</div><div id="pvRev" class="font-semibold text-sm">—</div></div>
+        </div>
+        <div class="mt-2"><div class="text-[11px] text-slate-400">Features</div><div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div></div>
+      </div>
+
+      <div class="glass p-4">
+        <div class="text-xs text-slate-300">Pro tips</div>
+        <ul class="list-disc list-inside text-sm text-slate-300 mt-2">
+          <li>Use a clear title under 50 characters.</li>
+          <li>Add at least 3 tags and 3 skills for discoverability.</li>
+          <li>Upload a cover image or short video — it increases clicks.</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="text-center py-6 text-slate-300">© 2025 Talent-Hub Pro — Fixed Pricing & Silent Autosave</footer>
+
+  <!-- FIREBASE + LOGIC -->
+  <script type="module">
+    // ---------- Firebase v10 modular ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // ---------- Config (unchanged) ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+      measurementId: "G-TYL2XF4WZY"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // ---------- helpers & elements ----------
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    const loginStatus = $('#loginStatus'), loginBtnLink = $('#loginBtnLink'), btnLogout = $('#btnLogout');
+    const uPhoto = $('#uPhoto'), uName = $('#uName'), uEmail = $('#uEmail');
+
+    const titleEl = $('#title'), titleCount = $('#titleCount');
+    const categoryEl = $('#category'), subcatEl = $('#subcategory');
+    const tagsInput = $('#tagsInput'), tagsWrap = $('#tagsWrap');
+    const baseHourlyEl = $('#baseHourly'), btnGeneratePrices = $('#btnGeneratePrices'), addCustomExtraBtn = $('#addCustomExtraBtn');
+    const btnPrev = $('#btnPrev'), btnNext = $('#btnNext'), stepNote = $('#stepNote'), stepTabs = $$('.step-tab');
+    const btnSaveDraft = $('#btnSaveDraft'), btnPublish = $('#btnPublish'), btnReset = $('#btnReset');
+    const formStatus = $('#formStatus'), debugJson = $('#debugJson');
+    const pvTitle = $('#pvTitle'), pvCat = $('#pvCat'), pvDel = $('#pvDel'), pvPrice = $('#pvPrice'), pvRev = $('#pvRev'), pvFeat = $('#pvFeat'), liveThumb = $('#liveThumb');
+    const dropzone = $('#dropzone'), fileInput = $('#fileInput'), mediaPreview = $('#mediaPreview'), aiQuality = $('#aiQuality'), coverPreview = $('#coverPreview');
+    const descCount = $('#descCount'), seoChecklist = $('#seoChecklist'), autosaveStatus = $('#autosaveStatus');
+
+    const quill = new Quill('#descriptionEditor', { theme: 'snow', placeholder: 'Explain what you will deliver, process, tools, and what makes you unique...' });
+
+    // ---------- state ----------
+    let currentUser = null;
+    let currentStep = 1;
+    const maxStep = 6;
+    const GIGS_COLLECTION = 'subho_gigs';
+    let mediaFiles = []; // {file, id, urlLocal}
+    let coverIndex = -1;
+
+    // ---------- Category map (same as before) ----------
+    const CATEGORY_MAP = {
+      'logo-design': { subs: ['Minimal Logo','Mascot Logo','Vintage','3D Logo','Wordmark'], extras: ['Source File (AI/PSD)','Vector File (SVG/EPS)','3D Mockup','Social Media Kit','Brand Style Guide','Transparent PNG'] },
+      'video-editing': { subs: ['Short Edit','YouTube Long','Motion Graphics','Explainer'], extras: ['Raw Footage Return','Subtitles/Captions','Color Grading','4K Export','Thumbnail Design','Sound Mix'] },
+      'writing': { subs: ['Article','Product Description','SEO Blog','Proofreading'], extras: ['SEO Keywords','Plagiarism Report','Word Count Upgrade','References','Editable DOCX'] },
+      'web': { subs: ['Landing Page','eCommerce','Full Site','Bug Fix'], extras: ['Responsive Design','Source Code','1 Month Support','CMS Integration','Speed Optimization'] },
+      'marketing': { subs: ['Social Ads','Strategy','Email Campaign'], extras: ['Ad Copy','3 Creatives','Targeting Suggestions','Analytics Report','Campaign Setup'] },
+      'music': { subs: ['Voice Over','Track Production','Mix & Master'], extras: ['Stem Files','Commercial License','Mastered WAV','Multiple Takes','Instrumental Version'] },
+      'ai': { subs: ['Chatbot','Prompt Engineering','Automation'], extras: ['Model Selection','Dataset Prep','API Integration','Notebook','Deployment Script'] }
+    };
+
+    // ---------- Auth UI (unchanged) ----------
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        currentUser = null;
+        loginStatus.textContent = 'Not logged in';
+        loginBtnLink.classList.remove('hidden'); btnLogout.classList.add('hidden');
+        uName.textContent = '—'; uEmail.textContent = '—'; uPhoto.src = 'https://via.placeholder.com/80';
+        return;
+      }
+      currentUser = user;
+      loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`;
+      loginBtnLink.classList.add('hidden'); btnLogout.classList.remove('hidden');
+      uName.textContent = user.displayName || (user.email ? user.email.split('@')[0] : user.uid);
+      uEmail.textContent = user.email || user.uid;
+      uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
+      if (!user.displayName && user.email) {
+        try { await updateProfile(user, { displayName: user.email.split('@')[0] }); } catch (e) { /* noop */ }
+      }
+    });
+    btnLogout.addEventListener('click', async () => { try { await signOut(auth); location.href = 'index.html'; } catch (e) { alert('Logout failed'); } });
+
+    // ---------- Step nav (unchanged behavior; free navigation) ----------
+    function gotoStep(n) {
+      currentStep = Math.max(1, Math.min(maxStep, n));
+      for (let i = 1; i <= maxStep; i++) {
+        const pane = document.getElementById('step-' + i);
+        if (pane) pane.classList.toggle('hidden', i !== currentStep);
+        const dot = document.getElementById('dot-' + i);
+        if (dot) dot.classList.toggle('active', i <= currentStep);
+      }
+      stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
+      stepTabs.forEach(btn => {
+        const target = Number(btn.dataset.step);
+        if (target === currentStep) { btn.classList.add('btn-brand'); btn.classList.remove('btn'); } else { btn.classList.remove('btn-brand'); btn.classList.add('btn'); }
+      });
+      if (currentStep === 6) { buildSEOChecklist(); renderDebug(); }
+      renderPreview();
+    }
+    stepTabs.forEach(btn => btn.addEventListener('click', () => gotoStep(Number(btn.dataset.step))));
+    btnPrev.addEventListener('click', () => gotoStep(currentStep - 1));
+    btnNext.addEventListener('click', () => gotoStep(currentStep + 1));
+    gotoStep(1);
+
+    // ---------- Title char limit + dynamic meta ----------
+    titleEl.addEventListener('input', () => {
+      if (titleEl.value.length > 50) titleEl.value = titleEl.value.slice(0, 50);
+      titleCount.textContent = `${titleEl.value.length}/50`;
+      document.title = titleEl.value ? `${titleEl.value} — Talent-Hub Pro` : 'Create Gig — Talent-Hub Pro';
+      const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', (titleEl.value ? titleEl.value + ' — ' : '') + 'Create and sell services on Talent-Hub Pro.');
+      renderPreview(); autosaveNowDebounced('title');
+    });
+
+    // ---------- Chips for tags (unchanged) ----------
+    function createChip(text, container) {
+      const span = document.createElement('span'); span.className = 'chip';
+      const txt = document.createElement('span'); txt.textContent = text;
+      const x = document.createElement('button'); x.className = 'text-xs'; x.textContent = '×'; x.style.marginLeft = '6px';
+      x.addEventListener('click', () => { span.remove(); autosaveNowDebounced('chips'); renderPreview(); });
+      span.appendChild(txt); span.appendChild(x); container.appendChild(span);
+    }
+    function readChips(container) { return Array.from(container.children).map(c => c.firstChild.textContent); }
+    tagsInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault(); const v = tagsInput.value.trim(); if (!v) return;
+        const existing = readChips(tagsWrap); if (existing.length >= 6) { alert('Max 6 tags'); tagsInput.value=''; return; }
+        createChip(v, tagsWrap); tagsInput.value=''; autosaveNowDebounced('tags'); renderPreview();
+      }
+    });
+
+    // ---------- Category & plan extras population (same logic) ----------
+    function populateSubcategories(cat) {
+      subcatEl.innerHTML = '<option value="">Select subcategory</option>';
+      if (!cat || !CATEGORY_MAP[cat]) return;
+      CATEGORY_MAP[cat].subs.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; subcatEl.appendChild(o); });
+    }
+
+    function populatePlanExtras(cat) {
+      // Creates extras rows inside each plan .plan-extras
+      const extras = cat && CATEGORY_MAP[cat] ? CATEGORY_MAP[cat].extras : ['Source File','Revisions','Support'];
+      document.querySelectorAll('.plan-column').forEach((col) => {
+        const extrasContainer = col.querySelector('.plan-extras');
+        extrasContainer.innerHTML = '';
+        extras.forEach((ex) => {
+          const row = document.createElement('div'); row.className = 'extra-row';
+          const left = document.createElement('div'); left.className = 'extra-left'; left.textContent = ex;
+          const right = document.createElement('div'); right.className = 'extra-right';
+          // segmented control (Included / Add-on / Not)
+          const seg = document.createElement('div'); seg.className = 'segmented';
+          const btnInc = document.createElement('button'); btnInc.textContent = 'Included'; btnInc.dataset.state='included';
+          const btnAdd = document.createElement('button'); btnAdd.textContent = 'Add-on'; btnAdd.dataset.state='addon';
+          const btnNo = document.createElement('button'); btnNo.textContent = 'Not'; btnNo.dataset.state='none';
+          seg.appendChild(btnInc); seg.appendChild(btnAdd); seg.appendChild(btnNo);
+          btnInc.classList.add('active');
+
+          const addonWrap = document.createElement('div'); addonWrap.style.display='none'; addonWrap.innerHTML = `<input type="number" class="input extra-price inline w-28" placeholder="₹ add-on" />`;
+          const hiddenState = document.createElement('input'); hiddenState.type='hidden'; hiddenState.className='extra-state'; hiddenState.value = 'included';
+
+          btnInc.addEventListener('click', ()=>{ [btnInc,btnAdd,btnNo].forEach(x=>x.classList.remove('active')); btnInc.classList.add('active'); addonWrap.style.display='none'; hiddenState.value='included'; autosaveNowDebounced('plan-extras'); });
+          btnAdd.addEventListener('click', ()=>{ [btnInc,btnAdd,btnNo].forEach(x=>x.classList.remove('active')); btnAdd.classList.add('active'); addonWrap.style.display='block'; hiddenState.value='addon'; autosaveNowDebounced('plan-extras'); });
+          btnNo.addEventListener('click', ()=>{ [btnInc,btnAdd,btnNo].forEach(x=>x.classList.remove('active')); btnNo.classList.add('active'); addonWrap.style.display='none'; hiddenState.value='none'; autosaveNowDebounced('plan-extras'); });
+
+          right.appendChild(seg); right.appendChild(addonWrap); right.appendChild(hiddenState);
+          row.appendChild(left); row.appendChild(right); extrasContainer.appendChild(row);
+        });
+      });
+      renderPreview();
+    }
+    populatePlanExtras('');
+
+    // ---------- Add custom extra ----------
+    $('#addCustomExtraBtn').addEventListener('click', () => {
+      const t = $('#customExtraTitle').value.trim();
+      const p = Number($('#customExtraPrice').value || 0);
+      if (!t) { alert('Enter extra title'); return; }
+      document.querySelectorAll('.plan-custom-extras').forEach(col => {
+        const wrap = document.createElement('div'); wrap.className='extra-row';
+        const left = document.createElement('div'); left.className='extra-left'; left.textContent = t;
+        const right = document.createElement('div'); right.className='extra-right'; right.innerHTML = `<input type="number" class="input extra-price inline w-28" value="${p}" />`;
+        wrap.appendChild(left); wrap.appendChild(right); col.appendChild(wrap);
+      });
+      $('#customExtraTitle').value=''; $('#customExtraPrice').value='';
+      autosaveNowDebounced('custom-extra'); renderPreview();
+    });
+
+    // ---------- Generate packages ----------
+    btnGeneratePrices.addEventListener('click', () => {
+      const base = Number(baseHourlyEl.value || 0);
+      let prices;
+      if (base <= 0) prices = [499, 1499, 2999];
+      else prices = [Math.max(99, Math.round(base * 2)), Math.max(199, Math.round(base * 4)), Math.max(299, Math.round(base * 6))];
+      const priceInputs = document.querySelectorAll('.plan-price');
+      priceInputs.forEach((p,i)=> p.value = prices[i] || 0);
+      autosaveNowDebounced('generate-prices'); renderPreview();
+    });
+
+    // ---------- FAQ dynamic ----------
+    $('#addFaqBtn').addEventListener('click', ()=> {
+      const c = $('#faqContainer'); const box = document.createElement('div'); box.className='soft p-3';
+      box.innerHTML = `<input class="input faq-q mb-2" placeholder="Question" /><textarea class="input faq-a" rows="2" placeholder="Answer"></textarea><div class="mt-2"><button class="btn remove-faq">Remove</button></div>`;
+      c.appendChild(box); box.querySelector('.remove-faq').addEventListener('click', ()=>{ box.remove(); autosaveNowDebounced('faq'); });
+      autosaveNowDebounced('faq');
+    });
+
+    // ---------- Requirements dynamic + Smart generator ----------
+    $('#addRequirementBtn').addEventListener('click', ()=> {
+      const c = $('#requirementsContainer'); const box = document.createElement('div'); box.className='soft p-3';
+      box.innerHTML = `<div class="grid md:grid-cols-3 gap-2"><select class="input req-type"><option value="text">Text</option><option value="file">File</option><option value="choice">Multiple Choice</option><option value="url">URL</option><option value="date">Date</option></select><input class="input req-q" placeholder="Question or instruction" /><div><label class="text-xs">Required?</label><input type="checkbox" class="req-required" checked/></div></div><div class="mt-2 req-choices hidden"><input class="input req-choices-input" placeholder="Comma separated choices" /></div><div class="mt-2"><button class="btn remove-req">Remove</button></div>`;
+      c.appendChild(box);
+      const typeSel = box.querySelector('.req-type'); const choicesWrap = box.querySelector('.req-choices');
+      typeSel.addEventListener('change', ()=> { choicesWrap.classList.toggle('hidden', typeSel.value !== 'choice'); autosaveNowDebounced('requirements'); });
+      box.querySelector('.remove-req').addEventListener('click', ()=> { box.remove(); autosaveNowDebounced('requirements'); });
+      autosaveNowDebounced('requirements');
+    });
+
+    $('#btnSmartReq').addEventListener('click', ()=> {
+      const cat = categoryEl.value; if (!cat) { alert('Select a category first to generate smart requirements.'); return; }
+      const templates = {
+        'logo-design': [
+          {type:'text', q:'Brand name / text for logo', required:true},
+          {type:'file', q:'Reference logos or moodboard (images/PDF)', required:true},
+          {type:'text', q:'Preferred colors / style', required:false}
+        ],
+        'video-editing': [
+          {type:'file', q:'Raw footage (zip or drive link)', required:true},
+          {type:'text', q:'Desired runtime & format', required:true},
+          {type:'file', q:'Voiceover or script (if any)', required:false}
+        ],
+        'writing': [
+          {type:'text', q:'Topic / brief / voice', required:true},
+          {type:'text', q:'Target keywords (optional)', required:false}
+        ],
+        'web': [
+          {type:'text', q:'Existing site / reference links', required:true},
+          {type:'file', q:'Brand assets / logos', required:false},
+          {type:'text', q:'Hosting & domain details', required:true}
+        ]
+      };
+      const picks = templates[cat] || [{type:'text', q:'Brief description of project', required:true}];
+      $('#requirementsContainer').innerHTML = '';
+      picks.forEach(p => {
+        const c = $('#requirementsContainer'); const box = document.createElement('div'); box.className='soft p-3';
+        box.innerHTML = `<div class="grid md:grid-cols-3 gap-2"><select class="input req-type"><option value="text">Text</option><option value="file">File</option><option value="choice">Multiple Choice</option><option value="url">URL</option><option value="date">Date</option></select><input class="input req-q" placeholder="Question or instruction" value="${p.q}" /><div><label class="text-xs">Required?</label><input type="checkbox" class="req-required" ${p.required?'checked':''}/></div></div><div class="mt-2 req-choices hidden"><input class="input req-choices-input" placeholder="Comma separated choices" /></div><div class="mt-2"><button class="btn remove-req">Remove</button></div>`;
+        c.appendChild(box);
+        const typeSel = box.querySelector('.req-type'); const choicesWrap = box.querySelector('.req-choices');
+        typeSel.addEventListener('change', ()=> { choicesWrap.classList.toggle('hidden', typeSel.value !== 'choice'); autosaveNowDebounced('requirements'); });
+        box.querySelector('.remove-req').addEventListener('click', ()=>{ box.remove(); autosaveNowDebounced('requirements'); });
+      });
+      autosaveNowDebounced('requirements');
+    });
+
+    // ---------- Media (same logic, limits enforced) ----------
+    const MAX_IMAGES = 6; const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 1MB
+    const MAX_VIDEO_COUNT = 1; const MAX_VIDEO_SIZE = 30 * 1024 * 1024; // 30MB
+
+    dropzone.addEventListener('click', ()=> fileInput.click());
+    dropzone.addEventListener('dragover', (e)=>{ e.preventDefault(); dropzone.classList.add('ring'); });
+    dropzone.addEventListener('dragleave', (e)=>{ dropzone.classList.remove('ring'); });
+    dropzone.addEventListener('drop', (e)=>{ e.preventDefault(); dropzone.classList.remove('ring'); handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', ()=> handleFiles(fileInput.files));
+
+    function handleFiles(list) {
+      const arr = Array.from(list);
+      const imagesOnly = arr.filter(f => f.type.startsWith('image/'));
+      const videos = arr.filter(f => f.type.startsWith('video/'));
+      const currentImgs = mediaFiles.filter(m => m.file.type.startsWith('image/')).length;
+      const currentVideos = mediaFiles.filter(m => m.file.type.startsWith('video/')).length;
+      const imgToAdd = imagesOnly.slice(0, Math.max(0, MAX_IMAGES - currentImgs));
+      const vidToAdd = videos.slice(0, Math.max(0, MAX_VIDEO_COUNT - currentVideos));
+      const toAdd = [...imgToAdd, ...vidToAdd];
+      toAdd.forEach(f => {
+        if (f.type.startsWith('image/') && f.size > MAX_IMAGE_SIZE) { alert(`${f.name} skipped — images must be ≤ ${MAX_IMAGE_SIZE/1024/1024}MB`); return; }
+        if (f.type.startsWith('video/') && f.size > MAX_VIDEO_SIZE) { alert(`${f.name} skipped — video must be ≤ ${MAX_VIDEO_SIZE/1024/1024}MB`); return; }
+        const id = Math.random().toString(36).slice(2,9); mediaFiles.push({file: f, id, urlLocal: URL.createObjectURL(f)});
+      });
+      renderMediaPreview(); runAIQualityCheck(); autosaveNowDebounced('media');
+    }
+
+    function renderMediaPreview() {
+      mediaPreview.innerHTML = '';
+      mediaFiles.forEach((m, idx) => {
+        const f = m.file;
+        const wrap = document.createElement('div'); wrap.className='p-1 relative'; wrap.style.width='160px';
+        // drag & drop reorder
+        wrap.draggable = true; wrap.dataset.idx = idx;
+        wrap.addEventListener('dragstart', (e)=> { e.dataTransfer.setData('text/plain', idx); wrap.style.opacity=0.5; });
+        wrap.addEventListener('dragend', ()=> { wrap.style.opacity=1; });
+        wrap.addEventListener('dragover', (e)=> { e.preventDefault(); });
+        wrap.addEventListener('drop', (e)=> {
+          e.preventDefault();
+          const from = Number(e.dataTransfer.getData('text/plain')); const to = Number(wrap.dataset.idx);
+          if (from === to) return;
+          const temp = mediaFiles.splice(from,1)[0]; mediaFiles.splice(to,0,temp);
+          renderMediaPreview(); runAIQualityCheck(); autosaveNowDebounced('media');
+        });
+
+        if (f.type.startsWith('image/')) {
+          const img = document.createElement('img'); img.src = m.urlLocal; img.alt = `Uploaded image ${idx+1}`; img.loading = 'lazy';
+          img.style.width='160px'; img.style.height='100px'; img.style.objectFit='cover'; img.style.borderRadius='8px';
+          wrap.appendChild(img);
+        } else {
+          const video = document.createElement('video'); video.controls=true; video.width=160; video.height=90; video.src = m.urlLocal; video.style.borderRadius='8px';
+          wrap.appendChild(video);
+        }
+        const info = document.createElement('div'); info.className='mt-1 text-xs'; info.textContent = m.file.name;
+        const rem = document.createElement('div'); rem.className='mt-1'; rem.innerHTML = `<div class="flex gap-1"><button data-idx='${idx}' class='btn text-xs set-cover'>Cover</button><button data-idx='${idx}' class='btn text-xs remove-media'>Remove</button></div>`;
+        rem.querySelector('.remove-media').addEventListener('click', ()=> { mediaFiles.splice(idx,1); if (coverIndex === idx) coverIndex = -1; renderMediaPreview(); runAIQualityCheck(); autosaveNowDebounced('media'); });
+        rem.querySelector('.set-cover').addEventListener('click', ()=> { coverIndex = idx; renderMediaPreview(); renderCover(); autosaveNowDebounced('media'); });
+        wrap.appendChild(info); wrap.appendChild(rem); mediaPreview.appendChild(wrap);
+      });
+      renderCover();
+      if (mediaFiles.length) {
+        const first = mediaFiles.find(m=>m.file.type.startsWith('image/')) || mediaFiles[0];
+        liveThumb.style.backgroundImage = `url('${first.urlLocal}')`;
+        liveThumb.setAttribute('aria-label', `Preview: ${first.file.name}`);
+      } else {
+        liveThumb.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Preview')";
+      }
+    }
+
+    function renderCover() {
+      coverPreview.innerHTML = '';
+      if (coverIndex >= 0 && mediaFiles[coverIndex]) {
+        const m = mediaFiles[coverIndex];
+        if (m.file.type.startsWith('image/')) {
+          coverPreview.style.backgroundImage = `url('${m.urlLocal}')`;
+          coverPreview.setAttribute('aria-label', `Cover: ${m.file.name}`);
+        } else {
+          coverPreview.style.backgroundImage = 'none';
+          const video = document.createElement('video'); video.controls=true; video.muted=true; video.playsInline=true; video.style.width='100%'; video.style.height='100%'; video.style.objectFit='cover'; video.src = m.urlLocal;
+          coverPreview.appendChild(video); coverPreview.setAttribute('aria-label', `Cover video: ${m.file.name}`);
+        }
+      } else {
+        coverPreview.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Cover')";
+        coverPreview.removeAttribute('aria-label');
+      }
+    }
+
+    function runAIQualityCheck() {
+      if (mediaFiles.length === 0) { aiQuality.textContent = 'No media uploaded'; return; }
+      const issues = [];
+      mediaFiles.forEach(m => {
+        const f = m.file;
+        if (f.size < 4 * 1024) issues.push(`${f.name}: suspiciously tiny`);
+        if (f.type.startsWith('image/') && f.size > MAX_IMAGE_SIZE) issues.push(`${f.name}: >1MB`);
+        if (f.type.startsWith('video/') && f.size > MAX_VIDEO_SIZE) issues.push(`${f.name}: >30MB`);
+      });
+      if (issues.length) aiQuality.textContent = issues.join(' | '); else aiQuality.textContent = `Good — ${mediaFiles.length} files, total ${(mediaFiles.reduce((s,m)=>s+m.file.size,0)/1024/1024).toFixed(2)} MB`;
+    }
+
+    // ---------- Preview helpers ----------
+    function getFirstPlanPrice() { const nodes = document.querySelectorAll('.plan-price'); if (!nodes || nodes.length===0) return 0; return Number(nodes[0].value || 0); }
+    function getFirstPlanRevisions() { const first = document.querySelectorAll('.plan-column')[0]; if (!first) return '—'; const rev = first.querySelector('.plan-revisions'); if (rev && rev.value) return rev.value; return '—'; }
+
+    function renderPreview() {
+      pvTitle.textContent = titleEl.value.trim() || '—';
+      const catText = (categoryEl.options[categoryEl.selectedIndex]?.text || '—');
+      pvCat.textContent = (catText) + (subcatEl.value ? ` / ${subcatEl.value}` : '');
+      pvDel.textContent = (document.querySelector('.plan-delivery')?.value || '—') + ' Days';
+      pvPrice.textContent = '₹' + getFirstPlanPrice();
+      pvRev.textContent = getFirstPlanRevisions();
+      pvFeat.innerHTML = '';
+      const firstPlan = document.querySelectorAll('.plan-column')[0];
+      if (firstPlan) {
+        const extras = Array.from(firstPlan.querySelectorAll('.plan-extras .extra-row'));
+        extras.forEach(r => {
+          const label = r.querySelector('.extra-left').textContent.trim();
+          const state = r.querySelector('.extra-state')?.value || 'included';
+          if (state === 'included') {
+            const span = document.createElement('span'); span.className='badge'; span.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${label}`; pvFeat.appendChild(span);
+          }
+        });
+      }
+      Array.from(document.querySelectorAll('.plan-custom-extras .extra-row')).forEach(d => {
+        const label = d.querySelector('.extra-left')?.textContent || d.firstChild?.textContent;
+        if (label) { const span = document.createElement('span'); span.className='badge'; span.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${label}`; pvFeat.appendChild(span); }
+      });
+    }
+
+    // ---------- SILENT AUTOSAVE (fix for popup annoyance) ----------
+    // Behavior changes:
+    // - Autosave writes to localStorage in background quietly.
+    // - UI shows only subtle "Saved" state briefly (no "Saving..." toast).
+    const AUTOSAVE_KEY = 'th_gig_autosave_final_v3_quiet';
+    let autosaveTimer = null;
+    function autosaveNowImmediate() {
+      try {
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(buildLocalPayload()));
+        // subtle short "Saved" indicator (no "Saving..." shown)
+        autosaveStatus.textContent = 'Saved';
+        clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(()=> autosaveStatus.textContent = 'Idle', 900);
+      } catch(e) { /* silent fail */ }
+    }
+    // Debounced wrapper so rapid inputs don't spam localStorage
+    let autosaveDebounce = null;
+    function autosaveNowDebounced(section) {
+      clearTimeout(autosaveDebounce);
+      autosaveDebounce = setTimeout(()=> autosaveNowImmediate(), 700);
+    }
+    // periodic background autosave (silent)
+    setInterval(()=> autosaveNowImmediate(), 30000);
+
+    // ---------- Autosave payload building & restore ----------
+    function buildLocalPayload() {
+      return {
+        title: titleEl.value, category: categoryEl.value, subcategory: subcatEl.value,
+        tags: readChips(tagsWrap),
+        plans: Array.from(document.querySelectorAll('.plan-column')).map(col => ({ name: col.querySelector('.plan-name').value, price: Number(col.querySelector('.plan-price').value||0), desc: col.querySelector('.plan-desc').value, delivery: col.querySelector('.plan-delivery').value, revisions: col.querySelector('.plan-revisions').value })),
+        description: quill.root.innerHTML,
+        requirements: Array.from($$('.req-q')).map(i=>i.value),
+        faqs: Array.from($$('.faq-q')).map((q,i)=>({q:q.value,a: $$('.faq-a')[i]?.value})),
+        media: mediaFiles.map(m=>({name:m.file.name,type:m.file.type,size:m.file.size})),
+        coverIndex, timestamp: Date.now()
+      };
+    }
+
+    function restoreAutosave() {
+      const raw = localStorage.getItem(AUTOSAVE_KEY); if (!raw) return;
+      try { const p = JSON.parse(raw); if (confirm('Restore autosaved draft?')) applyLocalPayload(p); } catch(e) {}
+    }
+
+    function applyLocalPayload(p) {
+      titleEl.value = p.title || ''; titleCount.textContent = `${titleEl.value.length}/50`;
+      categoryEl.value = p.category || ''; populateSubcategories(p.category); populatePlanExtras(p.category);
+      subcatEl.value = p.subcategory || '';
+      // Rebuild tags
+      tagsWrap.innerHTML = ''; (p.tags||[]).forEach(t=>createChip(t,tagsWrap));
+      (p.plans||[]).forEach((pl,i)=>{ const col = document.querySelectorAll('.plan-column')[i]; if(!col) return; col.querySelector('.plan-name').value=pl.name||col.querySelector('.plan-name').value; col.querySelector('.plan-price').value=pl.price||col.querySelector('.plan-price').value; col.querySelector('.plan-desc').value=pl.desc||col.querySelector('.plan-desc').value; col.querySelector('.plan-delivery').value=pl.delivery||col.querySelector('.plan-delivery').value; col.querySelector('.plan-revisions').value=pl.revisions||col.querySelector('.plan-revisions').value; });
+      quill.root.innerHTML = p.description || '';
+      renderPreview(); renderMediaPreview(); computeKeywordsAndScore();
+    }
+
+    // ---------- Build payload (server) ----------
+    function valOrDefault(v) { const s = String(v||'').trim(); return s==='' ? 'Not Provided' : s; }
+    function buildGigPayload(status='published', imageUrls=[]) {
+      const plans = Array.from(document.querySelectorAll('.plan-column')).map(col => {
+        const extras = Array.from(col.querySelectorAll('.plan-extras .extra-row')).map(r => {
+          const label = r.querySelector('.extra-left').textContent.trim();
+          const state = r.querySelector('.extra-state')?.value || 'included';
+          const price = Number(r.querySelector('.extra-price')?.value || 0);
+          return {label, state, addonPrice: price};
+        });
+        const custom = Array.from(col.querySelectorAll('.plan-custom-extras .extra-row')).map(r => ({label: r.querySelector('.extra-left')?.textContent || 'Custom', price: Number(r.querySelector('.extra-price')?.value || 0)}));
+        return {
+          name: valOrDefault(col.querySelector('.plan-name').value),
+          price: Number(col.querySelector('.plan-price').value||0),
+          description: valOrDefault(col.querySelector('.plan-desc').value),
+          delivery: valOrDefault(col.querySelector('.plan-delivery').value),
+          revisions: valOrDefault(col.querySelector('.plan-revisions').value),
+          extras, custom
+        };
+      });
+
+      const images = imageUrls.length ? imageUrls : ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'];
+      return {
+        title: valOrDefault(titleEl.value),
+        category: valOrDefault(categoryEl.value),
+        subcategory: valOrDefault(subcatEl.value),
+        tags: readChips(tagsWrap),
+        plans,
+        description: valOrDefault(quill.root.innerHTML),
+        requirements: Array.from($$('.req-q')).map(i => i.value || 'Not Provided'),
+        faq: Array.from($$('.faq-q')).map((q,i) => ({q: q.value || 'Not Provided', a: $$('.faq-a')[i]?.value || 'Not Provided'})),
+        media: images,
+        coverIndex,
+        sellerName: currentUser?.displayName || (currentUser?.email ? currentUser.email.split('@')[0] : 'Freelancer'),
+        sellerPhoto: currentUser?.photoURL || '',
+        status,
+        createdByUid: currentUser?.uid || '',
+        createdByEmail: currentUser?.email || '',
+        rating: 0, reviews: 0,
+        createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+      };
+    }
+
+    // ---------- Upload files with progress (unchanged) ----------
+    async function uploadFiles(files, uid, onProgress) {
+      const urls = [];
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        try {
+          const path = `gigs/${uid}/${Date.now()}_${i}_${f.name.replace(/[^a-z0-9\\.\\-\\_]/gi,'')}`;
+          const ref = storageRef(storage, path);
+          const task = uploadBytesResumable(ref, f);
+          await new Promise((res, rej) => {
+            task.on('state_changed', snap => {
+              const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+              onProgress && onProgress({index:i, pct, name: f.name});
+            }, err => { console.error('upload err', err); rej(err); }, async () => {
+              const url = await getDownloadURL(task.snapshot.ref); urls.push(url); res();
+            });
+          });
+        } catch(e) { console.error('file upload failed', e); }
+      }
+      return urls;
+    }
+
+    // ---------- Save Draft (server) ----------
+    $('#btnSaveDraft').addEventListener('click', async () => {
+      if (!currentUser) { alert('Please login to save draft. Local autosave is available.'); return; }
+      btnSaveDraft.disabled = true; formStatus.textContent = 'Saving draft...';
+      try {
+        const filesToUpload = mediaFiles.map(m=>m.file);
+        const urls = filesToUpload.length ? await uploadFiles(filesToUpload, currentUser.uid, ({index,pct,name})=> { formStatus.textContent = `Uploading ${name} ${pct}%`; }) : [];
+        const payload = buildGigPayload('draft', urls);
+        const ref = await addDoc(collection(db, GIGS_COLLECTION), payload);
+        formStatus.textContent = 'Draft saved ✓';
+        debugJson.textContent = JSON.stringify({draftId: ref.id, payload}, null, 2);
+        updateJSONLD(payload, ref.id);
+      } catch(e) { formStatus.textContent = 'Save draft failed: ' + (e.message || e); }
+      finally { btnSaveDraft.disabled = false; }
+    });
+
+    // ---------- Publish ----------
+    $('#btnPublish').addEventListener('click', async () => {
+      if (!currentUser) {
+        if (!confirm('You are not logged in. Publish will not be saved to the server. Continue and show payload?')) return;
+      }
+      btnPublish.disabled = true; formStatus.textContent = 'Publishing...';
+      try {
+        const filesToUpload = mediaFiles.map(m=>m.file);
+        const urls = currentUser && filesToUpload.length ? await uploadFiles(filesToUpload, currentUser.uid, ({index,pct,name})=> { formStatus.textContent = `Uploading ${name} ${pct}%`; }) : mediaFiles.map(m=>m.file.name);
+        const payload = buildGigPayload('published', urls);
+        if (currentUser) {
+          const ref = await addDoc(collection(db, GIGS_COLLECTION), payload);
+          formStatus.textContent = 'Published ✓ Redirecting…';
+          debugJson.textContent = JSON.stringify({id: ref.id, payload}, null, 2);
+          updatePageMeta(payload);
+          updateJSONLD(payload, ref.id);
+          setTimeout(()=> location.href = `index.html?id=${encodeURIComponent(ref.id)}`, 700);
+        } else {
+          formStatus.textContent = 'Preview (not saved to server) — see JSON below';
+          debugJson.textContent = JSON.stringify({previewPayload: payload}, null, 2);
+          updatePageMeta(payload); updateJSONLD(payload, null);
+        }
+      } catch(e) { formStatus.textContent = 'Publish failed: ' + (e.message || e); }
+      finally { btnPublish.disabled = false; }
+    });
+
+    // ---------- Reset ----------
+    $('#btnReset').addEventListener('click', ()=> { if (!confirm('Reset entire form? This clears autosaved local draft.')) return; localStorage.removeItem(AUTOSAVE_KEY); location.reload(); });
+
+    // ---------- Debug ----------
+    function renderDebug() { debugJson.textContent = JSON.stringify(buildGigPayload('preview', mediaFiles.map(m=>m.file.name)), null, 2); }
+
+    // ---------- small reactive hooks ----------
+    document.addEventListener('change', (e)=> { if (e.target.closest('.plan-column')) { renderPreview(); autosaveNowDebounced('plan-change'); } });
+    document.addEventListener('input', (e)=> { if (e.target.closest('.plan-column')) { renderPreview(); autosaveNowDebounced('plan-input'); } });
+
+    // ---------- restore autosave on load ----------
+    window.addEventListener('load', ()=> { restoreAutosave(); renderPreview(); computeKeywordsAndScore(); renderDebug(); });
+
+    // ---------- SEO helpers (same as before) ----------
+    function updatePageMeta(payload) {
+      try {
+        const title = payload.title !== 'Not Provided' ? payload.title : 'Service on Talent-Hub Pro';
+        document.title = `${title} — Talent-Hub Pro`;
+        const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', (payload.description && payload.description !== 'Not Provided') ? stripHtml(payload.description).slice(0,160) : 'Find professional services on Talent-Hub Pro.');
+        const mk = document.querySelector('meta[name="keywords"]'); if (mk) mk.setAttribute('content', (payload.tags||[]).slice(0,10).join(','));
+        const ogTitle = document.querySelector('meta[property="og:title"]'); if (ogTitle) ogTitle.setAttribute('content', title);
+        const ogDesc = document.querySelector('meta[property="og:description"]'); if (ogDesc) ogDesc.setAttribute('content', (payload.description && payload.description!=='Not Provided') ? stripHtml(payload.description).slice(0,160) : '');
+        const ogImage = document.querySelector('meta[property="og:image"]'); if (ogImage) ogImage.setAttribute('content', payload.media && payload.media[0] ? payload.media[0] : 'https://via.placeholder.com/1200x800.png?text=Talent-Hub+Pro');
+      } catch(e) { console.warn('meta update failed', e); }
+    }
+    function stripHtml(html) { const tmp = document.createElement('div'); tmp.innerHTML = html || ''; return tmp.textContent || tmp.innerText || ''; }
+
+    function updateJSONLD(payload, docId) {
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": payload.title || "Talent-Hub Service",
+        "description": stripHtml(payload.description || '').slice(0, 400),
+        "provider": { "@type": "Person", "name": payload.sellerName || 'Freelancer' },
+        "offers": { "@type": "Offer", "priceCurrency": "INR", "price": payload.plans && payload.plans[0] ? String(payload.plans[0].price || 0) : "0", "url": docId ? `${location.origin}/gig.html?id=${docId}` : location.href },
+        "image": payload.media && payload.media.length ? payload.media[0] : "https://via.placeholder.com/1200x800.png?text=Talent-Hub+Pro"
+      };
+      const existing = document.getElementById('gig-jsonld'); if (existing) existing.remove();
+      const script = document.createElement('script'); script.type = 'application/ld+json'; script.id = 'gig-jsonld'; script.text = JSON.stringify(schema, null, 2); document.head.appendChild(script);
+    }
+
+    // ---------- SEO compute (keeps keyword suggestion / score) ----------
+    function computeKeywordsAndScore() {
+      const text = (titleEl.value + ' ' + (quill.root.innerText || '')).toLowerCase();
+      const words = text.match(/[a-z0-9]+/g) || [];
+      const freq = {}; words.forEach(w => { if (w.length < 3) return; freq[w] = (freq[w] || 0) + 1; });
+      const sorted = Object.keys(freq).sort((a,b)=> freq[b]-freq[a]).slice(0,6);
+      // kwSuggestions element removed to reduce clutter; but compute for score
+      const tlen = Math.min(50, titleEl.value.length);
+      const dlen = Math.min(1200, (quill.root.innerText || '').length);
+      const tagsCount = tagsWrap ? tagsWrap.children.length : 0;
+      const score = Math.max(10, Math.min(95, Math.round((tlen / 50) * 30 + (dlen / 1200) * 50 + Math.min(1, tagsCount / 6) * 20)));
+      // small silent update to seoChecklist (no popups)
+      seoChecklist.textContent = `SEO score: ${score} — Title ${tlen}/50, Description ${dlen}/1200, Tags ${tagsCount}`;
+      return { keywords: sorted, score };
+    }
+    function buildSEOChecklist() { const kv = computeKeywordsAndScore(); const items = []; items.push(kv.score > 50 ? 'Title & description: OK' : 'Improve title/description'); items.push((tagsWrap.children.length) >= 3 ? 'Tags OK' : 'Add 3–8 tags'); items.push(mediaFiles.length > 0 ? 'Media uploaded' : 'Add at least one image'); seoChecklist.innerHTML = items.map(i=>`• ${i}`).join('<br>'); }
+
+  </script>
+</body>
+</html>
