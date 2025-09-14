@@ -4,9 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Create Gig — Talent-Hub (Pro) — Updated</title>
-  <meta name="description"
-    content="Create a professional gig — Talent-Hub. Category-driven dynamic features, per-plan edits, title limits, improved editor." />
+  <title>Create Gig — Talent-Hub Pro (Final)</title>
+  <meta name="description" content="Create gig — Talent-Hub Pro. Full modified working single-file." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -17,20 +16,21 @@
     :root {
       --bg1: #07102a;
       --bg2: #040718;
-      --ink: #e6eefb;
-      --muted: #9db2cf;
+      --ink: #e9f2ff;
+      --muted: #98abc7;
       --glass: rgba(255, 255, 255, .03);
-      --b: rgba(255, 255, 255, .05);
+      --b: rgba(255, 255, 255, .06);
       --brand: #34d399;
-      --brand-ink: #062d22;
-      --panel: #0b1226;
+      --brand-ink: #042819;
+      --warn: #ffcc66;
+      --err: #ff8a8a;
     }
 
     body {
       font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
       background: linear-gradient(180deg, var(--bg1), var(--bg2));
       color: var(--ink);
-      margin: 0
+      -webkit-font-smoothing: antialiased
     }
 
     .glass {
@@ -42,11 +42,19 @@
 
     .input {
       width: 100%;
-      padding: 10px;
-      border-radius: 10px;
+      padding: 8px;
+      border-radius: 8px;
       background: rgba(255, 255, 255, .02);
       border: 1px solid rgba(255, 255, 255, .06);
-      color: var(--ink)
+      color: var(--ink);
+      font-size: 13px
+    }
+
+    .input-sm {
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      height: 36px
     }
 
     .btn {
@@ -54,17 +62,19 @@
       align-items: center;
       gap: 8px;
       padding: 8px 12px;
-      border-radius: 10px;
+      border-radius: 8px;
       font-weight: 700;
-      background: rgba(255, 255, 255, .03);
-      border: 1px solid rgba(255, 255, 255, .06);
-      color: var(--ink)
+      cursor: pointer
+    }
+
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed
     }
 
     .btn-brand {
       background: var(--brand);
-      color: var(--brand-ink);
-      border: none
+      color: var(--brand-ink)
     }
 
     .thumb {
@@ -75,34 +85,9 @@
       border: 1px solid rgba(255, 255, 255, .06)
     }
 
-    .soft {
-      background: rgba(255, 255, 255, .017);
-      border-radius: 10px;
-      padding: 12px;
-      border: 1px dashed rgba(255, 255, 255, .04)
-    }
-
-    .plan-column {
-      background: rgba(255, 255, 255, .015);
-      border-radius: 10px;
-      padding: 12px;
-      border: 1px solid rgba(255, 255, 255, .04)
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .02);
-      border: 1px solid rgba(255, 255, 255, .04);
-      font-size: 12px
-    }
-
     .step-dot {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 999px;
       border: 2px solid rgba(255, 255, 255, .12);
       display: flex;
@@ -123,298 +108,574 @@
       border: 1px solid rgba(255, 255, 255, .06)
     }
 
-    /* darker dropdowns / panels for contrast */
-    select.input,
-    .input {
-      background: rgba(0, 0, 0, 0.26);
-      color: var(--ink);
-    }
-
-    /* Quill editor tweak */
-    .ql-toolbar.ql-snow {
-      background: #0f1724;
-      border: 1px solid rgba(255, 255, 255, .06);
-      color: var(--ink)
-    }
-
-    .ql-container.ql-snow {
-      background: #071426;
-      color: #e6eefb;
-      border: 1px solid rgba(255, 255, 255, .06);
-      border-top: none
-    }
-
-    /* small helper */
-    .text-muted {
-      color: #9fb0cc;
-      font-size: 13px
-    }
-
-    .flex-between {
-      display: flex;
+    .badge {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between
-    }
-
-    .extra-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 8px
-    }
-
-    .kicker {
-      font-weight: 800;
-      letter-spacing: .08em;
-      color: #9db2cf;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid rgba(255, 255, 255, .04);
       font-size: 12px
     }
 
+    .dropzone {
+      border: 2px dashed rgba(255, 255, 255, .06);
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .01), transparent);
+    }
+
+    .soft {
+      background: rgba(255, 255, 255, .01);
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px dashed rgba(255, 255, 255, .03)
+    }
+
     .danger {
-      border-color: rgba(255, 100, 100, .45) !important;
+      border-color: rgba(255, 100, 100, .45) !important
+    }
+
+    .code {
+      font-family: ui-monospace, Menlo, monospace
+    }
+
+    .dark-select {
+      background: #0b1222;
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, .06)
+    }
+
+    /* plan column */
+    .plan-column {
+      background: rgba(255, 255, 255, .02);
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, .04);
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .plan-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow: visible
+    }
+
+    .segmented {
+      display: inline-flex;
+      border-radius: 8px;
+      overflow: hidden
+    }
+
+    .segmented button {
+      padding: 6px 8px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 12px
+    }
+
+    .segmented button.active {
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .draggable-handle {
+      cursor: grab;
+      padding: 6px
+    }
+
+    .ql-editor {
+      background: #ffffff;
+      color: #0b1222;
+      min-height: 160px;
+      border-radius: 6px
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .05);
+      margin: 4px
+    }
+
+    .requirement-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .media-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03)
+    }
+
+    .media-actions {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      right: 6px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px
+    }
+
+    .kicker {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--brand);
+    }
+
+    /* extras row (new design) */
+    .plan-extras {
+      margin-top: 6px;
+      display: grid;
+      gap: 8px
+    }
+
+    .plan-extra-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03)
+    }
+
+    .plan-extra-left {
+      flex: 1;
+      min-width: 0
+    }
+
+    /* label: clamp to 3 lines; wrap */
+    .extra-label {
+      font-size: 13px;
+      line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+      white-space: normal;
+      margin-bottom: 6px;
+    }
+
+    .plan-extra-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0
+    }
+
+    .extra-btn {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer
+    }
+
+    .extra-btn:active {
+      transform: translateY(1px)
+    }
+
+    .extra-btn.accepted {
+      background: rgba(52, 211, 153, 0.12);
+      border-color: rgba(52, 211, 153, 0.25);
+      color: #34d399;
+    }
+
+    .extra-btn.rejected {
+      background: rgba(255, 80, 80, 0.08);
+      border-color: rgba(255, 80, 80, 0.2);
+      color: #ff5757;
+    }
+
+    .plan-extra-row.rejected {
+      border-left: 4px solid rgba(255, 80, 80, 0.9);
+      opacity: 0.95
+    }
+
+    .plan-extra-row.rejected .extra-label {
+      text-decoration: line-through;
+      color: rgba(255, 140, 140, 0.95)
+    }
+
+    .plan-extra-row.accepted {
+      border-left: 4px solid rgba(52, 211, 153, 0.9)
+    }
+
+    .plan-extra-row.accepted .extra-label {
+      color: var(--ink)
+    }
+
+    .extra-price {
+      width: 92px
+    }
+
+    .extra-note {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    /* preview badges smaller */
+    #pvFeat .badge {
+      font-size: 11px;
+      padding: 5px 8px
+    }
+
+    /* status messages */
+    .ok {
+      color: #34d399;
+    }
+
+    .err {
+      color: #ff8a8a;
+    }
+
+    .warn {
+      color: #ffcc66;
+    }
+
+    /* responsive tweaks */
+    @media (max-width: 768px) {
+      .plan-column {
+        min-height: 260px
+      }
+
+      .input,
+      .input-sm {
+        font-size: 13px
+      }
+
+      .preview-cover {
+        aspect-ratio: 4/3
+      }
+
+      .plan-extra-right {
+        gap: 6px
+      }
+
+      .extra-btn {
+        width: 34px;
+        height: 34px
+      }
     }
   </style>
 </head>
 
 <body class="min-h-screen">
 
-  <nav class="glass sticky top-0 z-40 px-4 py-3 max-w-6xl mx-auto mt-3 flex items-center justify-between">
-    <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub Pro</a>
-    <div class="flex items-center gap-2">
-      <span id="loginStatus" class="px-3 py-1 rounded-full text-sm" aria-live="polite">Checking auth…</span>
-      <a id="loginBtnLink" href="login.html" class="btn">Login</a>
-      <button id="btnLogout" class="btn hidden">Logout</button>
+  <!-- NAV -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub Pro</a>
+      <div class="flex items-center gap-3">
+        <span id="loginStatus" class="text-sm px-3 py-1 rounded-full">Checking auth…</span>
+        <a id="loginBtnLink" href="login.html" class="btn">Login</a>
+        <button id="btnLogout" class="btn hidden">Logout</button>
+      </div>
     </div>
   </nav>
 
   <main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
+    <!-- LEFT: form -->
     <section class="lg:col-span-2 glass p-5 space-y-4">
 
-      <div class="flex-between">
+      <div class="flex items-center justify-between">
         <div>
-          <div class="kicker">Create new gig</div>
-          <h1 class="text-2xl font-extrabold mt-1">Create a Pro Gig</h1>
+          <div class="text-xs text-slate-300 uppercase">Create new gig</div>
+          <h1 class="text-2xl font-extrabold">Follow your diagram — Full Builder</h1>
+          <div class="text-sm text-slate-300">Stepper on top — publish even if blanks (saved as "Not Provided")</div>
         </div>
-        <div class="text-sm text-muted">Autosave: <span id="autosaveStatus">Idle</span></div>
+        <div class="text-sm text-slate-300 hidden">Autosave: <span id="autosaveStatus">Idle</span></div>
       </div>
 
-      <div class="flex gap-2 overflow-x-auto">
-        <button data-step="1" class="step-tab btn">1 Overview</button>
-        <button data-step="2" class="step-tab btn">2 Pricing</button>
-        <button data-step="3" class="step-tab btn">3 Description & FAQ</button>
-        <button data-step="4" class="step-tab btn">4 Requirements</button>
-        <button data-step="5" class="step-tab btn">5 Media</button>
-        <button data-step="6" class="step-tab btn">6 Publish</button>
+      <!-- STEP BAR -->
+      <div class="glass p-3">
+        <div class="flex items-center gap-3">
+          <div id="dot-1" class="step-dot active">1</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-2" class="step-dot">2</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-3" class="step-dot">3</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-4" class="step-dot">4</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-5" class="step-dot">5</div>
+          <div class="flex-1" style="height:2px;background:rgba(255,255,255,.06)"></div>
+          <div id="dot-6" class="step-dot">6</div>
+        </div>
+        <div class="mt-2 grid grid-cols-6 text-xs text-slate-300 text-center">
+          <div>Overview</div>
+          <div>Pricing</div>
+          <div>Description</div>
+          <div>Requirements</div>
+          <div>Media</div>
+          <div>Publish</div>
+        </div>
       </div>
 
-      <form id="gigForm" class="space-y-6">
+      <!-- step tabs -->
+      <div class="flex gap-2 flex-wrap">
+        <button data-step="1" class="step-tab btn">1. Overview</button>
+        <button data-step="2" class="step-tab btn">2. Pricing</button>
+        <button data-step="3" class="step-tab btn">3. Description</button>
+        <button data-step="4" class="step-tab btn">4. Requirements</button>
+        <button data-step="5" class="step-tab btn">5. Media</button>
+        <button data-step="6" class="step-tab btn">6. Publish</button>
+      </div>
 
-        <!-- STEP 1 Overview -->
+      <form id="gigForm" class="space-y-6" onsubmit="return false;">
+
+        <!-- STEP 1: Overview -->
         <div id="step-1" class="step-pane">
-          <label class="block mb-1">Gig Title <span class="text-muted text-xs"> (max 50 chars)</span></label>
-          <input id="title" class="input" maxlength="50" placeholder="I will design a professional logo" />
-          <div class="mt-1 text-xs text-muted flex-between">
-            <div id="titleCount">0/50</div>
-            <div id="titleHint" class="text-muted">Be specific and niche</div>
-          </div>
+          <div class="kicker">Overview</div>
+          <label class="block mt-2">Gig Title <span class="text-xs text-slate-400">(max 50 chars)</span></label>
+          <input id="title" class="input" placeholder="e.g., I will design a modern minimalist logo" maxlength="50" />
+          <div class="text-xs mt-1 text-slate-300">Characters: <span id="titleCount">0/50</span></div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
             <div>
               <label class="block mb-1">Category</label>
-              <select id="category" class="input">
-                <option value="">Choose a category</option>
-                <option value="graphic">Graphics & Design</option>
-                <option value="web">Programming & Tech</option>
-                <option value="marketing">Digital Marketing</option>
-                <option value="video">Video & Animation</option>
+              <select id="category" class="input dark-select">
+                <option value="">Select category</option>
+                <option value="logo-design">Logo & Branding</option>
+                <option value="video-editing">Video & Animation</option>
                 <option value="writing">Writing & Translation</option>
+                <option value="web">Web Development</option>
+                <option value="marketing">Digital Marketing</option>
                 <option value="music">Music & Audio</option>
                 <option value="ai">AI Services</option>
               </select>
             </div>
             <div>
               <label class="block mb-1">Subcategory</label>
-              <select id="subcategory" class="input">
-                <option value="">Choose subcategory</option>
+              <select id="subcategory" class="input dark-select">
+                <option value="">Select subcategory</option>
               </select>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
             <div>
-              <label class="block mb-1">Tags (comma separated)</label>
-              <input id="tags" class="input" placeholder="branding, minimal, vector" />
-            </div>
-            <div>
-              <label class="block mb-1">Skills</label>
-              <input id="skills" class="input"
-                placeholder="Add skills separated by comma (e.g. Photoshop, After Effects)" />
-              <div class="text-xs text-muted mt-1">Will be stored as individual skills</div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-            <div>
-              <label class="block mb-1">Languages</label>
-              <input id="languages" class="input" placeholder="Add languages (e.g. English, Hindi)" />
-              <div class="text-xs text-muted mt-1">Comma separated</div>
+              <label class="block mb-1">Tags (positive) — press Enter/comma to add (max 6)</label>
+              <div id="tagsWrap" class="p-2 rounded" style="background:rgba(255,255,255,.01)"></div>
+              <input id="tagsInput" class="input mt-2 input-sm" placeholder="Add tag and press Enter" />
             </div>
             <div>
               <label class="block mb-1">Platform</label>
-              <select id="platform" class="input">
+              <select id="platform" class="input input-sm">
                 <option value="">Any</option>
                 <option>YouTube</option>
-                <option>TikTok</option>
                 <option>Instagram</option>
+                <option>TikTok</option>
+                <option>Website</option>
               </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+            <div>
+              <label class="block mb-1">Skills (comma or Enter)</label>
+              <div id="skillsWrap" class="p-2 rounded" style="background:rgba(255,255,255,.01)"></div>
+              <input id="skillsInput" class="input mt-2 input-sm" placeholder="e.g., Photoshop, Illustrator" />
+            </div>
+            <div>
+              <label class="block mb-1">Languages (comma or Enter)</label>
+              <div id="langsWrap" class="p-2 rounded" style="background:rgba(255,255,255,.01)"></div>
+              <input id="langsInput" class="input mt-2 input-sm" placeholder="e.g., English, Hindi" />
             </div>
           </div>
 
           <div class="mt-3 soft">
-            <div class="font-semibold">SEO & Suggestions</div>
-            <div class="text-sm mt-2">Keywords: <span id="kwSuggestions">—</span></div>
-            <div class="text-xs mt-2">Quality score: <span id="qualityScore">0</span>%</div>
+            <div class="font-semibold">Gig metadata (category-specific)</div>
+            <div id="gigMeta" class="mt-2 text-sm text-slate-300">Select a category to see relevant metadata fields.
+            </div>
           </div>
         </div>
 
-        <!-- STEP 2 Pricing (dynamic per category) -->
+        <!-- STEP 2: Pricing -->
         <div id="step-2" class="step-pane hidden">
-          <div class="flex-between mb-2">
-            <div class="kicker">Pricing — set three packages</div>
-            <div class="text-xs text-muted">You can add extras and edit delivery/revisions per plan</div>
+          <div class="kicker">Pricing</div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="plan-column">
+              <div class="plan-content">
+                <div class="text-center">
+                  <input class="input plan-name text-center mb-2 input-sm" value="Starter" />
+                  <div>₹ <input type="number" class="input inline w-28 plan-price input-sm" value="499" /></div>
+                  <textarea class="input plan-desc mt-2 input-sm" rows="2"
+                    placeholder="Describe what's included">Basic delivery</textarea>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <div><label class="text-xs">Delivery days</label><input class="input plan-delivery input-sm"
+                      type="number" min="1" value="3" /></div>
+                  <div><label class="text-xs">Revisions</label><input class="input plan-revisions input-sm" type="text"
+                      placeholder="e.g., 1 or Unlimited" value="1" /></div>
+                </div>
+                <div class="mt-3 plan-extras"></div>
+                <div class="mt-2 plan-custom-extras"></div>
+              </div>
+            </div>
+
+            <div class="plan-column">
+              <div class="plan-content">
+                <div class="text-center">
+                  <input class="input plan-name text-center mb-2 input-sm" value="Growth" />
+                  <div>₹ <input type="number" class="input inline w-28 plan-price input-sm" value="1499" /></div>
+                  <textarea class="input plan-desc mt-2 input-sm" rows="2"
+                    placeholder="Describe what's included">Popular package</textarea>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <div><label class="text-xs">Delivery days</label><input class="input plan-delivery input-sm"
+                      type="number" min="1" value="5" /></div>
+                  <div><label class="text-xs">Revisions</label><input class="input plan-revisions input-sm" type="text"
+                      placeholder="e.g., 3 or Unlimited" value="3" /></div>
+                </div>
+                <div class="mt-3 plan-extras"></div>
+                <div class="mt-2 plan-custom-extras"></div>
+              </div>
+            </div>
+
+            <div class="plan-column">
+              <div class="plan-content">
+                <div class="text-center">
+                  <input class="input plan-name text-center mb-2 input-sm" value="Elite" />
+                  <div>₹ <input type="number" class="input inline w-28 plan-price input-sm" value="2999" /></div>
+                  <textarea class="input plan-desc mt-2 input-sm" rows="2"
+                    placeholder="Describe what's included">Complete premium</textarea>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <div><label class="text-xs">Delivery days</label><input class="input plan-delivery input-sm"
+                      type="number" min="1" value="7" /></div>
+                  <div><label class="text-xs">Revisions</label><input class="input plan-revisions input-sm" type="text"
+                      placeholder="e.g., Unlimited" value="Unlimited" /></div>
+                </div>
+                <div class="mt-3 plan-extras"></div>
+                <div class="mt-2 plan-custom-extras"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="plan-column">
-              <div class="text-center">
-                <input class="input text-center plan-name" value="Starter" />
-                <div class="mt-2">₹ <input type="number" class="input inline w-28 plan-price" value="999" /></div>
-                <textarea class="input mt-2 plan-desc" rows="2">Essential package</textarea>
-                <div class="extra-row">
-                  <input class="input w-1/2 plan-delivery" placeholder="Days" value="3" />
-                  <input class="input w-1/2 plan-revisions" placeholder="Revisions" value="1" />
-                </div>
-                <div class="mt-2 plan-extras"></div>
-                <button type="button" class="btn mt-2 add-extra">+ Add Extra</button>
-              </div>
-            </div>
-
-            <div class="plan-column">
-              <div class="text-center">
-                <input class="input text-center plan-name" value="Growth" />
-                <div class="mt-2">₹ <input type="number" class="input inline w-28 plan-price" value="1999" /></div>
-                <textarea class="input mt-2 plan-desc" rows="2">Popular package</textarea>
-                <div class="extra-row">
-                  <input class="input w-1/2 plan-delivery" placeholder="Days" value="5" />
-                  <input class="input w-1/2 plan-revisions" placeholder="Revisions" value="2" />
-                </div>
-                <div class="mt-2 plan-extras"></div>
-                <button type="button" class="btn mt-2 add-extra">+ Add Extra</button>
-              </div>
-            </div>
-
-            <div class="plan-column">
-              <div class="text-center">
-                <input class="input text-center plan-name" value="Elite" />
-                <div class="mt-2">₹ <input type="number" class="input inline w-28 plan-price" value="2999" /></div>
-                <textarea class="input mt-2 plan-desc" rows="2">Complete package</textarea>
-                <div class="extra-row">
-                  <input class="input w-1/2 plan-delivery" placeholder="Days" value="7" />
-                  <input class="input w-1/2 plan-revisions" placeholder="Revisions" value="Unlimited" />
-                </div>
-                <div class="mt-2 plan-extras"></div>
-                <button type="button" class="btn mt-2 add-extra">+ Add Extra</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+          <div class="grid md:grid-cols-3 gap-3 mt-4">
             <div>
-              <label class="block mb-1">Default delivery time for buyer selector</label>
-              <select id="deliveryTime" class="input">
-                <option>1</option>
-                <option>2</option>
-                <option selected>3</option>
-                <option>5</option>
-                <option>7</option>
-              </select>
-            </div>
-            <div>
-              <label class="block mb-1">Auto-price: Base hourly (₹)</label>
+              <label class="block mb-1">Base hourly (optional)</label>
               <input id="baseHourly" type="number" class="input" placeholder="e.g., 500" />
             </div>
             <div class="flex items-end">
               <button id="btnGeneratePrices" type="button" class="btn btn-brand">Generate Packages</button>
             </div>
+            <div class="text-sm text-slate-300">Customize each plan; extras can be Included / Add-on / Not Provided.
+            </div>
           </div>
 
-          <div class="mt-4 soft">
-            <div class="text-sm text-muted">After choosing category, click Generate Packages to get smart defaults for
-              prices/delivery/revisions. You can edit each plan manually (delivery, revisions, extras).</div>
+          <div class="mt-3 soft">
+            <div class="font-semibold">Add custom extra (per plan)</div>
+            <div class="grid md:grid-cols-3 gap-2 mt-2">
+              <div><input id="customExtraTitle" class="input input-sm"
+                  placeholder="Extra title (e.g., Rush Delivery)" /></div>
+              <div><input id="customExtraPrice" type="number" class="input input-sm" placeholder="Price (₹)" /></div>
+              <div><button id="addCustomExtraBtn" class="btn">Add extra to all plans</button></div>
+            </div>
           </div>
         </div>
 
-        <!-- STEP 3 Description & FAQ -->
+        <!-- STEP 3: Description & FAQ -->
         <div id="step-3" class="step-pane hidden">
-          <label class="block mb-1">Description</label>
-          <div id="quillEditor" style="height:220px;border-radius:8px;background:#071426"></div>
-          <div class="flex-between mt-2 text-xs text-muted">
-            <div id="descCount">0 / 1200</div>
-            <div class="text-muted">Explain deliverables & process</div>
-          </div>
+          <div class="kicker">Description & FAQ</div>
+
+          <label class="block mb-1">Description (max 1200 characters)</label>
+          <div id="descriptionEditor"></div>
+          <div class="text-xs mt-1 text-slate-300">Characters: <span id="descCount">0 / 1200</span></div>
 
           <div class="mt-4">
-            <div class="flex-between">
-              <div class="kicker">FAQ</div>
-              <div class="text-xs text-muted">Add common buyer questions</div>
-            </div>
-            <div id="faqContainer" class="mt-2"></div>
-            <button type="button" id="addFaqBtn" class="btn mt-2">+ Add FAQ</button>
+            <label class="block mb-1">FAQ</label>
+            <div id="faqContainer" class="space-y-2"></div>
+            <button id="addFaqBtn" type="button" class="btn mt-2">+ Add FAQ</button>
+            <div class="text-xs text-slate-300 mt-1">Make a few common Q&A to reduce buyer queries.</div>
           </div>
         </div>
 
-        <!-- STEP 4 Requirements -->
+        <!-- STEP 4: Requirements -->
         <div id="step-4" class="step-pane hidden">
-          <div class="flex-between">
-            <div class="kicker">Buyer Requirements</div>
-            <div class="text-xs text-muted">What you need to start</div>
+          <div class="kicker">Requirements</div>
+          <div id="requirementsContainer" class="space-y-4"></div>
+          <div class="flex gap-2 mt-2">
+            <button id="addRequirementBtn" type="button" class="btn">+ Add Requirement</button>
+            <button id="btnSmartReq" type="button" class="btn btn-brand">Smart Requirements (Auto)</button>
           </div>
-          <div id="requirementsContainer" class="mt-2"></div>
-          <button id="addRequirementBtn" type="button" class="btn mt-2">+ Add Requirement</button>
-
-          <div class="mt-4 soft">
-            <label class="block mb-1">Smart Templates</label>
-            <select id="tplSelect" class="input">
-              <option value="">Choose template</option>
-              <option value="video-editing">Video Editing</option>
-              <option value="logo-design">Logo Design</option>
-              <option value="web-dev">Web Development</option>
-              <option value="audio">Audio</option>
-            </select>
-          </div>
+          <div class="text-xs text-slate-300 mt-2">Ask the buyer for files/links/choices you need to start work.</div>
         </div>
 
-        <!-- STEP 5 Media -->
+        <!-- STEP 5: Media -->
         <div id="step-5" class="step-pane hidden">
-          <label class="block mb-1">Cover Images & Video</label>
-          <div id="dropzone" class="soft dropzone" style="cursor:pointer">Drag & drop or click to upload (max 8 images +
-            1 video, 30MB each)</div>
-          <input id="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" />
-          <div id="mediaPreview" class="mt-3 flex gap-2 flex-wrap"></div>
-          <div class="mt-4 soft">
-            <div class="font-semibold">AI Quality Check</div>
-            <div class="text-sm mt-2" id="aiQuality">No media uploaded</div>
+          <div class="kicker">Gallery / Media</div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <div id="dropzone" class="dropzone">Drag & drop images or click to browse<br><small>Images: 2–6 files,
+                  each ≤1 MB. Video: 1 file ≤30 MB.</small></div>
+              <input id="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" />
+              <div id="mediaPreview" class="media-grid"></div>
+            </div>
+            <div>
+              <div class="soft">
+                <div class="font-semibold">AI Quality Check</div>
+                <div id="aiQuality" class="text-sm mt-2">No media uploaded</div>
+                <div class="mt-2 text-xs text-slate-300">You can set one cover (image or video). Reorder to control
+                  gallery order.</div>
+              </div>
+              <div class="mt-3">
+                <label class="block mb-1">Set cover from uploaded media</label>
+                <div id="coverPreview" class="preview-cover"></div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- STEP 6 Publish -->
+        <!-- STEP 6: Review & Publish -->
         <div id="step-6" class="step-pane hidden">
+          <div class="kicker">Review & Publish</div>
+
           <div class="soft">
-            <div class="font-bold">SEO Checklist</div>
-            <div class="mt-2 text-sm" id="seoChecklist"></div>
+            <div class="font-bold">SEO & Checklist</div>
+            <div id="seoChecklist" class="text-sm mt-2"></div>
           </div>
 
-          <div class="mt-3 flex gap-2">
+          <div class="mt-4 grid md:grid-cols-3 gap-3">
             <button id="btnSaveDraft" type="button" class="btn">Save Draft</button>
             <button id="btnPublish" type="button" class="btn btn-brand">Publish Gig</button>
             <button id="btnReset" type="button" class="btn">Reset</button>
@@ -423,35 +684,38 @@
           <div id="formStatus" class="mt-3 text-sm"></div>
           <div class="mt-4 soft">
             <div class="font-semibold">Preview JSON</div>
-            <pre id="debugJson" class="code text-xs p-2 overflow-auto"></pre>
+            <pre id="debugJson" class="code p-2 text-xs overflow-auto"></pre>
           </div>
         </div>
 
       </form>
 
-      <div class="flex-between mt-4">
+      <!-- nav bottom -->
+      <div class="flex items-center justify-between mt-4">
         <button id="btnPrev" class="btn">← Prev</button>
-        <div class="text-sm text-slate-300" id="stepNote">Step 1 of 6</div>
+        <div id="stepNote" class="text-sm text-slate-300">Step 1 of 6</div>
         <button id="btnNext" class="btn">Next →</button>
       </div>
-
     </section>
 
-    <!-- RIGHT: preview & profile -->
+    <!-- RIGHT: preview + profile -->
     <aside class="space-y-4">
       <div class="glass p-4">
-        <div class="text-xs text-muted">Your profile</div>
-        <div class="flex items-center gap-3 mt-2"><img id="uPhoto" class="w-12 h-12 rounded-full object-cover"
-            src="https://via.placeholder.com/80" />
+        <div class="text-xs text-slate-300">Your profile</div>
+        <div class="flex items-center gap-3 mt-2">
+          <img id="uPhoto" class="w-12 h-12 rounded-full object-cover" src="https://via.placeholder.com/80" />
           <div>
             <div id="uName" class="font-bold">—</div>
-            <div id="uEmail" class="text-xs text-muted">—</div>
+            <div id="uEmail" class="text-xs text-slate-300">—</div>
           </div>
+        </div>
+        <div class="mt-2">
+          <button id="editProfileBtn" class="btn text-sm">Edit profile</button>
         </div>
       </div>
 
       <div class="glass p-4 stick">
-        <div class="text-xs text-muted">Live preview</div>
+        <div class="text-xs text-slate-300">Live preview</div>
         <div id="liveThumb" class="preview-cover mt-2"
           style="background-image:url('https://via.placeholder.com/1200x800?text=Preview')"></div>
         <div class="mt-3">
@@ -478,31 +742,34 @@
             <div id="pvRev" class="font-semibold text-sm">—</div>
           </div>
         </div>
-        <div class="mt-2 text-[11px] text-slate-400">Features</div>
-        <div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div>
+        <div class="mt-2">
+          <div class="text-[11px] text-slate-400">Features</div>
+          <div id="pvFeat" class="flex gap-1 flex-wrap mt-1 text-xs"></div>
+        </div>
       </div>
 
       <div class="glass p-4">
-        <div class="text-xs text-muted">Pro tips</div>
+        <div class="text-xs text-slate-300">Pro tips</div>
         <ul class="list-disc list-inside text-sm text-slate-300 mt-2">
-          <li>Use 5–8 tags & clear title</li>
-          <li>Upload at least 3 portfolio images</li>
-          <li>Add an intro video for higher conversions</li>
+          <li>Use a clear title under 50 characters.</li>
+          <li>Add at least 3 tags and 3 skills for discoverability.</li>
+          <li>Upload a cover image or short video — it increases clicks.</li>
         </ul>
       </div>
     </aside>
-
   </main>
 
-  <footer class="text-center py-8 text-slate-300">© 2025 Talent-Hub Pro</footer>
+  <footer class="text-center py-6 text-slate-300">© 2025 Talent-Hub Pro — Final</footer>
 
   <!-- FIREBASE + LOGIC -->
   <script type="module">
+    // Firebase v10 modular
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
+    // --- Firebase config (keep your project ones) ---
     const firebaseConfig = {
       apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
       authDomain: "skillspot-pro.firebaseapp.com",
@@ -517,77 +784,107 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
+    // helpers
     const $ = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
 
-    // Elements
+    // elements
     const loginStatus = $('#loginStatus'), loginBtnLink = $('#loginBtnLink'), btnLogout = $('#btnLogout');
     const uPhoto = $('#uPhoto'), uName = $('#uName'), uEmail = $('#uEmail');
     const titleEl = $('#title'), titleCount = $('#titleCount');
-    const categoryEl = $('#category'), subcatEl = $('#subcategory'), tagsEl = $('#tags');
-    const skillsEl = $('#skills'), languagesEl = $('#languages'), platformEl = $('#platform');
-    const kwSuggestions = $('#kwSuggestions'), qualityScoreEl = $('#qualityScore'), seoChecklist = $('#seoChecklist');
-    const autosaveStatus = $('#autosaveStatus');
+    const categoryEl = $('#category'), subcatEl = $('#subcategory');
+    const tagsInput = $('#tagsInput'), tagsWrap = $('#tagsWrap');
+    const skillsInput = $('#skillsInput'), skillsWrap = $('#skillsWrap');
+    const langsInput = $('#langsInput'), langsWrap = $('#langsWrap');
+    const gigMeta = $('#gigMeta');
+    const baseHourlyEl = $('#baseHourly'), btnGeneratePrices = $('#btnGeneratePrices'), addCustomExtraBtn = $('#addCustomExtraBtn');
     const btnPrev = $('#btnPrev'), btnNext = $('#btnNext'), stepNote = $('#stepNote'), stepTabs = $$('.step-tab');
-    const btnGeneratePrices = $('#btnGeneratePrices'), baseHourlyEl = $('#baseHourly'), deliveryEl = $('#deliveryTime');
-    const btnSaveDraft = $('#btnSaveDraft'), btnPublish = $('#btnPublish'), btnReset = $('#btnReset'), formStatus = $('#formStatus'), debugJson = $('#debugJson');
+    const btnSaveDraft = $('#btnSaveDraft'), btnPublish = $('#btnPublish'), btnReset = $('#btnReset');
+    const formStatus = $('#formStatus'), debugJson = $('#debugJson');
     const pvTitle = $('#pvTitle'), pvCat = $('#pvCat'), pvDel = $('#pvDel'), pvPrice = $('#pvPrice'), pvRev = $('#pvRev'), pvFeat = $('#pvFeat'), liveThumb = $('#liveThumb');
-    const dropzone = $('#dropzone'), fileInput = $('#fileInput'), mediaPreview = $('#mediaPreview'), aiQuality = $('#aiQuality');
+    const dropzone = $('#dropzone'), fileInput = $('#fileInput'), mediaPreview = $('#mediaPreview'), aiQuality = $('#aiQuality'), coverPreview = $('#coverPreview');
+    const descCount = $('#descCount'), seoChecklist = $('#seoChecklist'), autosaveStatus = $('#autosaveStatus');
 
+    // quill editor
+    const quill = new Quill('#descriptionEditor', { theme: 'snow', placeholder: 'Explain what you will deliver, process, tools, and what makes you unique...' });
+
+    // state
     let currentUser = null;
-    let currentStep = 1, maxStep = 6;
+    let currentStep = 1;
+    const maxStep = 6;
     const GIGS_COLLECTION = 'subho_gigs';
+    let mediaFiles = []; // objects: {file, id, urlLocal}
+    let coverIndex = -1;
 
-    // Quill
-    const quill = new Quill('#quillEditor', { theme: 'snow' });
-
-    // Category map (subcategories + features)
+    // Category map: subcategories + extras metadata
     const CATEGORY_MAP = {
-      graphic: {
-        subs: ['Logo Design', 'Brand Style Guides', 'Illustration', 'Business Cards', 'Social Media Design', 'Book Covers', 'Packaging Design'],
-        features: ['Source Files', 'Vector files', '3 Revisions', 'Favicon', 'Mockups']
+      'logo-design': {
+        subs: ['Minimal Logo', 'Mascot Logo', 'Vintage', '3D Logo', 'Wordmark'],
+        extras: ['Source File (AI/PSD)', 'Vector File (SVG/EPS)', '3D Mockup', 'Social Media Kit', 'Brand Style Guide', 'Transparent PNG']
       },
-      web: {
-        subs: ['Website Development', 'App Development', 'Game Development', 'E-commerce Development', 'Cybersecurity', 'AI Development'],
-        features: ['Responsive', 'SEO basic', 'CMS', '1 Month Support', 'Source Code']
+      'video-editing': {
+        subs: ['Short Edit', 'YouTube Long', 'Motion Graphics', 'Explainer'],
+        extras: ['Raw Footage Return', 'Subtitles/Captions', 'Color Grading', '4K Export', 'Thumbnail Design', 'Sound Mix']
       },
-      marketing: {
-        subs: ['Social Media Marketing', 'SEO', 'Content Marketing', 'Email Marketing', 'Influencer Marketing', 'Video Marketing', 'Affiliate Marketing'],
-        features: ['3 Creatives', 'Ad Copy', 'A/B Variations', 'Targeting Suggestion', 'Analytics Report']
+      'writing': {
+        subs: ['Article', 'Product Description', 'SEO Blog', 'Proofreading'],
+        extras: ['SEO Keywords', 'Plagiarism Report', 'Word Count Upgrade', 'References', 'Editable DOCX']
       },
-      video: {
-        subs: ['Video Editing', '2D Animation', '3D Animation', 'Whiteboard Animation', 'Short Video Ads', 'Intro/Outro'],
-        features: ['Color Grade', 'Sound Mix', 'Captions', 'Intro Animation', 'Source Files']
+      'web': {
+        subs: ['Landing Page', 'eCommerce', 'Full Site', 'Bug Fix'],
+        extras: ['Responsive Design', 'Source Code', '1 Month Support', 'CMS Integration', 'Speed Optimization']
       },
-      writing: {
-        subs: ['Articles & Blogs', 'Copywriting', 'Translation', 'Proofreading', 'Technical Writing', 'Resume Writing'],
-        features: ['SEO keywords', 'Meta tags', 'Plagiarism check', '2 Revisions', 'References']
+      'marketing': {
+        subs: ['Social Ads', 'Strategy', 'Email Campaign'],
+        extras: ['Ad Copy', '3 Creatives', 'Targeting Suggestions', 'Analytics Report', 'Campaign Setup']
       },
-      music: {
-        subs: ['Voice Over', 'Mixing & Mastering', 'Podcast Editing', 'Jingles', 'Sound Effects'],
-        features: ['Stem Files', 'Mastered', 'Commercial License', 'Multiple Takes', 'Lyrics']
+      'music': {
+        subs: ['Voice Over', 'Track Production', 'Mix & Master'],
+        extras: ['Stem Files', 'Commercial License', 'Mastered WAV', 'Multiple Takes', 'Instrumental Version']
       },
-      ai: {
-        subs: ['AI Art', 'AI Content Writing', 'AI Chatbot', 'AI Automation', 'AI Video Creation'],
-        features: ['Model Selection', 'Dataset Prep', 'API Integration', '2 Iterations', 'Docs']
+      'ai': {
+        subs: ['Chatbot', 'Prompt Engineering', 'Automation'],
+        extras: ['Model Selection', 'Dataset Prep', 'API Integration', 'Notebook', 'Deployment Script']
       }
     };
 
-    // Auth UI
+    // --- AUTH UI ---
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { loginStatus.textContent = 'Not logged in'; btnLogout.classList.add('hidden'); loginBtnLink.classList.remove('hidden'); currentUser = null; uName.textContent = '—'; uEmail.textContent = '—'; uPhoto.src = 'https://via.placeholder.com/80'; return; }
-      currentUser = user; loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`; btnLogout.classList.remove('hidden'); loginBtnLink.classList.add('hidden');
-      uName.textContent = user.displayName || (user.email ? user.email.split('@')[0] : user.uid); uEmail.textContent = user.email || user.uid; uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
-      if (!user.displayName && user.email) { try { await updateProfile(user, { displayName: user.email.split('@')[0] }); } catch (e) { } }
+      if (!user) {
+        currentUser = null;
+        loginStatus.textContent = 'Not logged in';
+        loginBtnLink.classList.remove('hidden');
+        btnLogout.classList.add('hidden');
+        uName.textContent = '—'; uEmail.textContent = '—'; uPhoto.src = 'https://via.placeholder.com/80';
+        return;
+      }
+      currentUser = user;
+      loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`;
+      loginBtnLink.classList.add('hidden'); btnLogout.classList.remove('hidden');
+      uName.textContent = user.displayName || (user.email ? user.email.split('@')[0] : user.uid);
+      uEmail.textContent = user.email || user.uid;
+      uPhoto.src = user.photoURL || 'https://via.placeholder.com/80';
+      if (!user.displayName && user.email) {
+        try { await updateProfile(user, { displayName: user.email.split('@')[0] }); } catch (e) { /*noop*/ }
+      }
     });
-    btnLogout.addEventListener('click', async () => { try { await signOut(auth); location.href = 'index.html'; } catch (e) { alert('Logout failed') } });
+
+    btnLogout.addEventListener('click', async () => { try { await signOut(auth); location.href = 'index.html'; } catch (e) { alert('Logout failed'); } });
 
     // Step nav
     function gotoStep(n) {
       currentStep = Math.max(1, Math.min(maxStep, n));
-      for (let i = 1; i <= maxStep; i++) { const pane = document.getElementById('step-' + i); if (pane) pane.classList.toggle('hidden', i !== currentStep); }
+      for (let i = 1; i <= maxStep; i++) {
+        const pane = document.getElementById('step-' + i);
+        if (pane) pane.classList.toggle('hidden', i !== currentStep);
+        const dot = document.getElementById('dot-' + i);
+        if (dot) dot.classList.toggle('active', i <= currentStep); // show progress
+        const tab = document.querySelector(`.step-tab[data-step="${i}"]`);
+        if (tab) {
+          if (i === currentStep) { tab.classList.add('btn-brand'); tab.classList.remove('btn'); } else { tab.classList.remove('btn-brand'); tab.classList.add('btn'); }
+        }
+      }
       stepNote.textContent = `Step ${currentStep} of ${maxStep}`;
-      stepTabs.forEach(btn => btn.classList.toggle('btn-brand', Number(btn.dataset.step) === currentStep));
       if (currentStep === 6) { buildSEOChecklist(); renderDebug(); }
       renderPreview();
     }
@@ -596,121 +893,310 @@
     btnNext.addEventListener('click', () => gotoStep(currentStep + 1));
     gotoStep(1);
 
-    // Populate subcategories + features when category changes
+    // --- Title char limit + counter ---
+    titleEl.addEventListener('input', () => {
+      if (titleEl.value.length > 50) titleEl.value = titleEl.value.slice(0, 50);
+      titleCount.textContent = `${titleEl.value.length}/50`;
+      renderPreview(); autosaveNow('title');
+    });
+
+    // --- Chips for tags, skills, languages ---
+    function createChip(text, container) {
+      const span = document.createElement('span'); span.className = 'chip';
+      const txt = document.createElement('span'); txt.textContent = text;
+      const x = document.createElement('button'); x.className = 'text-xs'; x.textContent = '×'; x.style.marginLeft = '6px';
+      x.addEventListener('click', () => { span.remove(); autosaveNow('chips'); renderPreview(); });
+      span.appendChild(txt);
+      span.appendChild(x);
+      container.appendChild(span);
+    }
+    function readChips(container) { return Array.from(container.children).map(c => c.firstChild.textContent); }
+
+    // tags
+    tagsInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault(); const v = tagsInput.value.trim(); if (!v) return;
+        const existing = readChips(tagsWrap); if (existing.length >= 6) { alert('Max 6 tags'); tagsInput.value = ''; return; }
+        createChip(v, tagsWrap); tagsInput.value = ''; autosaveNow('tags'); renderPreview();
+      }
+    });
+    // skills
+    skillsInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); const v = skillsInput.value.trim(); if (!v) return; createChip(v, skillsWrap); skillsInput.value = ''; autosaveNow('skills'); renderPreview(); }
+    });
+    // languages
+    langsInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); const v = langsInput.value.trim(); if (!v) return; createChip(v, langsWrap); langsInput.value = ''; autosaveNow('langs'); renderPreview(); }
+    });
+
+    // --- Category & subcategory & gig metadata ---
     function populateSubcategories(cat) {
-      subcatEl.innerHTML = '<option value="">Choose subcategory</option>';
+      subcatEl.innerHTML = '<option value="">Select subcategory</option>';
       if (!cat || !CATEGORY_MAP[cat]) return;
       CATEGORY_MAP[cat].subs.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; subcatEl.appendChild(o); });
     }
-    function populatePlanFeatureLists(cat) {
-      const features = (cat && CATEGORY_MAP[cat]) ? CATEGORY_MAP[cat].features : ['Source Files', 'Revisions', 'Support', 'Custom Request'];
-      document.querySelectorAll('.plan-column').forEach((col) => {
-        const container = col.querySelector('.plan-extras');
-        container.innerHTML = ''; // we use extras area for showing selected features (as checkboxes)
-        // create checkboxes to allow toggling which features apply across plans
-        features.forEach((f, idx) => {
-          const wrap = document.createElement('div');
-          wrap.style.display = 'flex'; wrap.style.alignItems = 'center'; wrap.style.justifyContent = 'space-between'; wrap.style.marginTop = '6px';
-          wrap.innerHTML = `<label style="font-size:13px"><input type="checkbox" class="feat-chk" data-feature="${f}" ${idx === 0 ? 'checked' : ''}/> ${f}</label> <small class="text-muted" style="opacity:.8">— toggle</small>`;
-          container.appendChild(wrap);
+    function populateGigMeta(cat) {
+      gigMeta.innerHTML = '';
+      if (!cat || !CATEGORY_MAP[cat]) { gigMeta.textContent = 'Select a category to see metadata templates.'; return; }
+      const list = CATEGORY_MAP[cat].extras;
+      const container = document.createElement('div');
+      list.forEach(l => {
+        const label = document.createElement('label'); label.className = 'flex items-center gap-2';
+        const chk = document.createElement('input'); chk.type = 'checkbox'; chk.checked = false; chk.dataset.meta = l;
+        const span = document.createElement('span'); span.textContent = l; label.appendChild(chk); label.appendChild(span);
+        container.appendChild(label);
+      });
+      gigMeta.appendChild(container);
+    }
+
+    categoryEl.addEventListener('change', () => {
+      populateSubcategories(categoryEl.value);
+      populatePlanExtras(categoryEl.value);
+      populateGigMeta(categoryEl.value);
+      computeKeywordsAndScore(); autosaveNow('category');
+    });
+
+    subcatEl.addEventListener('change', () => { renderPreview(); autosaveNow('subcategory'); });
+
+    // --- Plan extras population (NEW: two small buttons on right + wrapping labels) ---
+    function populatePlanExtras(cat) {
+      const extras = cat && CATEGORY_MAP[cat] ? CATEGORY_MAP[cat].extras : ['Source File', 'Revisions', 'Support'];
+      // for each plan column, render extras list with accept/reject buttons (side)
+      document.querySelectorAll('.plan-column').forEach((col, idx) => {
+        const extrasContainer = col.querySelector('.plan-extras');
+        extrasContainer.innerHTML = '';
+        extras.forEach((ex) => {
+          const row = document.createElement('div'); row.className = 'plan-extra-row';
+          const left = document.createElement('div'); left.className = 'plan-extra-left';
+          left.innerHTML = `<div class="extra-label">${ex}</div><div class="extra-note">Tap ✔ to include, ✖ to reject</div>`;
+          // right side: accept / reject buttons
+          const right = document.createElement('div'); right.className = 'plan-extra-right';
+          const btnAccept = document.createElement('button'); btnAccept.type = 'button'; btnAccept.className = 'extra-btn'; btnAccept.title = 'Include';
+          btnAccept.innerHTML = `<i class="fa-solid fa-check"></i>`;
+          const btnReject = document.createElement('button'); btnReject.type = 'button'; btnReject.className = 'extra-btn'; btnReject.title = 'Reject';
+          btnReject.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+          // hidden state input to read later
+          const hiddenState = document.createElement('input'); hiddenState.type = 'hidden'; hiddenState.className = 'extra-state'; hiddenState.value = 'none';
+          // click handlers: toggles
+          btnAccept.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            // toggle: if already accepted, remove; else accept
+            const isAccepted = btnAccept.classList.contains('accepted');
+            if (!isAccepted) {
+              // mark accepted
+              btnAccept.classList.add('accepted');
+              btnReject.classList.remove('rejected');
+              row.classList.remove('rejected');
+              row.classList.add('accepted');
+              hiddenState.value = 'included';
+            } else {
+              // unset
+              btnAccept.classList.remove('accepted');
+              row.classList.remove('accepted');
+              hiddenState.value = 'none';
+            }
+            renderPreview(); autosaveNow('plan-extras');
+          });
+          btnReject.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            const isRejected = btnReject.classList.contains('rejected');
+            if (!isRejected) {
+              // mark rejected
+              btnReject.classList.add('rejected');
+              btnAccept.classList.remove('accepted');
+              row.classList.remove('accepted');
+              row.classList.add('rejected');
+              hiddenState.value = 'rejected';
+            } else {
+              // unset reject
+              btnReject.classList.remove('rejected');
+              row.classList.remove('rejected');
+              hiddenState.value = 'none';
+            }
+            renderPreview(); autosaveNow('plan-extras');
+          });
+          // keyboard accessible toggle
+          btnAccept.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnAccept.click(); } });
+          btnReject.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnReject.click(); } });
+
+          right.appendChild(btnAccept);
+          right.appendChild(btnReject);
+          right.appendChild(hiddenState);
+
+          row.appendChild(left);
+          row.appendChild(right);
+          extrasContainer.appendChild(row);
         });
       });
       renderPreview();
     }
-    categoryEl.addEventListener('change', () => { populateSubcategories(categoryEl.value); populatePlanFeatureLists(categoryEl.value); computeKeywordsAndScore(); autosaveNow('category'); });
-    populatePlanFeatureLists('');
+    populatePlanExtras(''); // initial
 
-    // Title char counter (max 50)
-    titleEl.addEventListener('input', () => { const v = titleEl.value.slice(0, 50); if (v !== titleEl.value) titleEl.value = v; titleCount.textContent = `${titleEl.value.length}/50`; computeKeywordsAndScore(); autosaveNow('title'); renderPreview(); });
+    // Add custom extra to all plans (keeps old behavior, but uses new row style)
+    addCustomExtraBtn.addEventListener('click', () => {
+      const t = document.getElementById('customExtraTitle').value.trim();
+      const p = Number(document.getElementById('customExtraPrice').value || 0);
+      if (!t) { alert('Enter extra title'); return; }
+      document.querySelectorAll('.plan-custom-extras').forEach(col => {
+        const wrap = document.createElement('div'); wrap.className = 'mt-2 flex items-center justify-between';
+        const left = document.createElement('div'); left.textContent = t;
+        const right = document.createElement('div'); right.innerHTML = `<input type="number" class="input extra-price input-sm" value="${p}" />`;
+        wrap.appendChild(left); wrap.appendChild(right);
+        col.appendChild(wrap);
+      });
+      document.getElementById('customExtraTitle').value = ''; document.getElementById('customExtraPrice').value = '';
+      autosaveNow('custom-extra'); renderPreview();
+    });
 
-    // Skills & Languages: store as comma separated, no fancy widget now
-    skillsEl.addEventListener('change', () => autosaveNow('skills'));
-    languagesEl.addEventListener('change', () => autosaveNow('languages'));
-
-    // Generate packages (fills price + default delivery/revisions)
+    // Generate packages
     btnGeneratePrices.addEventListener('click', () => {
       const base = Number(baseHourlyEl.value || 0);
-      const priceInputs = document.querySelectorAll('.plan-price');
-      const deliveryInputs = document.querySelectorAll('.plan-delivery');
-      const revisionsInputs = document.querySelectorAll('.plan-revisions');
       let prices;
-      if (base <= 0) prices = [999, 1999, 2999];
-      else prices = [Math.max(99, Math.round(base * 1.6)), Math.max(199, Math.round(base * 3.0)), Math.max(299, Math.round(base * 5.0))];
+      if (base <= 0) prices = [499, 1499, 2999];
+      else prices = [Math.max(99, Math.round(base * 2)), Math.max(199, Math.round(base * 4)), Math.max(299, Math.round(base * 6))];
+      const priceInputs = document.querySelectorAll('.plan-price');
       priceInputs.forEach((p, i) => p.value = prices[i] || 0);
-      // sensible defaults for delivery and revisions
-      deliveryInputs.forEach((d, i) => { if (!d.value) d.value = [3, 5, 7][i]; });
-      revisionsInputs.forEach((r, i) => { if (!r.value) r.value = [1, 2, 'Unlimited'][i]; });
-      renderPreview(); autosaveNow('pricing');
+      renderPreview(); autosaveNow('generate-prices');
     });
 
-    // Add Extra button per plan (adds custom extras with price)
-    document.addEventListener('click', (e) => {
-      if (e.target.matches('.add-extra')) {
-        const col = e.target.closest('.plan-column');
-        const extras = col.querySelector('.plan-extras');
-        const wrapper = document.createElement('div'); wrapper.style.marginTop = '8px';
-        wrapper.innerHTML = `<div style="display:flex;gap:8px"><input class="input extra-label" placeholder="Extra label (e.g., Priority Delivery)" /><input type="number" class="input extra-price" placeholder="₹ price" /><button class="btn remove-extra">Remove</button></div>`;
-        extras.appendChild(wrapper);
-        wrapper.querySelector('.remove-extra').addEventListener('click', () => { wrapper.remove(); autosaveNow('extras'); });
-        autosaveNow('extras');
-      }
-    });
-
-    // FAQ add/remove
+    // --- FAQ dynamic ---
     $('#addFaqBtn').addEventListener('click', () => {
-      const c = $('#faqContainer');
-      const i = document.createElement('div'); i.className = 'mt-2 soft p-3';
-      i.innerHTML = `<input class='input faq-q mb-2' placeholder='Question' /><textarea class='input faq-a' rows='2' placeholder='Answer'></textarea><div class='mt-2'><button class='btn remove-faq'>Remove</button></div>`;
-      c.appendChild(i);
-      i.querySelector('.remove-faq').addEventListener('click', () => { i.remove(); autosaveNow('faq'); });
+      const c = $('#faqContainer'); const box = document.createElement('div'); box.className = 'soft p-3';
+      box.innerHTML = `<input class="input faq-q mb-2 input-sm" placeholder="Question" /><textarea class="input faq-a" rows="2"></textarea><div class="mt-2"><button class="btn remove-faq" type="button">Remove</button></div>`;
+      c.appendChild(box); box.querySelector('.remove-faq').addEventListener('click', () => { box.remove(); autosaveNow('faq'); });
       autosaveNow('faq');
     });
 
-    // Requirements add/remove and templates (custom editable)
+    // --- Requirements dynamic + Smart generator ---
     $('#addRequirementBtn').addEventListener('click', () => {
       const c = $('#requirementsContainer');
-      const n = document.createElement('div'); n.className = 'mt-2 soft p-3';
-      n.innerHTML = `<select class='input mb-2 req-type'><option value='text'>Text</option><option value='file'>File</option><option value='choice'>Multiple Choice</option></select><input class='input req-q' placeholder='Question or instruction' /><div class='mt-2'><button class='btn remove-req'>Remove</button></div>`;
-      c.appendChild(n);
-      n.querySelector('.remove-req').addEventListener('click', () => { n.remove(); autosaveNow('req'); });
-      autosaveNow('req');
+      const box = document.createElement('div');
+      box.className = 'requirement-item';
+      box.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <select class="input req-type input-sm">
+            <option value="text">Text</option>
+            <option value="file">File</option>
+            <option value="choice">Multiple Choice</option>
+            <option value="url">URL</option>
+            <option value="date">Date</option>
+          </select>
+          <input class="input req-q input-sm" placeholder="Question or instruction" />
+          <div class="flex items-center gap-2">
+            <label class="text-xs">Required?</label>
+            <input type="checkbox" class="req-required" checked/>
+          </div>
+        </div>
+        <div class="mt-2 req-choices hidden">
+          <input class="input req-choices-input input-sm" placeholder="Comma separated choices" />
+        </div>
+        <div class="mt-2">
+          <button class="btn remove-req" type="button">Remove</button>
+        </div>
+      `;
+      c.appendChild(box);
+      const typeSel = box.querySelector('.req-type');
+      const choicesWrap = box.querySelector('.req-choices');
+      typeSel.addEventListener('change', () => {
+        choicesWrap.classList.toggle('hidden', typeSel.value !== 'choice');
+        autosaveNow('requirements');
+      });
+      box.querySelector('.remove-req').addEventListener('click', () => {
+        box.remove();
+        autosaveNow('requirements');
+      });
+      autosaveNow('requirements');
     });
 
-    $('#tplSelect').addEventListener('change', (e) => {
-      const v = e.target.value;
-      const c = $('#requirementsContainer');
-      if (v === 'video-editing') {
-        c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Please upload raw footage (mp4), script, timestamps for cuts, brand assets (logo)</label></div>`;
-      } else if (v === 'logo-design') {
-        c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Provide brand name, colors, style references, existing logos (if any)</label></div>`;
-      } else if (v === 'web-dev') {
-        c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Provide hosting details, admin access, design examples, required features</label></div>`;
-      } else if (v === 'audio') {
-        c.innerHTML = `<div class='soft p-3'><label class='text-sm'>Provide script, reference voice sample, tone, music preference</label></div>`;
-      }
-      autosaveNow('tpl');
+    $('#btnSmartReq').addEventListener('click', () => {
+      const cat = categoryEl.value; if (!cat) { alert('Select a category first to generate smart requirements.'); return; }
+      const templates = {
+        'logo-design': [
+          { type: 'text', q: 'Brand name / text for logo', required: true },
+          { type: 'file', q: 'Reference logos or moodboard (images/PDF)', required: true },
+          { type: 'text', q: 'Preferred colors / style', required: false }
+        ],
+        'video-editing': [
+          { type: 'file', q: 'Raw footage (zip or drive link)', required: true },
+          { type: 'text', q: 'Desired runtime & format', required: true },
+          { type: 'file', q: 'Voiceover or script (if any)', required: false }
+        ],
+        'writing': [
+          { type: 'text', q: 'Topic / brief / voice', required: true },
+          { type: 'text', q: 'Target keywords (optional)', required: false }
+        ],
+        'web': [
+          { type: 'text', q: 'Existing site / reference links', required: true },
+          { type: 'file', q: 'Brand assets / logos', required: false },
+          { type: 'text', q: 'Hosting & domain details', required: true }
+        ]
+      };
+      const picks = templates[cat] || [{ type: 'text', q: 'Brief description of project', required: true }];
+      $('#requirementsContainer').innerHTML = '';
+      picks.forEach(p => {
+        const c = $('#requirementsContainer');
+        const box = document.createElement('div');
+        box.className = 'requirement-item';
+        box.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <select class="input req-type input-sm">
+              <option value="text" ${p.type === 'text' ? 'selected' : ''}>Text</option>
+              <option value="file" ${p.type === 'file' ? 'selected' : ''}>File</option>
+              <option value="choice" ${p.type === 'choice' ? 'selected' : ''}>Multiple Choice</option>
+              <option value="url" ${p.type === 'url' ? 'selected' : ''}>URL</option>
+            </select>
+            <input class="input req-q input-sm" placeholder="Question or instruction" value="${p.q}" />
+            <div class="flex items-center gap-2">
+              <label class="text-xs">Required?</label>
+              <input type="checkbox" class="req-required" ${p.required ? 'checked' : ''}/>
+            </div>
+          </div>
+          <div class="mt-2 req-choices hidden">
+            <input class="input req-choices-input input-sm" placeholder="Comma separated choices" />
+          </div>
+          <div class="mt-2">
+            <button class="btn remove-req" type="button">Remove</button>
+          </div>
+        `;
+        c.appendChild(box);
+        const typeSel = box.querySelector('.req-type');
+        const choicesWrap = box.querySelector('.req-choices');
+        typeSel.addEventListener('change', () => {
+          choicesWrap.classList.toggle('hidden', typeSel.value !== 'choice');
+          autosaveNow('requirements');
+        });
+        box.querySelector('.remove-req').addEventListener('click', () => { box.remove(); autosaveNow('requirements'); });
+      });
+      autosaveNow('requirements');
     });
 
-    // Media drag/drop + preview, limits 8 images + 1 video
-    let mediaFiles = [];
+    // --- Media: drag & drop, preview, limits, set cover, reorder ---
+    const MAX_IMAGES = 6;
+    const MIN_IMAGES = 2; // suggestion (not enforced on publish)
+    const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 1MB
+    const MAX_VIDEO_COUNT = 1;
+    const MAX_VIDEO_SIZE = 30 * 1024 * 1024; // 30MB
+
     dropzone.addEventListener('click', () => fileInput.click());
-    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('ring'); });
-    dropzone.addEventListener('dragleave', e => { dropzone.classList.remove('ring'); });
-    dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('ring'); handleFiles(e.dataTransfer.files); });
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('ring'); });
+    dropzone.addEventListener('dragleave', (e) => { dropzone.classList.remove('ring'); });
+    dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('ring'); handleFiles(e.dataTransfer.files); });
     fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 
     function handleFiles(list) {
       const arr = Array.from(list);
       const imagesOnly = arr.filter(f => f.type.startsWith('image/'));
       const videos = arr.filter(f => f.type.startsWith('video/'));
-      const currentImgs = mediaFiles.filter(m => m.type.startsWith('image/')).length;
-      const currentVideos = mediaFiles.filter(m => m.type.startsWith('video/')).length;
-      const imgToAdd = imagesOnly.slice(0, Math.max(0, 8 - currentImgs));
-      const vidToAdd = videos.slice(0, Math.max(0, 1 - currentVideos));
+      const currentImgs = mediaFiles.filter(m => m.file.type.startsWith('image/')).length;
+      const currentVideos = mediaFiles.filter(m => m.file.type.startsWith('video/')).length;
+      const imgToAdd = imagesOnly.slice(0, Math.max(0, MAX_IMAGES - currentImgs));
+      const vidToAdd = videos.slice(0, Math.max(0, MAX_VIDEO_COUNT - currentVideos));
       const toAdd = [...imgToAdd, ...vidToAdd];
       toAdd.forEach(f => {
-        if (f.size > 30 * 1024 * 1024) { alert(`${f.name} is larger than 30MB and was skipped.`); return; }
-        mediaFiles.push(f);
+        if (f.type.startsWith('image/') && f.size > MAX_IMAGE_SIZE) { alert(`${f.name} skipped — images must be ≤ ${MAX_IMAGE_SIZE / 1024 / 1024}MB`); return; }
+        if (f.type.startsWith('video/') && f.size > MAX_VIDEO_SIZE) { alert(`${f.name} skipped — video must be ≤ ${MAX_VIDEO_SIZE / 1024 / 1024}MB`); return; }
+        const id = Math.random().toString(36).slice(2, 9);
+        mediaFiles.push({ file: f, id, urlLocal: URL.createObjectURL(f) });
       });
       renderMediaPreview();
       runAIQualityCheck();
@@ -719,91 +1205,173 @@
 
     function renderMediaPreview() {
       mediaPreview.innerHTML = '';
-      mediaFiles.forEach((f, idx) => {
-        const wrap = document.createElement('div'); wrap.className = 'p-1';
+      mediaFiles.forEach((m, idx) => {
+        const f = m.file;
+        const wrap = document.createElement('div');
+        wrap.className = 'media-item';
+        wrap.draggable = true;
+        wrap.dataset.idx = idx;
+        wrap.style.minHeight = '120px';
+
+        // drag handlers
+        wrap.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', idx);
+          wrap.style.opacity = 0.5;
+        });
+        wrap.addEventListener('dragend', () => {
+          wrap.style.opacity = 1;
+        });
+        wrap.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+        wrap.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const from = Number(e.dataTransfer.getData('text/plain'));
+          const to = Number(wrap.dataset.idx);
+          if (from === to) return;
+          const temp = mediaFiles.splice(from, 1)[0];
+          mediaFiles.splice(to, 0, temp);
+          renderMediaPreview();
+          runAIQualityCheck();
+          autosaveNow('media');
+        });
+
         if (f.type.startsWith('image/')) {
-          const url = URL.createObjectURL(f);
-          const d = document.createElement('div'); d.className = 'thumb'; d.style.backgroundImage = `url('${url}')`;
-          wrap.appendChild(d);
+          const img = document.createElement('img');
+          img.src = m.urlLocal;
+          img.className = 'w-full h-32 object-cover';
+          wrap.appendChild(img);
         } else {
-          const video = document.createElement('video'); video.controls = true; video.width = 160; video.height = 90; video.src = URL.createObjectURL(f); video.style.borderRadius = '8px';
+          const video = document.createElement('video');
+          video.controls = true;
+          video.className = 'w-full h-32 object-cover';
+          video.src = m.urlLocal;
           wrap.appendChild(video);
         }
-        const rem = document.createElement('div'); rem.className = 'mt-1'; rem.innerHTML = `<button data-idx='${idx}' class='btn text-xs remove-media'>Remove</button>`;
-        rem.querySelector('button').addEventListener('click', () => { mediaFiles.splice(idx, 1); renderMediaPreview(); runAIQualityCheck(); autosaveNow('media'); });
-        wrap.appendChild(rem);
+
+        const info = document.createElement('div');
+        info.className = 'p-2 text-xs truncate';
+        info.textContent = m.file.name;
+        wrap.appendChild(info);
+
+        const actions = document.createElement('div');
+        actions.className = 'media-actions';
+        actions.innerHTML = `
+          <button data-idx='${idx}' class='btn text-xs set-cover' type="button">Cover</button>
+          <button data-idx='${idx}' class='btn text-xs remove-media' type="button">Remove</button>
+        `;
+        wrap.appendChild(actions);
+
+        actions.querySelector('.remove-media').addEventListener('click', () => {
+          mediaFiles.splice(idx, 1);
+          if (coverIndex === idx) coverIndex = -1;
+          renderMediaPreview();
+          runAIQualityCheck();
+          autosaveNow('media');
+        });
+        actions.querySelector('.set-cover').addEventListener('click', () => {
+          coverIndex = idx;
+          renderMediaPreview();
+          renderCover();
+          autosaveNow('media');
+        });
+
         mediaPreview.appendChild(wrap);
       });
+      renderCover();
       if (mediaFiles.length) {
-        const first = mediaFiles.find(m => m.type.startsWith('image/')) || mediaFiles[0];
-        liveThumb.style.backgroundImage = `url('${URL.createObjectURL(first)}')`;
+        const first = mediaFiles.find(m => m.file.type.startsWith('image/')) || mediaFiles[0];
+        liveThumb.style.backgroundImage = `url('${first.urlLocal}')`;
       } else {
         liveThumb.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Preview')";
+      }
+    }
+
+    function renderCover() {
+      if (coverIndex >= 0 && mediaFiles[coverIndex]) {
+        const m = mediaFiles[coverIndex];
+        if (m.file.type.startsWith('image/')) {
+          coverPreview.style.backgroundImage = `url('${m.urlLocal}')`;
+          coverPreview.innerHTML = '';
+        } else {
+          coverPreview.style.backgroundImage = 'none';
+          coverPreview.innerHTML = `<video controls muted playsinline class="w-full h-full object-cover rounded"><source src="${m.urlLocal}"></video>`;
+        }
+      } else {
+        coverPreview.style.backgroundImage = "url('https://via.placeholder.com/1200x800?text=Cover')";
+        coverPreview.innerHTML = '';
       }
     }
 
     function runAIQualityCheck() {
       if (mediaFiles.length === 0) { aiQuality.textContent = 'No media uploaded'; return; }
       const issues = [];
-      mediaFiles.forEach(f => {
-        if (f.size < 4 * 1024) issues.push(`${f.name}: very small`);
-        if (f.size > 30 * 1024 * 1024) issues.push(`${f.name}: >30MB`);
-        if (f.type.startsWith('image/') && f.size < 10 * 1024) issues.push(`${f.name}: suspiciously tiny`);
+      mediaFiles.forEach(m => {
+        const f = m.file;
+        if (f.size < 4 * 1024) issues.push(`${f.name}: suspiciously tiny`);
+        if (f.type.startsWith('image/') && f.size > MAX_IMAGE_SIZE) issues.push(`${f.name}: >1MB`);
+        if (f.type.startsWith('video/') && f.size > MAX_VIDEO_SIZE) issues.push(`${f.name}: >30MB`);
       });
-      if (issues.length) aiQuality.textContent = issues.join(' | '); else aiQuality.textContent = `Good — ${mediaFiles.length} files, total ${(mediaFiles.reduce((s, m) => s + m.size, 0) / 1024 / 1024).toFixed(2)} MB`;
+      if (issues.length) aiQuality.textContent = issues.join(' | '); else aiQuality.textContent = `Good — ${mediaFiles.length} files, total ${(mediaFiles.reduce((s, m) => s + m.file.size, 0) / 1024 / 1024).toFixed(2)} MB`;
     }
 
-    // Preview helpers (robust)
-    function getFirstPlanPrice() {
-      const nodes = document.querySelectorAll('.plan-price');
-      if (!nodes || nodes.length === 0) return 0;
-      return Number(nodes[0].value || 0);
-    }
-    function getFirstPlanRevisions() {
-      const first = document.querySelectorAll('.plan-column')[0];
-      if (!first) return '—';
-      const revInput = first.querySelector('.plan-revisions'); if (revInput && revInput.value) return revInput.value;
-      // fallback find a feature mentioning 'Revision'
-      const featLabels = Array.from(first.querySelectorAll('.plan-extras label')).map(l => l.textContent || '');
-      const rev = featLabels.find(t => /revision/i.test(t));
-      return rev || '—';
-    }
+    // --- Preview helpers ---
+    function getFirstPlanPrice() { const nodes = document.querySelectorAll('.plan-price'); if (!nodes || nodes.length === 0) return 0; return Number(nodes[0].value || 0); }
+    function getFirstPlanRevisions() { const first = document.querySelectorAll('.plan-column')[0]; if (!first) return '—'; const rev = first.querySelector('.plan-revisions'); if (rev && rev.value) return rev.value; return '—'; }
 
     function renderPreview() {
       pvTitle.textContent = titleEl.value.trim() || '—';
-      const catText = (categoryEl.options[categoryEl.selectedIndex]?.text || '');
-      pvCat.textContent = (catText || '—') + (subcatEl.value ? ` / ${subcatEl.value}` : '');
-      pvDel.textContent = (deliveryEl.value || '—') + ' Days';
+      const catText = (categoryEl.options[categoryEl.selectedIndex]?.text || '—');
+      pvCat.textContent = (catText) + (subcatEl.value ? ` / ${subcatEl.value}` : '');
+      pvDel.textContent = (document.querySelector('.plan-delivery')?.value || '—') + ' Days';
       pvPrice.textContent = '₹' + getFirstPlanPrice();
       pvRev.textContent = getFirstPlanRevisions();
       pvFeat.innerHTML = '';
-      const feats = Array.from(document.querySelectorAll('.plan-column .feat-chk:checked')).map(el => el.dataset.feature || (el.nextSibling ? el.nextSibling.textContent.trim() : ''));
-      feats.forEach(f => {
-        const span = document.createElement('span'); span.className = 'badge'; span.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`; pvFeat.appendChild(span);
+      // features: collect included features from first plan
+      const firstCol = document.querySelectorAll('.plan-column')[0];
+      const featNodes = firstCol ? firstCol.querySelectorAll('.plan-extras .plan-extra-row') : [];
+      const feats = [];
+      featNodes.forEach(row => {
+        const label = row.querySelector('.extra-label')?.textContent?.trim() || '';
+        const state = row.querySelector('.extra-state')?.value || 'none';
+        if (state === 'included') feats.push(label);
+      });
+      // also include custom extras with a price or included
+      const custom = Array.from(document.querySelectorAll('.plan-custom-extras')).flatMap(col => Array.from(col.querySelectorAll('div')).map(d => d.firstChild?.textContent).filter(Boolean));
+      feats.concat(custom).forEach(f => {
+        if (f) { const span = document.createElement('span'); span.className = 'badge'; span.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`; pvFeat.appendChild(span); }
       });
     }
 
-    // inputs triggering preview and seo
-    [titleEl, categoryEl, subcatEl, tagsEl, platformEl, deliveryEl].forEach(el => {
-      el.addEventListener('input', () => { renderPreview(); computeKeywordsAndScore(); autosaveNow('fields'); });
-      el.addEventListener('change', () => { renderPreview(); computeKeywordsAndScore(); autosaveNow('fields'); });
-    });
-    document.addEventListener('input', (e) => { if (e.target.closest('.plan-column')) renderPreview(); });
-    quill.on('text-change', () => { const len = (quill.getText() || '').trim().length; $('#descCount').textContent = `${len} / 1200`; computeKeywordsAndScore(); autosaveNow('description'); });
+    // auto render preview on inputs
+    [titleEl, categoryEl, subcatEl, baseHourlyEl].forEach(el => { el.addEventListener('input', () => { renderPreview(); computeKeywordsAndScore(); autosaveNow('fields'); }); el.addEventListener('change', () => { renderPreview(); computeKeywordsAndScore(); autosaveNow('fields'); }); });
+    document.addEventListener('input', (e) => { if (e.target.closest('.plan-column')) { renderPreview(); autosaveNow('plan-input'); } });
 
-    // SEO compute
+    quill.on('text-change', () => {
+      const len = (quill.getText() || '').trim().length; descCount.textContent = `${Math.min(len, 1200)} / 1200`; // enforce
+      if (len > 1200) {
+        const txt = quill.getText().slice(0, 1200);
+        quill.setText(txt);
+      }
+      computeKeywordsAndScore(); autosaveNow('description'); renderPreview();
+    });
+
+    // --- SEO compute ---
+    const kwSuggestions = document.getElementById('kwSuggestions') || null;
+    const qualityScoreEl = document.getElementById('qualityScore') || null;
+
     function computeKeywordsAndScore() {
       const text = (titleEl.value + ' ' + (quill.root.innerText || '')).toLowerCase();
       const words = text.match(/[a-z0-9]+/g) || [];
       const freq = {};
       words.forEach(w => { if (w.length < 3) return; freq[w] = (freq[w] || 0) + 1; });
       const sorted = Object.keys(freq).sort((a, b) => freq[b] - freq[a]).slice(0, 6);
-      kwSuggestions.textContent = sorted.join(', ') || '—';
       const tlen = Math.min(50, titleEl.value.length);
       const dlen = Math.min(1200, (quill.root.innerText || '').length);
-      const tagsCount = tagsEl.value.split(',').filter(t => t.trim()).length;
+      const tagsCount = readChips(tagsWrap).length;
       const score = Math.max(10, Math.min(95, Math.round((tlen / 50) * 30 + (dlen / 1200) * 50 + Math.min(1, tagsCount / 6) * 20)));
-      qualityScoreEl.textContent = score;
+      if (kwSuggestions) kwSuggestions.textContent = sorted.join(', ') || '—';
+      if (qualityScoreEl) qualityScoreEl.textContent = score;
       return { keywords: sorted, score };
     }
 
@@ -811,82 +1379,113 @@
       const kv = computeKeywordsAndScore();
       const items = [];
       items.push(kv.score > 50 ? 'Title & description: OK' : 'Improve title/description');
-      items.push(tagsEl.value.split(',').filter(t => t.trim()).length >= 3 ? 'Tags OK' : 'Add 3–8 tags');
+      items.push(readChips(tagsWrap).length >= 3 ? 'Tags OK' : 'Add 3–8 tags');
       items.push(mediaFiles.length > 0 ? 'Media uploaded' : 'Add at least one image');
       seoChecklist.innerHTML = items.map(i => `• ${i}`).join('<br>');
     }
 
-    // Autosave (localStorage) - improved subtle indicator
-    const AUTOSAVE_KEY = 'th_gig_autosave_v3';
+    // --- Autosave localStorage ---
+    const AUTOSAVE_KEY = 'th_gig_autosave_final_v1';
     let autosaveTimer = null;
     function autosaveNow(section) {
       clearTimeout(autosaveTimer);
-      autosaveStatus.textContent = 'Saving…';
       autosaveTimer = setTimeout(() => {
-        try { localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(buildLocalPayload())); autosaveStatus.textContent = 'Saved'; setTimeout(() => autosaveStatus.textContent = 'Idle', 900); } catch (e) { autosaveStatus.textContent = 'Error' }
+        try {
+          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(buildLocalPayload()));
+        } catch (e) { }
       }, 700);
     }
-    setInterval(() => autosaveNow('periodic'), 15000);
+    setInterval(() => autosaveNow('periodic'), 20000);
 
     function buildLocalPayload() {
       return {
-        title: titleEl.value, category: categoryEl.value, subcategory: subcatEl.value, tags: tagsEl.value, skills: skillsEl.value, languages: languagesEl.value, platform: platformEl.value,
+        title: titleEl.value, category: categoryEl.value, subcategory: subcatEl.value,
+        tags: readChips(tagsWrap), skills: readChips(skillsWrap), languages: readChips(langsWrap),
         plans: Array.from(document.querySelectorAll('.plan-column')).map(col => ({
           name: col.querySelector('.plan-name').value,
           price: Number(col.querySelector('.plan-price').value || 0),
           desc: col.querySelector('.plan-desc').value,
           delivery: col.querySelector('.plan-delivery').value,
-          revisions: col.querySelector('.plan-revisions').value,
-          extras: Array.from(col.querySelectorAll('.plan-extras .extra-label')).map((el, i) => ({ label: el.value, price: Number(col.querySelectorAll('.extra-price')[i].value || 0) }))
+          revisions: col.querySelector('.plan-revisions').value
         })),
-        description: quill.root.innerHTML, requirements: Array.from($$('.req-q')).map(i => i.value), faq: Array.from($$('.faq-q')).map((q, i) => ({ q: q.value, a: $$('.faq-a')[i]?.value })), mediaCount: mediaFiles.length, timestamp: Date.now()
+        description: quill.root.innerHTML,
+        requirements: Array.from($$('.req-q')).map(i => i.value),
+        faqs: Array.from($$('.faq-q')).map((q, i) => ({ q: q.value, a: $$('.faq-a')[i]?.value })),
+        media: mediaFiles.map(m => ({ name: m.file.name, type: m.file.type, size: m.file.size })),
+        coverIndex, timestamp: Date.now()
       };
     }
 
     function restoreAutosave() {
-      const raw = localStorage.getItem(AUTOSAVE_KEY);
-      if (!raw) return;
+      const raw = localStorage.getItem(AUTOSAVE_KEY); if (!raw) return;
       try {
         const p = JSON.parse(raw);
-        if (confirm('Restore autosaved draft?')) applyLocalPayload(p);
+        // show a non-blocking banner/prompt instead of immediate confirm
+        const banner = document.createElement('div');
+        banner.className = 'glass p-3 fixed left-4 right-4 top-20 z-60';
+        banner.style.display = 'flex'; banner.style.justifyContent = 'space-between'; banner.style.alignItems = 'center';
+        banner.innerHTML = `<div>Autosaved draft found. Restore?</div><div><button id="restoreYes" class="btn btn-brand">Yes</button><button id="restoreNo" class="btn">No</button></div>`;
+        document.body.appendChild(banner);
+        document.getElementById('restoreYes').addEventListener('click', () => { applyLocalPayload(p); banner.remove(); });
+        document.getElementById('restoreNo').addEventListener('click', () => { banner.remove(); });
       } catch (e) { }
     }
 
     function applyLocalPayload(p) {
       titleEl.value = p.title || ''; titleCount.textContent = `${titleEl.value.length}/50`;
-      categoryEl.value = p.category || ''; populateSubcategories(p.category); populatePlanFeatureLists(p.category);
-      subcatEl.value = p.subcategory || ''; tagsEl.value = p.tags || ''; skillsEl.value = p.skills || ''; languagesEl.value = p.languages || ''; platformEl.value = p.platform || '';
+      categoryEl.value = p.category || ''; populateSubcategories(p.category); populatePlanExtras(p.category); populateGigMeta(p.category);
+      subcatEl.value = p.subcategory || '';
+      // tags/skills/langs
+      tagsWrap.innerHTML = ''; (p.tags || []).forEach(t => createChip(t, tagsWrap));
+      skillsWrap.innerHTML = ''; (p.skills || []).forEach(s => createChip(s, skillsWrap));
+      langsWrap.innerHTML = ''; (p.languages || []).forEach(l => createChip(l, langsWrap));
+      // plans
       (p.plans || []).forEach((pl, i) => { const col = document.querySelectorAll('.plan-column')[i]; if (!col) return; col.querySelector('.plan-name').value = pl.name || col.querySelector('.plan-name').value; col.querySelector('.plan-price').value = pl.price || col.querySelector('.plan-price').value; col.querySelector('.plan-desc').value = pl.desc || col.querySelector('.plan-desc').value; col.querySelector('.plan-delivery').value = pl.delivery || col.querySelector('.plan-delivery').value; col.querySelector('.plan-revisions').value = pl.revisions || col.querySelector('.plan-revisions').value; });
-      quill.root.innerHTML = p.description || quill.root.innerHTML;
+      quill.root.innerHTML = p.description || '';
       renderPreview(); renderMediaPreview(); computeKeywordsAndScore();
     }
 
-    // Build payload (Not Provided defaults)
+    // --- Build payload for Firestore (valOrDefault) ---
     function valOrDefault(v) { const s = String(v || '').trim(); return s === '' ? 'Not Provided' : s; }
     function buildGigPayload(status = 'published', imageUrls = []) {
-      const plans = Array.from(document.querySelectorAll('.plan-column')).map(col => ({
-        name: valOrDefault(col.querySelector('.plan-name').value),
-        price: Number(col.querySelector('.plan-price').value || 0),
-        description: valOrDefault(col.querySelector('.plan-desc').value),
-        delivery: valOrDefault(col.querySelector('.plan-delivery').value),
-        revisions: valOrDefault(col.querySelector('.plan-revisions').value),
-        extras: Array.from(col.querySelectorAll('.plan-extras .extra-label')).map((el, i) => ({ label: el.value || 'Extra', price: Number(col.querySelectorAll('.extra-price')[i].value || 0) })),
-        features: Array.from(col.querySelectorAll('.plan-extras .feat-chk:checked')).map(i => i.dataset.feature)
-      }));
-      return {
+      const plans = Array.from(document.querySelectorAll('.plan-column')).map(col => {
+        // extras reading
+        const extras = [];
+        const extrasRows = col.querySelectorAll('.plan-extras > .plan-extra-row');
+        extrasRows.forEach(r => {
+          const label = r.querySelector('.extra-label')?.textContent.trim() || '';
+          const stateInp = r.querySelector('.extra-state');
+          const state = stateInp ? stateInp.value : 'none';
+          const priceInp = r.querySelector('.extra-price'); const price = priceInp ? Number(priceInp.value || 0) : 0;
+          extras.push({ label, state, addonPrice: price });
+        });
+        // custom extras
+        const custom = Array.from(col.querySelectorAll('.plan-custom-extras > div')).map(div => ({ label: div.firstChild.textContent, price: Number(div.querySelector('.extra-price')?.value || 0) }));
+        return {
+          name: valOrDefault(col.querySelector('.plan-name').value),
+          price: Number(col.querySelector('.plan-price').value || 0),
+          description: valOrDefault(col.querySelector('.plan-desc').value),
+          delivery: valOrDefault(col.querySelector('.plan-delivery').value),
+          revisions: valOrDefault(col.querySelector('.plan-revisions').value),
+          extras, custom
+        };
+      });
+
+      const images = imageUrls.length ? imageUrls : ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'];
+      const payload = {
         title: valOrDefault(titleEl.value),
         category: valOrDefault(categoryEl.value),
         subcategory: valOrDefault(subcatEl.value),
-        tags: tagsEl.value.split(',').map(t => t.trim()).filter(Boolean),
-        skills: skillsEl.value.split(',').map(s => s.trim()).filter(Boolean),
-        languages: languagesEl.value.split(',').map(l => l.trim()).filter(Boolean),
-        platform: valOrDefault(platformEl.value),
-        delivery: valOrDefault(deliveryEl.value),
+        tags: readChips(tagsWrap),
+        skills: readChips(skillsWrap),
+        languages: readChips(langsWrap),
+        platform: valOrDefault($('#platform').value),
         plans,
         description: valOrDefault(quill.root.innerHTML),
         requirements: Array.from($$('.req-q')).map(i => i.value || 'Not Provided'),
         faq: Array.from($$('.faq-q')).map((q, i) => ({ q: q.value || 'Not Provided', a: $$('.faq-a')[i]?.value || 'Not Provided' })),
-        images: imageUrls.length ? imageUrls : ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'],
+        media: images,
+        coverIndex,
         sellerName: currentUser?.displayName || (currentUser?.email ? currentUser.email.split('@')[0] : 'Freelancer'),
         sellerPhoto: currentUser?.photoURL || '',
         status,
@@ -895,6 +1494,7 @@
         rating: 0, reviews: 0,
         createdAt: serverTimestamp(), updatedAt: serverTimestamp()
       };
+      return payload;
     }
 
     // Upload files with progress
@@ -922,10 +1522,11 @@
 
     // Save Draft
     $('#btnSaveDraft').addEventListener('click', async () => {
-      if (!currentUser) { alert('Please login to save draft to server. Local autosave is available.'); return; }
+      if (!currentUser) { alert('Please login to save draft to server. Local autosave available.'); return; }
       btnSaveDraft.disabled = true; formStatus.textContent = 'Saving draft...';
       try {
-        const urls = mediaFiles.length ? await uploadFiles(mediaFiles, currentUser.uid, ({ index, pct, name }) => formStatus.textContent = `Uploading ${name} ${pct}%`) : [];
+        const filesToUpload = mediaFiles.map(m => m.file);
+        const urls = filesToUpload.length ? await uploadFiles(filesToUpload, currentUser.uid, ({ index, pct, name }) => { formStatus.textContent = `Uploading ${name} ${pct}%`; }) : [];
         const payload = buildGigPayload('draft', urls);
         const ref = await addDoc(collection(db, GIGS_COLLECTION), payload);
         formStatus.textContent = 'Draft saved ✓';
@@ -934,38 +1535,63 @@
       finally { btnSaveDraft.disabled = false; }
     });
 
-    // Publish (allows blanks)
+    // Publish (with proper authentication and flow from old code)
     $('#btnPublish').addEventListener('click', async () => {
       if (!currentUser) {
-        if (!confirm('You are not logged in. Publish will not be saved to cloud. Continue and show final payload?')) return;
+        alert('Please login to publish your gig');
+        location.href = 'login.html?next=create-gig.html';
+        return;
       }
-      btnPublish.disabled = true; formStatus.textContent = 'Publishing...';
+
+      btnPublish.disabled = true;
+      formStatus.textContent = 'Uploading media (if any)…';
+      formStatus.className = '';
+
       try {
-        const urls = currentUser && mediaFiles.length ? await uploadFiles(mediaFiles, currentUser.uid, ({ index, pct, name }) => formStatus.textContent = `Uploading ${name} ${pct}%`) : mediaFiles.map(f => f.name);
+        // Upload files first (from old code logic)
+        const filesToUpload = mediaFiles.map(m => m.file);
+        const urls = filesToUpload.length ?
+          await uploadFiles(filesToUpload, currentUser.uid, ({ index, pct, name }) => {
+            formStatus.textContent = `Uploading ${name} ${pct}%`;
+          }) : [];
+
+        formStatus.textContent = 'Saving gig…';
+
+        // Build payload (using your final code's buildGigPayload)
         const payload = buildGigPayload('published', urls);
-        if (currentUser) {
-          const ref = await addDoc(collection(db, GIGS_COLLECTION), payload);
-          formStatus.textContent = 'Published ✓ Redirecting…'; debugJson.textContent = JSON.stringify({ id: ref.id, payload }, null, 2);
-          setTimeout(() => location.href = `index.html?id=${encodeURIComponent(ref.id)}`, 700);
-        } else {
-          formStatus.textContent = 'Preview (not saved to server) — see JSON below'; debugJson.textContent = JSON.stringify({ previewPayload: payload }, null, 2);
-        }
-      } catch (e) { formStatus.textContent = 'Publish failed: ' + (e.message || e); }
-      finally { btnPublish.disabled = false; }
+
+        // Save to Firestore (from old code logic)
+        const docRef = await addDoc(collection(db, GIGS_COLLECTION), payload);
+
+        formStatus.className = 'ok';
+        formStatus.textContent = 'Gig published ✓ Redirecting…';
+        debugJson.textContent = JSON.stringify({ id: docRef.id, payload }, null, 2);
+
+        // Redirect to gig detail (from old code)
+        setTimeout(() => {
+          location.href = `index.html?id=${encodeURIComponent(docRef.id)}`;
+        }, 700);
+
+      } catch (e) {
+        formStatus.className = 'err';
+        formStatus.textContent = 'Publish failed: ' + (e.message || e);
+      } finally {
+        btnPublish.disabled = false;
+      }
     });
 
     // Reset
-    $('#btnReset').addEventListener('click', () => { if (!confirm('Reset the entire form? This will clear autosaved draft locally.')) return; localStorage.removeItem(AUTOSAVE_KEY); location.reload(); });
+    $('#btnReset').addEventListener('click', () => { if (!confirm('Reset entire form? This clears autosaved local draft.')) return; localStorage.removeItem(AUTOSAVE_KEY); location.reload(); });
 
-    // Debug render
-    function renderDebug() { debugJson.textContent = JSON.stringify(buildGigPayload('preview', mediaFiles.map(f => f.name)), null, 2); }
+    // Debug
+    function renderDebug() { debugJson.textContent = JSON.stringify(buildGigPayload('preview', mediaFiles.map(m => m.file.name)), null, 2); }
+
+    // small helpers to react to plan extras changes
+    document.addEventListener('change', (e) => { if (e.target.closest('.plan-column')) { renderPreview(); autosaveNow('plan-change'); } });
+    document.addEventListener('input', (e) => { if (e.target.closest('.plan-column')) { renderPreview(); autosaveNow('plan-input'); } });
 
     // restore autosave on load
     window.addEventListener('load', () => { restoreAutosave(); renderPreview(); computeKeywordsAndScore(); renderDebug(); });
-
-    // small helpers to react to changes in plan extras and features -> preview + autosave
-    document.addEventListener('change', (e) => { if (e.target.closest('.plan-column')) { renderPreview(); autosaveNow('plan-change'); } });
-    document.addEventListener('input', (e) => { if (e.target.closest('.plan-column')) { renderPreview(); autosaveNow('plan-input'); } });
 
   </script>
 </body>
