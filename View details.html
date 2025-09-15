@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Gig - Talent-Hub Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg1: #07102a;
+      --bg2: #040718;
+      --ink: #e9f2ff;
+      --muted: #98abc7;
+      --glass: rgba(255, 255, 255, .03);
+      --b: rgba(255, 255, 255, .06);
+      --brand: #34d399;
+      --brand-ink: #042819;
+      --warn: #ffcc66;
+      --err: #ff8a8a;
+    }
+
+    body {
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--b);
+      border-radius: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-brand {
+      background: var(--brand);
+      color: var(--brand-ink);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--brand);
+      color: var(--brand);
+    }
+
+    .preview-cover {
+      aspect-ratio: 16/9;
+      background: #12102b center/cover no-repeat;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, .06);
+      transition: all 0.3s ease;
+    }
+
+    .preview-cover:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .05);
+      margin: 4px;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .chip:hover {
+      background: rgba(255, 255, 255, .06);
+      transform: translateY(-1px);
+    }
+
+    .plan-column {
+      background: rgba(255, 255, 255, .02);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, .04);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+
+    .plan-column:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border-color: rgba(52, 211, 153, 0.2);
+    }
+
+    .plan-column.popular {
+      border: 2px solid rgba(52, 211, 153, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan-column.popular::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--brand);
+      color: var(--brand-ink);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-bottom-left-radius: 8px;
+    }
+
+    .plan-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .soft {
+      background: rgba(255, 255, 255, .01);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px dashed rgba(255, 255, 255, .03);
+    }
+
+    .kicker {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .kicker i {
+      font-size: 1.1rem;
+    }
+
+    .tab-button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-button.active {
+      background: rgba(52, 211, 153, 0.1);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--brand);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .gallery-item {
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+
+    .feature-list li i {
+      color: var(--brand);
+      width: 20px;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--brand);
+      border-radius: 3px;
+    }
+
+    .review-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 15px;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- NAV -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-400 flex items-center gap-2">
+        <i class="fas fa-rocket"></i> Talent-Hub
+      </a>
+      <div class="flex items-center gap-3">
+        <span id="loginStatus" class="text-sm px-3 py-1 rounded-full bg-black/20">Checking auth…</span>
+        <a id="loginBtnLink" href="login.html" class="btn btn-outline">Login</a>
+        <button id="btnLogout" class="btn hidden">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-bg2/90 flex items-center justify-center z-50">
+    <div class="text-center">
+      <div class="w-16 h-16 border-4 border-brand border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <p class="mt-4 text-lg font-semibold">Loading gig details...</p>
+    </div>
+  </div>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
+    <!-- LEFT: Gig Details -->
+    <section class="lg:col-span-2 space-y-6">
+      <!-- Breadcrumb -->
+      <div class="flex items-center text-sm text-muted">
+        <a href="index.html" class="hover:text-brand transition-colors">Home</a>
+        <i class="fas fa-chevron-right mx-2 text-xs"></i>
+        <a href="browse.html" class="hover:text-brand transition-colors">Browse Gigs</a>
+        <i class="fas fa-chevron-right mx-2 text-xs"></i>
+        <span id="breadcrumbCategory">Category</span>
+        <i class="fas fa-chevron-right mx-2 text-xs"></i>
+        <span class="text-ink">Gig Details</span>
+      </div>
+
+      <!-- Service Title & Seller Info -->
+      <div class="glass p-6">
+        <h1 id="gigTitle" class="text-2xl md:text-3xl font-extrabold animate-pulse bg-muted/20 rounded h-10 w-3/4"></h1>
+        <div class="flex items-center gap-3 mt-4">
+          <div class="animate-pulse bg-muted/20 rounded-full w-10 h-10"></div>
+          <div class="flex-1">
+            <div class="animate-pulse bg-muted/20 rounded h-5 w-32 mb-1"></div>
+            <div class="animate-pulse bg-muted/20 rounded h-4 w-24"></div>
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <div class="animate-pulse bg-muted/20 rounded-full h-6 w-24"></div>
+          <div class="animate-pulse bg-muted/20 rounded-full h-6 w-24"></div>
+          <div class="animate-pulse bg-muted/20 rounded-full h-6 w-24"></div>
+        </div>
+      </div>
+
+      <!-- Gallery Section -->
+      <div class="glass p-5">
+        <div class="kicker">
+          <i class="fas fa-images"></i>
+          <span>Gallery</span>
+        </div>
+        <div id="galleryContainer" class="gallery-grid">
+          <div class="gallery-item animate-pulse bg-muted/20"></div>
+          <div class="gallery-item animate-pulse bg-muted/20"></div>
+          <div class="gallery-item animate-pulse bg-muted/20"></div>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="flex gap-2 overflow-x-auto pb-2">
+        <div class="tab-button active" data-tab="description">
+          <i class="fas fa-file-alt mr-2"></i>Description
+        </div>
+        <div class="tab-button" data-tab="packages">
+          <i class="fas fa-cubes mr-2"></i>Packages
+        </div>
+        <div class="tab-button" data-tab="reviews">
+          <i class="fas fa-star mr-2"></i>Reviews
+        </div>
+        <div class="tab-button" data-tab="faq">
+          <i class="fas fa-question-circle mr-2"></i>FAQ
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Description Tab -->
+        <div id="tab-description" class="tab-pane active">
+          <div class="glass p-5">
+            <div class="kicker">
+              <i class="fas fa-info-circle"></i>
+              <span>Service Description</span>
+            </div>
+            <div id="gigDescription" class="prose prose-invert max-w-none">
+              <div class="animate-pulse bg-muted/20 rounded h-4 w-full mb-2"></div>
+              <div class="animate-pulse bg-muted/20 rounded h-4 w-full mb-2"></div>
+              <div class="animate-pulse bg-muted/20 rounded h-4 w-3/4"></div>
+            </div>
+            
+            <div class="mt-6">
+              <div class="text-sm font-semibold mb-3">What's Included:</div>
+              <ul class="feature-list" id="featuresList">
+                <li><div class="animate-pulse bg-muted/20 rounded h-4 w-64"></div></li>
+                <li><div class="animate-pulse bg-muted/20 rounded h-4 w-56"></div></li>
+                <li><div class="animate-pulse bg-muted/20 rounded h-4 w-60"></div></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Packages Tab -->
+        <div id="tab-packages" class="tab-pane hidden">
+          <div class="glass p-5">
+            <div class="kicker">
+              <i class="fas fa-cubes"></i>
+              <span>Packages & Pricing</span>
+            </div>
+            <div class="grid md:grid-cols-3 gap-5 mt-4" id="packagesContainer">
+              <div class="plan-column animate-pulse">
+                <div class="h-6 bg-muted/20 rounded w-3/4 mx-auto mb-4"></div>
+                <div class="h-8 bg-muted/20 rounded w-1/2 mx-auto mb-4"></div>
+                <div class="h-4 bg-muted/20 rounded w-full mb-2"></div>
+                <div class="h-4 bg-muted/20 rounded w-5/6 mb-6"></div>
+                <div class="h-10 bg-muted/20 rounded w-full mt-auto"></div>
+              </div>
+              <div class="plan-column popular animate-pulse">
+                <div class="h-6 bg-muted/20 rounded w-3/4 mx-auto mb-4"></div>
+                <div class="h-8 bg-muted/20 rounded w-1/2 mx-auto mb-4"></div>
+                <div class="h-4 bg-muted/20 rounded w-full mb-2"></div>
+                <div class="h-4 bg-muted/20 rounded w-5/6 mb-6"></div>
+                <div class="h-10 bg-muted/20 rounded w-full mt-auto"></div>
+              </div>
+              <div class="plan-column animate-pulse">
+                <div class="h-6 bg-muted/20 rounded w-3/4 mx-auto mb-4"></div>
+                <div class="h-8 bg-muted/20 rounded w-1/2 mx-auto mb-4"></div>
+                <div class="h-4 bg-muted/20 rounded w-full mb-2"></div>
+                <div class="h-4 bg-muted/20 rounded w-5/6 mb-6"></div>
+                <div class="h-10 bg-muted/20 rounded w-full mt-auto"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div id="tab-reviews" class="tab-pane hidden">
+          <div class="glass p-5">
+            <div class="kicker">
+              <i class="fas fa-star"></i>
+              <span>Reviews & Ratings</span>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6 mt-4">
+              <div class="text-center p-4 glass">
+                <div class="text-5xl font-bold text-brand">4.8</div>
+                <div class="flex justify-center my-3">
+                  <i class="fas fa-star text-yellow-400"></i>
+                  <i class="fas fa-star text-yellow-400"></i>
+                  <i class="fas fa-star text-yellow-400"></i>
+                  <i class="fas fa-star text-yellow-400"></i>
+                  <i class="fas fa-star-half-alt text-yellow-400"></i>
+                </div>
+                <div class="text-muted text-sm">Based on 24 reviews</div>
+              </div>
+              <div class="md:col-span-2">
+                <div class="flex items-center justify-between text-sm mb-1">
+                  <div class="flex items-center">
+                    <span>5</span>
+                    <i class="fas fa-star text-yellow-400 ml-1 text-xs"></i>
+                  </div>
+                  <div class="w-3/4 bg-muted/20 rounded-full h-2">
+                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 80%"></div>
+                  </div>
+                  <span>19</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-1">
+                  <div class="flex items-center">
+                    <span>4</span>
+                    <i class="fas fa-star text-yellow-400 ml-1 text-xs"></i>
+                  </div>
+                  <div class="w-3/4 bg-muted/20 rounded-full h-2">
+                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 15%"></div>
+                  </div>
+                  <span>4</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-1">
+                  <div class="flex items-center">
+                    <span>3</span>
+                    <i class="fas fa-star text-yellow-400 ml-1 text-xs"></i>
+                  </div>
+                  <div class="w-3/4 bg-muted/20 rounded-full h-2">
+                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 5%"></div>
+                  </div>
+                  <span>1</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-1">
+                  <div class="flex items-center">
+                    <span>2</span>
+                    <i class="fas fa-star text-yellow-400 ml-1 text-xs"></i>
+                  </div>
+                  <div class="w-3/4 bg-muted/20 rounded-full h-2">
+                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 0%"></div>
+                  </div>
+                  <span>0</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center">
+                    <span>1</span>
+                    <i class="fas fa-star text-yellow-400 ml-1 text-xs"></i>
+                  </div>
+                  <div class="w-3/4 bg-muted/20 rounded-full h-2">
+                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 0%"></div>
+                  </div>
+                  <span>0</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="reviewsContainer" class="mt-6">
+              <div class="review-card animate-pulse">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-10 h-10 bg-muted/20 rounded-full"></div>
+                  <div>
+                    <div class="h-4 bg-muted/20 rounded w-32 mb-2"></div>
+                    <div class="h-3 bg-muted/20 rounded w-24"></div>
+                  </div>
+                </div>
+                <div class="h-4 bg-muted/20 rounded w-full mb-2"></div>
+                <div class="h-4 bg-muted/20 rounded w-5/6"></div>
+              </div>
+              <div class="review-card animate-pulse">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-10 h-10 bg-muted/20 rounded-full"></div>
+                  <div>
+                    <div class="h-4 bg-muted/20 rounded w-32 mb-2"></div>
+                    <div class="h-3 bg-muted/20 rounded w-24"></div>
+                  </div>
+                </div>
+                <div class="h-4 bg-muted/20 rounded w-full mb-2"></div>
+                <div class="h-4 bg-muted/20 rounded w-5/6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Tab -->
+        <div id="tab-faq" class="tab-pane hidden">
+          <div class="glass p-5">
+            <div class="kicker">
+              <i class="fas fa-question-circle"></i>
+              <span>Frequently Asked Questions</span>
+            </div>
+            <div id="faqContainer" class="mt-4 space-y-4">
+              <div class="soft animate-pulse">
+                <div class="h-5 bg-muted/20 rounded w-3/4 mb-3"></div>
+                <div class="h-4 bg-muted/20 rounded w-full"></div>
+              </div>
+              <div class="soft animate-pulse">
+                <div class="h-5 bg-muted/20 rounded w-4/5 mb-3"></div>
+                <div class="h-4 bg-muted/20 rounded w-full"></div>
+              </div>
+              <div class="soft animate-pulse">
+                <div class="h-5 bg-muted/20 rounded w-2/3 mb-3"></div>
+                <div class="h-4 bg-muted/20 rounded w-full"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Seller Info & Action -->
+    <aside class="space-y-4">
+      <!-- Seller Contact Box -->
+      <div class="glass p-5">
+        <div class="flex items-center gap-3">
+          <div id="sidebarSellerPhoto" class="w-14 h-14 bg-muted/20 rounded-full animate-pulse"></div>
+          <div class="flex-1">
+            <div id="sidebarSellerName" class="h-5 bg-muted/20 rounded w-32 mb-2"></div>
+            <div class="flex items-center text-sm text-green-400">
+              <span class="w-2 h-2 bg-muted/20 rounded-full mr-2"></span>
+              <span id="onlineStatus" class="h-4 bg-muted/20 rounded w-16"></span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4 text-sm">
+          <div class="text-slate-300">Avg. response time:</div>
+          <div id="responseTime" class="font-semibold h-5 bg-muted/20 rounded w-24 mt-1"></div>
+        </div>
+        
+        <button id="contactSellerBtn" class="btn btn-brand w-full mt-4 justify-center">
+          <i class="fas fa-envelope"></i> Contact Me
+        </button>
+
+        <button id="favoriteBtn" class="btn btn-outline w-full mt-3 justify-center">
+          <i class="far fa-heart"></i> Add to Favorites
+        </button>
+      </div>
+
+      <!-- Gig Action Box -->
+      <div class="glass p-5">
+        <div class="text-lg font-bold mb-3">Get Started</div>
+        
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-slate-300">Starting at:</span>
+          <span id="startingPrice" class="text-2xl font-black text-brand">₹---</span>
+        </div>
+        
+        <div class="text-sm text-slate-300 mb-4">
+          <i class="fas fa-clock mr-2"></i>
+          <span id="deliveryTime">Delivery in -- days</span>
+        </div>
+        
+        <button id="orderNowBtn" class="btn btn-brand w-full justify-center py-3 text-lg">
+          <i class="fas fa-shopping-cart"></i> Order Now
+        </button>
+        
+        <div class="text-center text-xs text-slate-400 mt-3">
+          <i class="fas fa-lock mr-1"></i> Secure payment
+        </div>
+      </div>
+
+      <!-- Seller Statistics -->
+      <div class="glass p-5">
+        <div class="text-xs text-slate-300 mb-3 uppercase tracking-wide">Seller Information</div>
+        
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="text-slate-300 flex items-center">
+              <i class="fas fa-map-marker-alt mr-2 w-4"></i> From
+            </div>
+            <div id="sellerCountry" class="font-semibold mt-1 h-4 bg-muted/20 rounded w-20"></div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300 flex items-center">
+              <i class="fas fa-calendar-alt mr-2 w-4"></i> Member since
+            </div>
+            <div id="memberSince" class="font-semibold mt-1 h-4 bg-muted/20 rounded w-24"></div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300 flex items-center">
+              <i class="fas fa-shipping-fast mr-2 w-4"></i> Last delivery
+            </div>
+            <div id="lastDelivery" class="font-semibold mt-1 h-4 bg-muted/20 rounded w-16"></div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300 flex items-center">
+              <i class="fas fa-language mr-2 w-4"></i> Languages
+            </div>
+            <div id="languagesSpoken" class="font-semibold mt-1 h-4 bg-muted/20 rounded w-32"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gig Metadata -->
+      <div class="glass p-5">
+        <div class="text-xs text-slate-300 mb-3 uppercase tracking-wide">Gig Details</div>
+        
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="text-slate-300 flex items-center">
+              <i class="fas fa-tag mr-2 w-4"></i> Category
+            </div>
+            <div id="gigCategory" class="font-semibold mt-1 h-4 bg-muted/20 rounded w-28"></div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300 flex items-center">
+              <i class="fas fa-hashtag mr-2 w-4"></i> Tags
+            </div>
+            <div id="gigTags" class="flex flex-wrap gap-1 mt-2">
+              <span class="chip animate-pulse bg-muted/20 w-16 h-6"></span>
+              <span class="chip animate-pulse bg-muted/20 w-14 h-6"></span>
+              <span class="chip animate-pulse bg-muted/20 w-20 h-6"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Share Gig -->
+      <div class="glass p-5">
+        <div class="text-xs text-slate-300 mb-3 uppercase tracking-wide">Share This Gig</div>
+        <div class="flex justify-between">
+          <a href="#" class="text-muted hover:text-blue-400 transition-colors">
+            <i class="fab fa-facebook-f text-lg"></i>
+          </a>
+          <a href="#" class="text-muted hover:text-blue-400 transition-colors">
+            <i class="fab fa-twitter text-lg"></i>
+          </a>
+          <a href="#" class="text-muted hover:text-red-500 transition-colors">
+            <i class="fab fa-pinterest-p text-lg"></i>
+          </a>
+          <a href="#" class="text-muted hover:text-blue-700 transition-colors">
+            <i class="fab fa-linkedin-in text-lg"></i>
+          </a>
+          <a href="#" class="text-muted hover:text-green-500 transition-colors">
+            <i class="fab fa-whatsapp text-lg"></i>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="text-center py-6 text-slate-300">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="text-2xl font-extrabold text-emerald-400 mb-4 md:mb-0">Talent-Hub</div>
+        <div class="flex gap-6 text-sm">
+          <a href="#" class="hover:text-brand transition-colors">Terms of Service</a>
+          <a href="#" class="hover:text-brand transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-brand transition-colors">Contact Us</a>
+        </div>
+      </div>
+      <div class="mt-4 text-xs text-slate-400">© 2025 Talent-Hub Pro. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Firebase config (same as in create.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+      measurementId: "G-TYL2XF4WZY"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM elements
+    const loginStatus = document.getElementById('loginStatus');
+    const loginBtnLink = document.getElementById('loginBtnLink');
+    const btnLogout = document.getElementById('btnLogout');
+    const contactSellerBtn = document.getElementById('contactSellerBtn');
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    const orderNowBtn = document.getElementById('orderNowBtn');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    // Gig data elements
+    const gigTitle = document.getElementById('gigTitle');
+    const sellerPhoto = document.getElementById('sellerPhoto');
+    const sidebarSellerPhoto = document.getElementById('sidebarSellerPhoto');
+    const sellerName = document.getElementById('sellerName');
+    const sidebarSellerName = document.getElementById('sidebarSellerName');
+    const rating = document.getElementById('rating');
+    const reviewsCount = document.getElementById('reviewsCount');
+    const queueCount = document.getElementById('queueCount');
+    const gigDescription = document.getElementById('gigDescription');
+    const featuresList = document.getElementById('featuresList');
+    const packagesContainer = document.getElementById('packagesContainer');
+    const faqContainer = document.getElementById('faqContainer');
+    const responseTime = document.getElementById('responseTime');
+    const sellerCountry = document.getElementById('sellerCountry');
+    const memberSince = document.getElementById('memberSince');
+    const lastDelivery = document.getElementById('lastDelivery');
+    const languagesSpoken = document.getElementById('languagesSpoken');
+    const gigCategory = document.getElementById('gigCategory');
+    const gigTags = document.getElementById('gigTags');
+    const startingPrice = document.getElementById('startingPrice');
+    const deliveryTime = document.getElementById('deliveryTime');
+    const galleryContainer = document.getElementById('galleryContainer');
+    const breadcrumbCategory = document.getElementById('breadcrumbCategory');
+
+    // Tab elements
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    // Get gig ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const gigId = urlParams.get('id');
+
+    // Current user and gig data
+    let currentUser = null;
+    let gigData = null;
+    let isFavorite = false;
+
+    // Auth state handler
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        loginStatus.textContent = 'Not logged in';
+        loginBtnLink.classList.remove('hidden');
+        btnLogout.classList.add('hidden');
+        return;
+      }
+      
+      currentUser = user;
+      loginStatus.textContent = `Hi, ${user.displayName || user.email.split('@')[0]}`;
+      loginBtnLink.classList.add('hidden');
+      btnLogout.classList.remove('hidden');
+      
+      // Check if this gig is in user's favorites
+      if (gigId) {
+        await checkIfFavorite();
+      }
+    });
+
+    // Logout handler
+    btnLogout.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (e) {
+        alert('Logout failed');
+      }
+    });
+
+    // Tab switching
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tabId = button.getAttribute('data-tab');
+        
+        // Update active tab button
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        // Show active tab pane
+        tabPanes.forEach(pane => pane.classList.add('hidden'));
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      });
+    });
+
+    // Contact seller button handler
+    contactSellerBtn.addEventListener('click', () => {
+      if (!auth.currentUser) {
+        alert('Please login to contact the seller');
+        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        return;
+      }
+      
+      // Show contact modal
+      showContactModal();
+    });
+
+    // Favorite button handler
+    favoriteBtn.addEventListener('click', async () => {
+      if (!auth.currentUser) {
+        alert('Please login to add favorites');
+        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        return;
+      }
+      
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        
+        if (isFavorite) {
+          // Remove from favorites
+          await updateDoc(userRef, {
+            favorites: arrayRemove(gigId)
+          });
+          favoriteBtn.innerHTML = '<i class="far fa-heart"></i> Add to Favorites';
+          isFavorite = false;
+        } else {
+          // Add to favorites
+          await updateDoc(userRef, {
+            favorites: arrayUnion(gigId)
+          });
+          favoriteBtn.innerHTML = '<i class="fas fa-heart"></i> Remove Favorite';
+          isFavorite = true;
+        }
+      } catch (error) {
+        console.error("Error updating favorites:", error);
+        alert('Error updating favorites');
+      }
+    });
+
+    // Order now button handler
+    orderNowBtn.addEventListener('click', () => {
+      if (!auth.currentUser) {
+        alert('Please login to place an order');
+        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        return;
+      }
+      
+      // Redirect to order page with gig ID
+      window.location.href = `order.html?gigId=${gigId}`;
+    });
+
+    // Check if gig is in user's favorites
+    async function checkIfFavorite() {
+      if (!currentUser || !gigId) return;
+      
+      try {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          isFavorite = userData.favorites && userData.favorites.includes(gigId);
+          
+          if (isFavorite) {
+            favoriteBtn.innerHTML = '<i class="fas fa-heart"></i> Remove Favorite';
+          }
+        }
+      } catch (error) {
+        console.error("Error checking favorites:", error);
+      }
+    }
+
+    // Show contact modal
+    function showContactModal() {
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4';
+      modal.innerHTML = `
+        <div class="glass p-6 rounded-xl max-w-md w-full">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">Contact Seller</h3>
+            <button class="text-muted hover:text-ink" id="closeModal">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm mb-1">Subject</label>
+              <input type="text" class="w-full p-3 rounded-lg bg-black/20 border border-muted/30 focus:border-brand focus:outline-none" placeholder="Question about your gig">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">Message</label>
+              <textarea class="w-full p-3 rounded-lg bg-black/20 border border-muted/30 focus:border-brand focus:outline-none h-32" placeholder="Type your message here..."></textarea>
+            </div>
+            <button class="btn btn-brand w-full">Send Message</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Close modal handlers
+      modal.querySelector('#closeModal').addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+      
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          document.body.removeChild(modal);
+        }
+      });
+    }
+
+    // Load gig data
+    async function loadGigData() {
+      if (!gigId) {
+        alert('No gig ID specified');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      try {
+        // Get the gig document
+        const gigDocRef = doc(db, "subho_gigs", gigId);
+        const gigDocSnap = await getDoc(gigDocRef);
+
+        if (!gigDocSnap.exists()) {
+          alert('Gig not found');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        gigData = gigDocSnap.data();
+        populateGigData(gigData);
+
+        // Try to get seller data if available
+        if (gigData.createdByUid) {
+          try {
+            const sellersQuery = query(
+              collection(db, "sellers"), 
+              where("uid", "==", gigData.createdByUid)
+            );
+            const sellerSnapshot = await getDocs(sellersQuery);
+            
+            if (!sellerSnapshot.empty) {
+              const sellerData = sellerSnapshot.docs[0].data();
+              populateSellerData(sellerData);
+            }
+          } catch (error) {
+            console.error("Error fetching seller data:", error);
+          }
+        }
+
+        // Hide loading overlay
+        loadingOverlay.classList.add('hidden');
+
+      } catch (error) {
+        console.error("Error loading gig:", error);
+        alert('Error loading gig details');
+        loadingOverlay.classList.add('hidden');
+      }
+    }
+
+    // Populate gig data into the UI
+    function populateGigData(gigData) {
+      // Basic info
+      gigTitle.textContent = gigData.title || 'Untitled Gig';
+      gigTitle.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-10', 'w-3/4');
+      gigDescription.innerHTML = gigData.description || 'No description provided';
+      gigDescription.classList.remove('animate-pulse', 'bg-muted/20', 'rounded');
+      
+      // Seller info
+      const sellerNameText = gigData.sellerName || 'Unknown Seller';
+      sellerName.textContent = sellerNameText;
+      sellerName.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-5', 'w-32', 'mb-1');
+      sidebarSellerName.textContent = sellerNameText;
+      sidebarSellerName.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-5', 'w-32', 'mb-2');
+      
+      if (gigData.sellerPhoto) {
+        sellerPhoto.src = gigData.sellerPhoto;
+        sellerPhoto.classList.remove('animate-pulse', 'bg-muted/20', 'rounded-full', 'w-10', 'h-10');
+        sidebarSellerPhoto.src = gigData.sellerPhoto;
+        sidebarSellerPhoto.classList.remove('animate-pulse', 'bg-muted/20', 'rounded-full', 'w-14', 'h-14');
+      }
+      
+      // Ratings and orders
+      rating.textContent = gigData.rating || '5.0';
+      reviewsCount.textContent = gigData.reviews || '0';
+      queueCount.textContent = gigData.ordersInQueue || '0';
+      queueCount.classList.remove('animate-pulse', 'bg-muted/20', 'rounded-full', 'h-6', 'w-24');
+      
+      // Category and tags
+      gigCategory.textContent = gigData.category || 'Uncategorized';
+      gigCategory.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-4', 'w-28');
+      breadcrumbCategory.textContent = gigData.category || 'Category';
+      
+      if (gigData.tags && gigData.tags.length > 0) {
+        gigTags.innerHTML = '';
+        gigData.tags.forEach(tag => {
+          const tagElement = document.createElement('span');
+          tagElement.className = 'chip';
+          tagElement.textContent = tag;
+          gigTags.appendChild(tagElement);
+        });
+      }
+      
+      // Starting price and delivery
+      if (gigData.plans && gigData.plans.length > 0) {
+        const basicPlan = gigData.plans[0];
+        startingPrice.textContent = `₹${basicPlan.price || '0'}`;
+        deliveryTime.textContent = `Delivery in ${basicPlan.delivery || 'N/A'} days`;
+      }
+      
+      // Packages
+      if (gigData.plans && gigData.plans.length > 0) {
+        packagesContainer.innerHTML = '';
+        gigData.plans.forEach((plan, index) => {
+          const isPopular = index === 1; // Mark the second plan as popular
+          
+          const planElement = document.createElement('div');
+          planElement.className = `plan-column ${isPopular ? 'popular' : ''}`;
+          
+          planElement.innerHTML = `
+            <div class="plan-content">
+              <div class="text-center">
+                <h3 class="font-bold text-lg">${plan.name || `Package ${index + 1}`}</h3>
+                <div class="text-2xl font-black text-emerald-300 my-2">₹${plan.price || '0'}</div>
+                <p class="text-sm text-slate-300">${plan.description || ''}</p>
+              </div>
+              
+              <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <div class="text-slate-300">Delivery</div>
+                  <div class="font-semibold">${plan.delivery || 'N/A'} days</div>
+                </div>
+                <div>
+                  <div class="text-slate-300">Revisions</div>
+                  <div class="font-semibold">${plan.revisions || 'N/A'}</div>
+                </div>
+              </div>
+              
+              ${plan.extras && plan.extras.length > 0 ? `
+                <div class="mt-4">
+                  <div class="text-slate-300 text-sm mb-2">Includes:</div>
+                  <ul class="text-sm space-y-2">
+                    ${plan.extras.filter(extra => extra.state === 'included').map(extra => 
+                      `<li class="flex items-center"><i class="fas fa-check text-emerald-400 mr-2"></i>${extra.label}</li>`
+                    ).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+            </div>
+            
+            <button class="btn btn-brand mt-4 justify-center select-package" data-plan="${index}">
+              Select Package
+            </button>
+          `;
+          
+          packagesContainer.appendChild(planElement);
+        });
+        
+        // Add event listeners to package selection buttons
+        document.querySelectorAll('.select-package').forEach(button => {
+          button.addEventListener('click', () => {
+            if (!auth.currentUser) {
+              alert('Please login to purchase this gig');
+              window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+              return;
+            }
+            
+            const planIndex = button.getAttribute('data-plan');
+            window.location.href = `order.html?gigId=${gigId}&plan=${planIndex}`;
+          });
+        });
+      }
+      
+      // Features list
+      if (gigData.plans && gigData.plans[0] && gigData.plans[0].extras) {
+        featuresList.innerHTML = '';
+        gigData.plans[0].extras.filter(extra => extra.state === 'included').forEach(extra => {
+          const li = document.createElement('li');
+          li.innerHTML = `<i class="fas fa-check-circle text-emerald-400"></i> ${extra.label}`;
+          featuresList.appendChild(li);
+        });
+      }
+      
+      // FAQ
+      if (gigData.faq && gigData.faq.length > 0) {
+        faqContainer.innerHTML = '';
+        gigData.faq.forEach(faqItem => {
+          const faqElement = document.createElement('div');
+          faqElement.className = 'soft';
+          faqElement.innerHTML = `
+            <div class="font-semibold">${faqItem.q || 'Question not available'}</div>
+            <div class="mt-2 text-slate-300">${faqItem.a || 'Answer not available'}</div>
+          `;
+          faqContainer.appendChild(faqElement);
+        });
+      }
+      
+      // Gallery
+      if (gigData.media && gigData.media.length > 0) {
+        galleryContainer.innerHTML = '';
+        gigData.media.forEach((mediaUrl, index) => {
+          const mediaElement = document.createElement('div');
+          mediaElement.className = 'gallery-item';
+          mediaElement.style.backgroundImage = `url('${mediaUrl}')`;
+          mediaElement.style.backgroundSize = 'cover';
+          mediaElement.style.backgroundPosition = 'center';
+          mediaElement.setAttribute('data-index', index);
+          
+          mediaElement.addEventListener('click', () => {
+            // Show image in lightbox
+            showLightbox(mediaUrl);
+          });
+          
+          galleryContainer.appendChild(mediaElement);
+        });
+      }
+    }
+
+    // Show lightbox for image
+    function showLightbox(imageUrl) {
+      const lightbox = document.createElement('div');
+      lightbox.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-50';
+      lightbox.innerHTML = `
+        <div class="relative max-w-4xl w-full mx-4">
+          <button class="absolute -top-12 right-0 text-white text-2xl">
+            <i class="fas fa-times"></i>
+          </button>
+          <img src="${imageUrl}" class="w-full h-auto rounded-lg" alt="Gig image">
+        </div>
+      `;
+      
+      document.body.appendChild(lightbox);
+      
+      // Close lightbox on click
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.closest('button')) {
+          document.body.removeChild(lightbox);
+        }
+      });
+    }
+
+    // Populate seller data into the UI
+    function populateSellerData(sellerData) {
+      // Response time
+      if (sellerData.responseTime) {
+        responseTime.textContent = sellerData.responseTime;
+        responseTime.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-5', 'w-24', 'mt-1');
+      }
+      
+      // Country
+      if (sellerData.country) {
+        sellerCountry.textContent = sellerData.country;
+        sellerCountry.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-4', 'w-20');
+      }
+      
+      // Member since
+      if (sellerData.memberSince) {
+        memberSince.textContent = new Date(sellerData.memberSince.seconds * 1000).toLocaleDateString();
+        memberSince.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-4', 'w-24');
+      }
+      
+      // Last delivery
+      if (sellerData.lastDelivery) {
+        lastDelivery.textContent = sellerData.lastDelivery;
+        lastDelivery.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-4', 'w-16');
+      }
+      
+      // Languages
+      if (sellerData.languages && sellerData.languages.length > 0) {
+        languagesSpoken.textContent = sellerData.languages.join(', ');
+        languagesSpoken.classList.remove('animate-pulse', 'bg-muted/20', 'rounded', 'h-4', 'w-32');
+      }
+    }
+
+    // Initialize page
+    window.addEventListener('DOMContentLoaded', () => {
+      loadGigData();
+    });
+  </script>
+</body>
+</html>
