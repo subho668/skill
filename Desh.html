@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Gig Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Container -->
+  <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- LEFT SIDE -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Gig Header -->
+      <div>
+        <h1 id="gigTitle" class="text-3xl font-bold"></h1>
+        <p class="text-gray-600"><span id="gigCategory"></span> • <span id="gigSubcategory"></span></p>
+        <div class="flex flex-wrap gap-2 mt-2" id="gigTags"></div>
+      </div>
+
+      <!-- Seller -->
+      <div class="flex items-center gap-4 bg-white p-4 rounded-lg shadow">
+        <img id="sellerPhoto" class="w-16 h-16 rounded-full object-cover" />
+        <div>
+          <h3 id="sellerName" class="font-semibold text-lg"></h3>
+          <p id="sellerEmail" class="text-sm text-gray-500"></p>
+        </div>
+      </div>
+
+      <!-- Media Gallery -->
+      <div id="mediaGallery" class="grid grid-cols-3 gap-2"></div>
+
+      <!-- Description -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">About this Gig</h2>
+        <div id="gigDescription" class="prose max-w-none"></div>
+      </div>
+
+      <!-- Features -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">Features & Extras</h2>
+        <ul id="featuresList" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+
+      <!-- FAQ -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">FAQs</h2>
+        <div id="faqSection" class="space-y-2"></div>
+      </div>
+
+      <!-- Requirements -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">Requirements</h2>
+        <ul id="requirementsList" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+
+      <!-- Reviews -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">Reviews</h2>
+        <p id="ratingSummary" class="font-semibold"></p>
+        <div id="reviewsList" class="space-y-2 mt-2"></div>
+      </div>
+
+      <!-- Related Gigs -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-2">More from this Seller</h2>
+        <div id="relatedGigs" class="grid grid-cols-2 gap-4"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="lg:col-span-1">
+      <div class="sticky top-6 bg-white p-4 rounded-lg shadow">
+        <!-- Plan Tabs -->
+        <div class="flex justify-between mb-4">
+          <button class="planTab font-semibold" data-plan="Starter">Starter</button>
+          <button class="planTab font-semibold" data-plan="Growth">Growth</button>
+          <button class="planTab font-semibold" data-plan="Elite">Elite</button>
+        </div>
+        <!-- Pricing -->
+        <h2 id="planName" class="text-lg font-bold"></h2>
+        <p id="planPrice" class="text-2xl font-semibold text-green-600"></p>
+        <p id="planDelivery"></p>
+        <p id="planRevisions"></p>
+        <ul id="planFeatures" class="list-disc pl-5 mt-2 space-y-1"></ul>
+        <!-- Buttons -->
+        <div class="mt-4 space-y-2">
+          <button id="orderNowBtn" 
+            class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+            Order Now
+          </button>
+          <button id="contactBtn" 
+            class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+            Contact Freelancer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs } 
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Get gigId from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const gigId = urlParams.get("id");
+  let activePlan = "Starter";
+  let currentGig = null;
+
+  async function loadGig() {
+    const ref = doc(db, "subho_gigs", gigId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      document.body.innerHTML = "<p>Gig not found</p>";
+      return;
+    }
+    currentGig = snap.data();
+
+    // Fill header
+    document.getElementById("gigTitle").innerText = currentGig.title;
+    document.getElementById("gigCategory").innerText = currentGig.category;
+    document.getElementById("gigSubcategory").innerText = currentGig.subcategory;
+    document.getElementById("gigTags").innerHTML = currentGig.tags?.map(t => 
+      `<span class="px-2 py-1 bg-gray-200 rounded">${t}</span>`).join("");
+
+    // Seller
+    document.getElementById("sellerName").innerText = currentGig.sellerName || "Freelancer";
+    document.getElementById("sellerEmail").innerText = currentGig.createdByEmail || "";
+    if (currentGig.sellerPhoto) {
+      document.getElementById("sellerPhoto").src = currentGig.sellerPhoto;
+    }
+
+    // Media
+    const mediaDiv = document.getElementById("mediaGallery");
+    mediaDiv.innerHTML = "";
+    (currentGig.media || []).forEach(m => {
+      mediaDiv.innerHTML += `<img src="${m}" class="w-full h-40 object-cover rounded"/>`;
+    });
+
+    // Description
+    document.getElementById("gigDescription").innerHTML = currentGig.description || "";
+
+    // Features
+    const featList = document.getElementById("featuresList");
+    featList.innerHTML = "";
+    (currentGig.plans?.[0]?.extras || []).forEach(f => {
+      featList.innerHTML += `<li>${f}</li>`;
+    });
+    (currentGig.plans?.[0]?.custom || []).forEach(f => {
+      featList.innerHTML += `<li>${f.title} (+₹${f.price})</li>`;
+    });
+
+    // FAQ
+    const faqSec = document.getElementById("faqSection");
+    faqSec.innerHTML = "";
+    (currentGig.faq || []).forEach(f => {
+      faqSec.innerHTML += `<details><summary>${f.q}</summary><p>${f.a}</p></details>`;
+    });
+
+    // Requirements
+    const reqList = document.getElementById("requirementsList");
+    reqList.innerHTML = "";
+    (currentGig.requirements || []).forEach(r => {
+      reqList.innerHTML += `<li>${r}</li>`;
+    });
+
+    // Reviews
+    document.getElementById("ratingSummary").innerText = `⭐ ${currentGig.rating || 0} (${(currentGig.reviews || []).length} reviews)`;
+    const revList = document.getElementById("reviewsList");
+    revList.innerHTML = "";
+    (currentGig.reviews || []).forEach(rv => {
+      revList.innerHTML += `<div class="border p-2 rounded"><p class="font-semibold">${rv.user}</p><p>${rv.comment}</p></div>`;
+    });
+
+    // Load plan info
+    showPlan("Starter");
+
+    // Related gigs
+    loadRelated(currentGig.createdByUid);
+  }
+
+  function showPlan(planName) {
+    activePlan = planName;
+    const plan = currentGig.plans.find(p => p.name === planName);
+    if (!plan) return;
+    document.getElementById("planName").innerText = plan.name;
+    document.getElementById("planPrice").innerText = "₹" + plan.price;
+    document.getElementById("planDelivery").innerText = "Delivery: " + plan.delivery + " days";
+    document.getElementById("planRevisions").innerText = "Revisions: " + plan.revisions;
+    const feat = document.getElementById("planFeatures");
+    feat.innerHTML = "";
+    (plan.extras || []).forEach(f => { feat.innerHTML += `<li>${f}</li>`; });
+    (plan.custom || []).forEach(f => { feat.innerHTML += `<li>${f.title} (+₹${f.price})</li>`; });
+  }
+
+  // Tab switching
+  document.querySelectorAll(".planTab").forEach(btn => {
+    btn.addEventListener("click", () => showPlan(btn.dataset.plan));
+  });
+
+  // Buttons
+  document.getElementById("orderNowBtn").addEventListener("click", () => {
+    window.location.href = `continue.html?id=${gigId}&plan=${activePlan}`;
+  });
+  document.getElementById("contactBtn").addEventListener("click", () => {
+    window.location.href = `message.html?uid=${currentGig.createdByUid}`;
+  });
+
+  async function loadRelated(sellerUid) {
+    const q = query(collection(db, "subho_gigs"), where("createdByUid", "==", sellerUid), where("status", "==", "published"));
+    const snaps = await getDocs(q);
+    const relDiv = document.getElementById("relatedGigs");
+    snaps.forEach(d => {
+      if (d.id === gigId) return;
+      const g = d.data();
+      relDiv.innerHTML += `
+        <a href="view-details.html?id=${d.id}" class="border p-2 rounded block">
+          <img src="${g.media?.[0] || ''}" class="w-full h-24 object-cover rounded"/>
+          <p class="font-semibold">${g.title}</p>
+          <p class="text-green-600">₹${g.price}</p>
+        </a>`;
+    });
+  }
+
+  loadGig();
+</script>
+</body>
+</html>
