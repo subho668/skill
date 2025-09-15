@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Create Gig — Talent-Hub Pro (Final)</title>
-  <meta name="description" content="Create gig — Talent-Hub Pro. Full modified working single-file." />
+  <title>Create Gig — Talent-Hub Pro (Merged)</title>
+  <meta name="description" content="Create gig — Talent-Hub Pro. Full merged file with old price-compat fix." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -151,7 +151,6 @@
       border: 1px solid rgba(255, 255, 255, .06)
     }
 
-    /* plan column */
     .plan-column {
       background: rgba(255, 255, 255, .02);
       border-radius: 10px;
@@ -170,37 +169,6 @@
       overflow: visible
     }
 
-    .segmented {
-      display: inline-flex;
-      border-radius: 8px;
-      overflow: hidden
-    }
-
-    .segmented button {
-      padding: 6px 8px;
-      border: 0;
-      background: transparent;
-      color: var(--ink);
-      font-weight: 600;
-      font-size: 12px
-    }
-
-    .segmented button.active {
-      background: rgba(255, 255, 255, .06);
-    }
-
-    .draggable-handle {
-      cursor: grab;
-      padding: 6px
-    }
-
-    .ql-editor {
-      background: #ffffff;
-      color: #0b1222;
-      min-height: 160px;
-      border-radius: 6px
-    }
-
     .chip {
       display: inline-flex;
       align-items: center;
@@ -210,14 +178,6 @@
       background: rgba(255, 255, 255, .03);
       border: 1px solid rgba(255, 255, 255, .05);
       margin: 4px
-    }
-
-    .requirement-item {
-      margin-bottom: 10px;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.02);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .media-grid {
@@ -252,7 +212,6 @@
       color: var(--brand);
     }
 
-    /* extras row (new design) */
     .plan-extras {
       margin-top: 6px;
       display: grid;
@@ -275,7 +234,6 @@
       min-width: 0
     }
 
-    /* label: clamp to 3 lines; wrap */
     .extra-label {
       font-size: 13px;
       line-height: 1.2;
@@ -306,10 +264,6 @@
       background: transparent;
       color: var(--ink);
       cursor: pointer
-    }
-
-    .extra-btn:active {
-      transform: translateY(1px)
     }
 
     .extra-btn.accepted {
@@ -351,13 +305,11 @@
       color: var(--muted)
     }
 
-    /* preview badges smaller */
     #pvFeat .badge {
       font-size: 11px;
       padding: 5px 8px
     }
 
-    /* status messages */
     .ok {
       color: #34d399;
     }
@@ -370,7 +322,6 @@
       color: #ffcc66;
     }
 
-    /* responsive tweaks */
     @media (max-width: 768px) {
       .plan-column {
         min-height: 260px
@@ -402,7 +353,7 @@
   <!-- NAV -->
   <nav class="glass sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub Pro</a>
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub</a>
       <div class="flex items-center gap-3">
         <span id="loginStatus" class="text-sm px-3 py-1 rounded-full">Checking auth…</span>
         <a id="loginBtnLink" href="login.html" class="btn">Login</a>
@@ -417,9 +368,9 @@
 
       <div class="flex items-center justify-between">
         <div>
-          <div class="text-xs text-slate-300 uppercase">Create new gig</div>
-          <h1 class="text-2xl font-extrabold">Follow your diagram — Full Builder</h1>
-          <div class="text-sm text-slate-300">Stepper on top — publish even if blanks (saved as "Not Provided")</div>
+          <!-- <div class="text-xs text-slate-300 uppercase"></div> -->
+          <h1 class="text-2xl font-extrabold">Create new gig</h1>
+          <!-- <div class="text-sm text-slate-300">Stepper on top — publish even if blanks (saved as "Not Provided")</div> -->
         </div>
         <div class="text-sm text-slate-300 hidden">Autosave: <span id="autosaveStatus">Idle</span></div>
       </div>
@@ -958,10 +909,9 @@
 
     subcatEl.addEventListener('change', () => { renderPreview(); autosaveNow('subcategory'); });
 
-    // --- Plan extras population (NEW: two small buttons on right + wrapping labels) ---
+    // --- Plan extras population ---
     function populatePlanExtras(cat) {
       const extras = cat && CATEGORY_MAP[cat] ? CATEGORY_MAP[cat].extras : ['Source File', 'Revisions', 'Support'];
-      // for each plan column, render extras list with accept/reject buttons (side)
       document.querySelectorAll('.plan-column').forEach((col, idx) => {
         const extrasContainer = col.querySelector('.plan-extras');
         extrasContainer.innerHTML = '';
@@ -969,28 +919,22 @@
           const row = document.createElement('div'); row.className = 'plan-extra-row';
           const left = document.createElement('div'); left.className = 'plan-extra-left';
           left.innerHTML = `<div class="extra-label">${ex}</div><div class="extra-note">Tap ✔ to include, ✖ to reject</div>`;
-          // right side: accept / reject buttons
           const right = document.createElement('div'); right.className = 'plan-extra-right';
           const btnAccept = document.createElement('button'); btnAccept.type = 'button'; btnAccept.className = 'extra-btn'; btnAccept.title = 'Include';
           btnAccept.innerHTML = `<i class="fa-solid fa-check"></i>`;
           const btnReject = document.createElement('button'); btnReject.type = 'button'; btnReject.className = 'extra-btn'; btnReject.title = 'Reject';
           btnReject.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
-          // hidden state input to read later
           const hiddenState = document.createElement('input'); hiddenState.type = 'hidden'; hiddenState.className = 'extra-state'; hiddenState.value = 'none';
-          // click handlers: toggles
           btnAccept.addEventListener('click', (ev) => {
             ev.preventDefault();
-            // toggle: if already accepted, remove; else accept
             const isAccepted = btnAccept.classList.contains('accepted');
             if (!isAccepted) {
-              // mark accepted
               btnAccept.classList.add('accepted');
               btnReject.classList.remove('rejected');
               row.classList.remove('rejected');
               row.classList.add('accepted');
               hiddenState.value = 'included';
             } else {
-              // unset
               btnAccept.classList.remove('accepted');
               row.classList.remove('accepted');
               hiddenState.value = 'none';
@@ -1001,21 +945,18 @@
             ev.preventDefault();
             const isRejected = btnReject.classList.contains('rejected');
             if (!isRejected) {
-              // mark rejected
               btnReject.classList.add('rejected');
               btnAccept.classList.remove('accepted');
               row.classList.remove('accepted');
               row.classList.add('rejected');
               hiddenState.value = 'rejected';
             } else {
-              // unset reject
               btnReject.classList.remove('rejected');
               row.classList.remove('rejected');
               hiddenState.value = 'none';
             }
             renderPreview(); autosaveNow('plan-extras');
           });
-          // keyboard accessible toggle
           btnAccept.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnAccept.click(); } });
           btnReject.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnReject.click(); } });
 
@@ -1032,7 +973,7 @@
     }
     populatePlanExtras(''); // initial
 
-    // Add custom extra to all plans (keeps old behavior, but uses new row style)
+    // Add custom extra to all plans
     addCustomExtraBtn.addEventListener('click', () => {
       const t = document.getElementById('customExtraTitle').value.trim();
       const p = Number(document.getElementById('customExtraPrice').value || 0);
@@ -1059,7 +1000,7 @@
       renderPreview(); autosaveNow('generate-prices');
     });
 
-    // --- FAQ dynamic ---
+    // FAQ dynamic
     $('#addFaqBtn').addEventListener('click', () => {
       const c = $('#faqContainer'); const box = document.createElement('div'); box.className = 'soft p-3';
       box.innerHTML = `<input class="input faq-q mb-2 input-sm" placeholder="Question" /><textarea class="input faq-a" rows="2"></textarea><div class="mt-2"><button class="btn remove-faq" type="button">Remove</button></div>`;
@@ -1067,7 +1008,7 @@
       autosaveNow('faq');
     });
 
-    // --- Requirements dynamic + Smart generator ---
+    // Requirements dynamic + Smart generator
     $('#addRequirementBtn').addEventListener('click', () => {
       const c = $('#requirementsContainer');
       const box = document.createElement('div');
@@ -1324,7 +1265,10 @@
       const catText = (categoryEl.options[categoryEl.selectedIndex]?.text || '—');
       pvCat.textContent = (catText) + (subcatEl.value ? ` / ${subcatEl.value}` : '');
       pvDel.textContent = (document.querySelector('.plan-delivery')?.value || '—') + ' Days';
+
+      // IMPORTANT: preview shows Basic (first) plan price (old-compat behavior)
       pvPrice.textContent = '₹' + getFirstPlanPrice();
+
       pvRev.textContent = getFirstPlanRevisions();
       pvFeat.innerHTML = '';
       // features: collect included features from first plan
@@ -1336,7 +1280,6 @@
         const state = row.querySelector('.extra-state')?.value || 'none';
         if (state === 'included') feats.push(label);
       });
-      // also include custom extras with a price or included
       const custom = Array.from(document.querySelectorAll('.plan-custom-extras')).flatMap(col => Array.from(col.querySelectorAll('div')).map(d => d.firstChild?.textContent).filter(Boolean));
       feats.concat(custom).forEach(f => {
         if (f) { const span = document.createElement('span'); span.className = 'badge'; span.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${f}`; pvFeat.appendChild(span); }
@@ -1420,7 +1363,6 @@
       const raw = localStorage.getItem(AUTOSAVE_KEY); if (!raw) return;
       try {
         const p = JSON.parse(raw);
-        // show a non-blocking banner/prompt instead of immediate confirm
         const banner = document.createElement('div');
         banner.className = 'glass p-3 fixed left-4 right-4 top-20 z-60';
         banner.style.display = 'flex'; banner.style.justifyContent = 'space-between'; banner.style.alignItems = 'center';
@@ -1435,11 +1377,9 @@
       titleEl.value = p.title || ''; titleCount.textContent = `${titleEl.value.length}/50`;
       categoryEl.value = p.category || ''; populateSubcategories(p.category); populatePlanExtras(p.category); populateGigMeta(p.category);
       subcatEl.value = p.subcategory || '';
-      // tags/skills/langs
       tagsWrap.innerHTML = ''; (p.tags || []).forEach(t => createChip(t, tagsWrap));
       skillsWrap.innerHTML = ''; (p.skills || []).forEach(s => createChip(s, skillsWrap));
       langsWrap.innerHTML = ''; (p.languages || []).forEach(l => createChip(l, langsWrap));
-      // plans
       (p.plans || []).forEach((pl, i) => { const col = document.querySelectorAll('.plan-column')[i]; if (!col) return; col.querySelector('.plan-name').value = pl.name || col.querySelector('.plan-name').value; col.querySelector('.plan-price').value = pl.price || col.querySelector('.plan-price').value; col.querySelector('.plan-desc').value = pl.desc || col.querySelector('.plan-desc').value; col.querySelector('.plan-delivery').value = pl.delivery || col.querySelector('.plan-delivery').value; col.querySelector('.plan-revisions').value = pl.revisions || col.querySelector('.plan-revisions').value; });
       quill.root.innerHTML = p.description || '';
       renderPreview(); renderMediaPreview(); computeKeywordsAndScore();
@@ -1449,7 +1389,6 @@
     function valOrDefault(v) { const s = String(v || '').trim(); return s === '' ? 'Not Provided' : s; }
     function buildGigPayload(status = 'published', imageUrls = []) {
       const plans = Array.from(document.querySelectorAll('.plan-column')).map(col => {
-        // extras reading
         const extras = [];
         const extrasRows = col.querySelectorAll('.plan-extras > .plan-extra-row');
         extrasRows.forEach(r => {
@@ -1459,7 +1398,6 @@
           const priceInp = r.querySelector('.extra-price'); const price = priceInp ? Number(priceInp.value || 0) : 0;
           extras.push({ label, state, addonPrice: price });
         });
-        // custom extras
         const custom = Array.from(col.querySelectorAll('.plan-custom-extras > div')).map(div => ({ label: div.firstChild.textContent, price: Number(div.querySelector('.extra-price')?.value || 0) }));
         return {
           name: valOrDefault(col.querySelector('.plan-name').value),
@@ -1471,6 +1409,9 @@
         };
       });
 
+      // === CRITICAL FIX: top-level price set to BASIC (first) plan price for old-compat ===
+      const topPrice = Number(plans[0]?.price || 0);
+
       const images = imageUrls.length ? imageUrls : ['https://via.placeholder.com/1200x800.png?text=Talent-Hub+Gig'];
       const payload = {
         title: valOrDefault(titleEl.value),
@@ -1481,6 +1422,8 @@
         languages: readChips(langsWrap),
         platform: valOrDefault($('#platform').value),
         plans,
+        // <-- compatibility: top-level price (basic/starter)
+        price: topPrice,
         description: valOrDefault(quill.root.innerHTML),
         requirements: Array.from($$('.req-q')).map(i => i.value || 'Not Provided'),
         faq: Array.from($$('.faq-q')).map((q, i) => ({ q: q.value || 'Not Provided', a: $$('.faq-a')[i]?.value || 'Not Provided' })),
@@ -1535,7 +1478,7 @@
       finally { btnSaveDraft.disabled = false; }
     });
 
-    // Publish (with proper authentication and flow from old code)
+    // Publish
     $('#btnPublish').addEventListener('click', async () => {
       if (!currentUser) {
         alert('Please login to publish your gig');
@@ -1548,7 +1491,6 @@
       formStatus.className = '';
 
       try {
-        // Upload files first (from old code logic)
         const filesToUpload = mediaFiles.map(m => m.file);
         const urls = filesToUpload.length ?
           await uploadFiles(filesToUpload, currentUser.uid, ({ index, pct, name }) => {
@@ -1556,18 +1498,13 @@
           }) : [];
 
         formStatus.textContent = 'Saving gig…';
-
-        // Build payload (using your final code's buildGigPayload)
         const payload = buildGigPayload('published', urls);
-
-        // Save to Firestore (from old code logic)
         const docRef = await addDoc(collection(db, GIGS_COLLECTION), payload);
 
         formStatus.className = 'ok';
         formStatus.textContent = 'Gig published ✓ Redirecting…';
         debugJson.textContent = JSON.stringify({ id: docRef.id, payload }, null, 2);
 
-        // Redirect to gig detail (from old code)
         setTimeout(() => {
           location.href = `index.html?id=${encodeURIComponent(docRef.id)}`;
         }, 700);
