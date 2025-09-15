@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Gig Details - Talent-Hub Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg1: #07102a;
+      --bg2: #040718;
+      --ink: #e9f2ff;
+      --muted: #98abc7;
+      --glass: rgba(255, 255, 255, .03);
+      --b: rgba(255, 255, 255, .06);
+      --brand: #34d399;
+      --brand-ink: #042819;
+      --warn: #ffcc66;
+      --err: #ff8a8a;
+    }
+
+    body {
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--b);
+      border-radius: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-brand {
+      background: var(--brand);
+      color: var(--brand-ink);
+    }
+
+    .preview-cover {
+      aspect-ratio: 16/9;
+      background: #12102b center/cover no-repeat;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .05);
+      margin: 4px;
+      font-size: 12px;
+    }
+
+    .plan-column {
+      background: rgba(255, 255, 255, .02);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, .04);
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .plan-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .soft {
+      background: rgba(255, 255, 255, .01);
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px dashed rgba(255, 255, 255, .03);
+    }
+
+    .kicker {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--brand);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- NAV -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub</a>
+      <div class="flex items-center gap-3">
+        <span id="loginStatus" class="text-sm px-3 py-1 rounded-full">Checking auth…</span>
+        <a id="loginBtnLink" href="login.html" class="btn">Login</a>
+        <button id="btnLogout" class="btn hidden">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
+    <!-- LEFT: Gig Details -->
+    <section class="lg:col-span-2 space-y-6">
+      <!-- Service Title & Seller Info -->
+      <div class="glass p-5">
+        <h1 id="gigTitle" class="text-2xl font-extrabold">Loading gig title...</h1>
+        <div class="flex items-center gap-3 mt-2">
+          <img id="sellerPhoto" class="w-10 h-10 rounded-full object-cover" src="https://via.placeholder.com/80" alt="Seller">
+          <div>
+            <div class="font-bold" id="sellerName">Seller Name</div>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="text-yellow-300">★★★★★</span>
+              <span id="rating">5.0</span>
+              <span>(<span id="reviewsCount">0</span> reviews)</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 text-sm" id="ordersInQueue">
+          <span class="text-slate-300">Orders in queue:</span> <span id="queueCount">0</span>
+        </div>
+      </div>
+
+      <!-- Service Description -->
+      <div class="glass p-5">
+        <div class="kicker">Service Description</div>
+        <div id="gigDescription" class="prose prose-invert max-w-none">
+          Loading description...
+        </div>
+        
+        <div class="mt-4">
+          <div class="text-sm font-semibold mb-2">Tools & Technologies:</div>
+          <div id="toolsList" class="flex flex-wrap gap-2">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <div class="text-sm font-semibold mb-2">Service Type:</div>
+          <div id="serviceType">Not specified</div>
+        </div>
+      </div>
+
+      <!-- Packages Comparison -->
+      <div class="glass p-5">
+        <div class="kicker">Packages</div>
+        <div class="grid md:grid-cols-3 gap-4" id="packagesContainer">
+          <!-- Packages will be populated by JavaScript -->
+          <div class="text-center py-10">Loading packages...</div>
+        </div>
+      </div>
+
+      <!-- Service FAQ -->
+      <div class="glass p-5">
+        <div class="kicker">Frequently Asked Questions</div>
+        <div id="faqContainer" class="space-y-4 mt-3">
+          <!-- FAQ items will be populated by JavaScript -->
+          <div>Loading FAQs...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Seller Info & Action -->
+    <aside class="space-y-4">
+      <!-- Seller Contact Box -->
+      <div class="glass p-4">
+        <div class="flex items-center gap-3">
+          <img id="sidebarSellerPhoto" class="w-12 h-12 rounded-full object-cover" src="https://via.placeholder.com/80" alt="Seller">
+          <div>
+            <div class="font-bold" id="sidebarSellerName">Seller Name</div>
+            <div class="flex items-center text-sm text-green-400">
+              <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+              <span id="onlineStatus">Online</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4 text-sm">
+          <div class="text-slate-300">Avg. response time:</div>
+          <div id="responseTime" class="font-semibold">Within a few hours</div>
+        </div>
+        
+        <button id="contactSellerBtn" class="btn btn-brand w-full mt-4 justify-center">
+          <i class="fas fa-envelope"></i> Contact Me
+        </button>
+      </div>
+
+      <!-- Seller Statistics -->
+      <div class="glass p-4">
+        <div class="text-xs text-slate-300 mb-2">Seller Information</div>
+        
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="text-slate-300">From</div>
+            <div id="sellerCountry" class="font-semibold">—</div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300">Member since</div>
+            <div id="memberSince" class="font-semibold">—</div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300">Last delivery</div>
+            <div id="lastDelivery" class="font-semibold">—</div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300">Languages</div>
+            <div id="languagesSpoken" class="font-semibold">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gig Metadata -->
+      <div class="glass p-4">
+        <div class="text-xs text-slate-300 mb-2">Gig Details</div>
+        
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="text-slate-300">Category</div>
+            <div id="gigCategory" class="font-semibold">—</div>
+          </div>
+          
+          <div>
+            <div class="text-slate-300">Tags</div>
+            <div id="gigTags" class="flex flex-wrap gap-1 mt-1">—</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="text-center py-6 text-slate-300">© 2025 Talent-Hub Pro</footer>
+
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Firebase config (same as in create.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+      measurementId: "G-TYL2XF4WZY"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM elements
+    const loginStatus = document.getElementById('loginStatus');
+    const loginBtnLink = document.getElementById('loginBtnLink');
+    const btnLogout = document.getElementById('btnLogout');
+    const contactSellerBtn = document.getElementById('contactSellerBtn');
+
+    // Gig data elements
+    const gigTitle = document.getElementById('gigTitle');
+    const sellerPhoto = document.getElementById('sellerPhoto');
+    const sidebarSellerPhoto = document.getElementById('sidebarSellerPhoto');
+    const sellerName = document.getElementById('sellerName');
+    const sidebarSellerName = document.getElementById('sidebarSellerName');
+    const rating = document.getElementById('rating');
+    const reviewsCount = document.getElementById('reviewsCount');
+    const queueCount = document.getElementById('queueCount');
+    const gigDescription = document.getElementById('gigDescription');
+    const toolsList = document.getElementById('toolsList');
+    const serviceType = document.getElementById('serviceType');
+    const packagesContainer = document.getElementById('packagesContainer');
+    const faqContainer = document.getElementById('faqContainer');
+    const responseTime = document.getElementById('responseTime');
+    const sellerCountry = document.getElementById('sellerCountry');
+    const memberSince = document.getElementById('memberSince');
+    const lastDelivery = document.getElementById('lastDelivery');
+    const languagesSpoken = document.getElementById('languagesSpoken');
+    const gigCategory = document.getElementById('gigCategory');
+    const gigTags = document.getElementById('gigTags');
+
+    // Get gig ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const gigId = urlParams.get('id');
+
+    // Auth state handler
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        loginStatus.textContent = 'Not logged in';
+        loginBtnLink.classList.remove('hidden');
+        btnLogout.classList.add('hidden');
+        return;
+      }
+      
+      currentUser = user;
+      loginStatus.textContent = `Logged in: ${user.email || user.displayName || user.uid}`;
+      loginBtnLink.classList.add('hidden');
+      btnLogout.classList.remove('hidden');
+    });
+
+    // Logout handler
+    btnLogout.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (e) {
+        alert('Logout failed');
+      }
+    });
+
+    // Contact seller button handler
+    contactSellerBtn.addEventListener('click', () => {
+      if (!auth.currentUser) {
+        alert('Please login to contact the seller');
+        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        return;
+      }
+      alert('Contact form would open here');
+      // In a real implementation, this would open a modal or redirect to a messaging page
+    });
+
+    // Load gig data
+    async function loadGigData() {
+      if (!gigId) {
+        alert('No gig ID specified');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      try {
+        // Get the gig document
+        const gigDocRef = doc(db, "subho_gigs", gigId);
+        const gigDocSnap = await getDoc(gigDocRef);
+
+        if (!gigDocSnap.exists()) {
+          alert('Gig not found');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const gigData = gigDocSnap.data();
+        populateGigData(gigData);
+
+        // Try to get seller data if available
+        if (gigData.createdByUid) {
+          try {
+            const sellersQuery = query(
+              collection(db, "sellers"), 
+              where("uid", "==", gigData.createdByUid)
+            );
+            const sellerSnapshot = await getDocs(sellersQuery);
+            
+            if (!sellerSnapshot.empty) {
+              const sellerData = sellerSnapshot.docs[0].data();
+              populateSellerData(sellerData);
+            }
+          } catch (error) {
+            console.error("Error fetching seller data:", error);
+          }
+        }
+
+      } catch (error) {
+        console.error("Error loading gig:", error);
+        alert('Error loading gig details');
+      }
+    }
+
+    // Populate gig data into the UI
+    function populateGigData(gigData) {
+      // Basic info
+      gigTitle.textContent = gigData.title || 'Untitled Gig';
+      gigDescription.innerHTML = gigData.description || 'No description provided';
+      
+      // Seller info
+      sellerName.textContent = gigData.sellerName || 'Unknown Seller';
+      sidebarSellerName.textContent = gigData.sellerName || 'Unknown Seller';
+      
+      if (gigData.sellerPhoto) {
+        sellerPhoto.src = gigData.sellerPhoto;
+        sidebarSellerPhoto.src = gigData.sellerPhoto;
+      }
+      
+      // Ratings and orders
+      rating.textContent = gigData.rating || '5.0';
+      reviewsCount.textContent = gigData.reviews || '0';
+      queueCount.textContent = gigData.ordersInQueue || '0';
+      
+      // Category and tags
+      gigCategory.textContent = gigData.category || 'Uncategorized';
+      
+      if (gigData.tags && gigData.tags.length > 0) {
+        gigTags.innerHTML = '';
+        gigData.tags.forEach(tag => {
+          const tagElement = document.createElement('span');
+          tagElement.className = 'chip';
+          tagElement.textContent = tag;
+          gigTags.appendChild(tagElement);
+        });
+      }
+      
+      // Packages
+      if (gigData.plans && gigData.plans.length > 0) {
+        packagesContainer.innerHTML = '';
+        gigData.plans.forEach((plan, index) => {
+          const planElement = document.createElement('div');
+          planElement.className = 'plan-column';
+          
+          planElement.innerHTML = `
+            <div class="plan-content">
+              <div class="text-center">
+                <h3 class="font-bold text-lg">${plan.name || `Package ${index + 1}`}</h3>
+                <div class="text-2xl font-black text-emerald-300 my-2">₹${plan.price || '0'}</div>
+                <p class="text-sm text-slate-300">${plan.description || ''}</p>
+              </div>
+              
+              <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <div class="text-slate-300">Delivery</div>
+                  <div class="font-semibold">${plan.delivery || 'N/A'} days</div>
+                </div>
+                <div>
+                  <div class="text-slate-300">Revisions</div>
+                  <div class="font-semibold">${plan.revisions || 'N/A'}</div>
+                </div>
+              </div>
+              
+              ${plan.extras && plan.extras.length > 0 ? `
+                <div class="mt-4">
+                  <div class="text-slate-300 text-sm mb-1">Includes:</div>
+                  <ul class="text-sm space-y-1">
+                    ${plan.extras.filter(extra => extra.state === 'included').map(extra => 
+                      `<li><i class="fas fa-check text-emerald-400 mr-2"></i>${extra.label}</li>`
+                    ).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+            </div>
+            
+            <button class="btn btn-brand mt-4 justify-center select-package" data-plan="${index}">
+              Select Package
+            </button>
+          `;
+          
+          packagesContainer.appendChild(planElement);
+        });
+        
+        // Add event listeners to package selection buttons
+        document.querySelectorAll('.select-package').forEach(button => {
+          button.addEventListener('click', () => {
+            if (!auth.currentUser) {
+              alert('Please login to purchase this gig');
+              window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+              return;
+            }
+            
+            const planIndex = button.getAttribute('data-plan');
+            alert(`Would proceed to order for package ${parseInt(planIndex) + 1}`);
+            // In a real implementation, this would redirect to an order page
+          });
+        });
+      }
+      
+      // FAQ
+      if (gigData.faq && gigData.faq.length > 0) {
+        faqContainer.innerHTML = '';
+        gigData.faq.forEach(faqItem => {
+          const faqElement = document.createElement('div');
+          faqElement.className = 'soft';
+          faqElement.innerHTML = `
+            <div class="font-semibold">${faqItem.q || 'Question not available'}</div>
+            <div class="mt-1 text-slate-300">${faqItem.a || 'Answer not available'}</div>
+          `;
+          faqContainer.appendChild(faqElement);
+        });
+      }
+    }
+
+    // Populate seller data into the UI
+    function populateSellerData(sellerData) {
+      // Response time
+      if (sellerData.responseTime) {
+        responseTime.textContent = sellerData.responseTime;
+      }
+      
+      // Country
+      if (sellerData.country) {
+        sellerCountry.textContent = sellerData.country;
+      }
+      
+      // Member since
+      if (sellerData.memberSince) {
+        memberSince.textContent = new Date(sellerData.memberSince.seconds * 1000).toLocaleDateString();
+      }
+      
+      // Last delivery
+      if (sellerData.lastDelivery) {
+        lastDelivery.textContent = sellerData.lastDelivery;
+      }
+      
+      // Languages
+      if (sellerData.languages && sellerData.languages.length > 0) {
+        languagesSpoken.textContent = sellerData.languages.join(', ');
+      }
+    }
+
+    // Initialize page
+    window.addEventListener('DOMContentLoaded', () => {
+      loadGigData();
+    });
+  </script>
+</body>
+</html>
