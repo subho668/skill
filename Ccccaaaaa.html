@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gig — View Details — Talent-Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root { --bg1:#07102a; --ink:#e9f2ff; --muted:#98abc7; --glass:rgba(255,255,255,.03); --b:rgba(255,255,255,.06); --brand:#34d399; }
+    body { font-family: Inter, system-ui, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(180deg,var(--bg1),#040718); color:var(--ink); -webkit-font-smoothing:antialiased; }
+    .glass { background:var(--glass); backdrop-filter:blur(8px); border:1px solid var(--b); border-radius:10px; }
+    .media-main { aspect-ratio:16/9; background:#0e1630 center/cover no-repeat; border-radius:8px; border:1px solid rgba(255,255,255,.05); overflow:hidden; }
+    .thumb { width:120px; height:72px; object-fit:cover; border-radius:6px; border:1px solid rgba(255,255,255,.04); cursor:pointer; }
+    .badge { display:inline-flex; align-items:center; gap:6px; padding:6px 8px; border-radius:999px; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.04); font-size:12px; color:var(--ink); }
+    .kicker { color:var(--brand); font-weight:700; font-size:1.05rem; }
+    a { color:inherit; text-decoration:none; }
+    .soft { background: rgba(255,255,255,0.01); border-radius:8px; padding:10px; border:1px dashed rgba(255,255,255,.03); }
+  </style>
+</head>
+<body>
+  <nav class="glass sticky top-3 z-50 max-w-6xl mx-auto px-4 py-3 my-4">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub</a>
+      <div class="text-sm text-slate-300">View service</div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
+    <!-- LEFT: Scrollable content -->
+    <section id="leftCol" class="lg:col-span-2 space-y-6">
+      <div class="glass p-5">
+        <div class="flex items-start gap-4">
+          <div class="flex-1">
+            <h1 id="gTitle" class="text-2xl font-extrabold">Loading…</h1>
+            <div class="mt-2 flex items-center gap-3 text-sm text-slate-300">
+              <div id="gCategory">—</div>
+              <div>•</div>
+              <div id="gTags" class="flex gap-2"></div>
+            </div>
+            <div class="mt-3 flex items-center gap-3">
+              <img id="sellerPhoto" class="w-12 h-12 rounded-full object-cover" src="https://via.placeholder.com/80" />
+              <div>
+                <div id="sellerName" class="font-bold">—</div>
+                <div id="sellerMeta" class="text-xs text-slate-300">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="w-28 text-right text-xs text-slate-400">
+            <div id="gStatus" class="badge">—</div>
+            <div class="mt-2" id="gStats">Rating: — | Reviews: —</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass p-5">
+        <div id="mediaGallery">
+          <div id="mediaMain" class="media-main" style="background-image:url('https://via.placeholder.com/1600x900?text=Loading')"></div>
+          <div id="mediaThumbs" class="mt-3 flex gap-2 overflow-auto"></div>
+        </div>
+      </div>
+
+      <div id="descriptionCard" class="glass p-5">
+        <h3 class="font-bold kicker">What this gig includes</h3>
+        <div id="gDescription" class="mt-3 text-sm text-slate-200">—</div>
+      </div>
+
+      <div id="featuresCard" class="glass p-5">
+        <h3 class="font-bold kicker">Features</h3>
+        <div id="gFeatures" class="mt-3 flex gap-2 flex-wrap"></div>
+      </div>
+
+      <div id="faqsCard" class="glass p-5">
+        <h3 class="font-bold kicker">FAQs</h3>
+        <div id="gFaqs" class="mt-3 space-y-2"></div>
+      </div>
+
+      <div id="requirementsCard" class="glass p-5">
+        <h3 class="font-bold kicker">Buyer requirements (what seller will ask after purchase)</h3>
+        <ul id="gRequirements" class="list-disc list-inside text-sm text-slate-200 mt-2"></ul>
+      </div>
+
+      <div id="aboutSeller" class="glass p-5">
+        <h3 class="font-bold kicker">About the seller</h3>
+        <div class="mt-3 flex items-start gap-3">
+          <img id="aboutSellerPhoto" src="https://via.placeholder.com/120" class="w-20 h-20 rounded-full object-cover" />
+          <div>
+            <div id="aboutSellerName" class="font-bold">—</div>
+            <div id="aboutSellerBio" class="text-sm text-slate-300 mt-2">—</div>
+            <div class="mt-3"><a id="contactSellerBtn" href="#" class="glass px-3 py-2 rounded inline-block">Contact Seller</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="relatedGigs" class="glass p-5">
+        <h3 class="font-bold kicker">More from this seller</h3>
+        <div id="relatedList" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Sticky pricing box -->
+    <aside class="space-y-4">
+      <div class="glass p-4 sticky" style="top:20px">
+        <div class="text-sm text-slate-300">Package</div>
+        <div id="priceTabs" class="mt-2 flex gap-2"></div>
+
+        <div class="mt-3 glass p-3">
+          <div class="text-xs text-slate-400">Selected</div>
+          <div id="selPlanName" class="font-bold text-lg mt-1">—</div>
+          <div class="text-2xl font-extrabold text-emerald-300 mt-2" id="selPlanPrice">₹0</div>
+          <div class="mt-2 text-sm text-slate-300">Delivery: <span id="selPlanDelivery">—</span></div>
+          <div class="mt-1 text-sm text-slate-300">Revisions: <span id="selPlanRevisions">—</span></div>
+
+          <div id="selPlanExtras" class="mt-3 text-sm"></div>
+
+          <div class="mt-4">
+            <button id="orderNowBtn" class="btn btn-brand w-full py-3" style="background:var(--brand);color:#042819;border-radius:8px;font-weight:700;">Order Now</button>
+            <button id="contactBtn" class="btn w-full py-3 mt-2" style="background:transparent;color:var(--ink);border-radius:8px;border:1px solid rgba(255,255,255,.06);">Contact Freelancer</button>
+          </div>
+        </div>
+
+        <div id="trustBadges" class="mt-3 flex gap-2 flex-wrap text-xs text-slate-300">
+          <div class="badge">✅ Verified Seller</div>
+          <div class="badge">⚡ Fast Response</div>
+        </div>
+      </div>
+
+      <div class="glass p-4">
+        <div class="text-xs text-slate-300">Gig stats</div>
+        <div id="sideStats" class="mt-2 text-sm text-slate-200">—</div>
+      </div>
+
+      <div class="glass p-4">
+        <div class="text-xs text-slate-300">Reviews</div>
+        <div id="sideReviews" class="mt-2 text-sm text-slate-200">—</div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="text-center py-6 text-slate-300">© 2025 Talent-Hub</footer>
+
+  <!-- Firebase + logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // --- Use same config you used in create-gig ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxNGIBexYUb-LecKJRgxPNsY5ZFN1_zUA",
+      authDomain: "skillspot-pro.firebaseapp.com",
+      projectId: "skillspot-pro",
+      storageBucket: "skillspot-pro.appspot.com",
+      messagingSenderId: "600467343030",
+      appId: "1:600467343030:web:ad985d8e95b3ea99c64817",
+      measurementId: "G-TYL2XF4WZY"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const GIGS_COLLECTION = 'subho_gigs';
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    // read ?id=docId
+    function readId() {
+      const url = new URL(location.href);
+      return url.searchParams.get('id');
+    }
+
+    let currentGig = null;
+    let currentGigId = readId();
+    let activePlanIdx = 0;
+
+    async function loadGig(id) {
+      if (!id) { $('#gTitle').textContent = 'No gig id provided'; return; }
+      const ref = doc(db, GIGS_COLLECTION, id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) { $('#gTitle').textContent = 'Gig not found'; return; }
+      const g = snap.data();
+      currentGig = g;
+      renderGig(g, id);
+      loadRelated(g.createdByUid, id);
+    }
+
+    function renderGig(g, id) {
+      $('#gTitle').textContent = g.title || 'Untitled gig';
+      $('#gCategory').textContent = (g.category || '') + (g.subcategory ? ' / ' + g.subcategory : '');
+
+      // tags
+      $('#gTags').innerHTML = '';
+      (g.tags || []).forEach(t => {
+        const sp = document.createElement('span'); sp.className='badge'; sp.textContent = t; $('#gTags').appendChild(sp);
+      });
+
+      // seller
+      $('#sellerName').textContent = g.sellerName || 'Freelancer';
+      $('#sellerPhoto').src = g.sellerPhoto || 'https://via.placeholder.com/80';
+      $('#sellerMeta').textContent = g.createdByEmail || '';
+
+      // status/stats
+      $('#gStatus').textContent = (g.status || '—');
+      $('#gStats').textContent = `Rating: ${g.rating || 0} | Reviews: ${g.reviews || 0}`;
+
+      // media
+      renderMedia(g.media || [], g.coverIndex || 0);
+
+      // description (Quill HTML saved earlier)
+      $('#gDescription').innerHTML = (g.description && g.description !== 'Not Provided') ? g.description : '<em>No description provided</em>';
+
+      // features: from first plan included extras + custom
+      $('#gFeatures').innerHTML = '';
+      const firstPlan = (g.plans && g.plans[0]) || null;
+      if (firstPlan) {
+        (firstPlan.extras || []).forEach(ex => {
+          if (ex && ex.state === 'included') {
+            const b = document.createElement('span'); b.className = 'badge'; b.textContent = ex.label; $('#gFeatures').appendChild(b);
+          }
+        });
+        (firstPlan.custom || []).forEach(c => {
+          const b = document.createElement('span'); b.className = 'badge'; b.textContent = `${c.label || c.title}${c.price ? ' • ₹' + c.price : ''}`; $('#gFeatures').appendChild(b);
+        });
+      }
+
+      // faq
+      $('#gFaqs').innerHTML = '';
+      (g.faq || []).forEach(f => {
+        const wrap = document.createElement('div'); wrap.className='soft p-3 mb-2';
+        wrap.innerHTML = `<div class="font-semibold">${f.q}</div><div class="text-sm text-slate-300 mt-1">${f.a}</div>`;
+        $('#gFaqs').appendChild(wrap);
+      });
+
+      // requirements
+      $('#gRequirements').innerHTML = '';
+      (g.requirements || []).forEach(r => {
+        const li = document.createElement('li'); li.textContent = r || 'Not Provided'; $('#gRequirements').appendChild(li);
+      });
+
+      // seller about
+      $('#aboutSellerPhoto').src = g.sellerPhoto || 'https://via.placeholder.com/120';
+      $('#aboutSellerName').textContent = g.sellerName || '—';
+      $('#aboutSellerBio').textContent = `Member: ${g.createdByEmail || '—'}`;
+      $('#contactSellerBtn').href = `mailto:${g.createdByEmail || ''}`;
+
+      // build right column (plans)
+      buildRightColumn(g, id);
+
+      // side stats/reviews
+      $('#sideStats').textContent = g.views ? `Views: ${g.views}` : 'Views: —';
+      // show rating and reviews count
+      if (Array.isArray(g.reviews) && g.reviews.length > 0) {
+        $('#sideReviews').textContent = `${g.reviews.length} reviews • Rating ${g.rating || 0}`;
+      } else {
+        $('#sideReviews').textContent = `${g.reviews || 0} reviews • Rating ${g.rating || 0}`;
+      }
+    }
+
+    function renderMedia(media, coverIdx) {
+      const main = $('#mediaMain'); const thumbs = $('#mediaThumbs'); thumbs.innerHTML = '';
+      if (!media || media.length === 0) { main.style.backgroundImage = "url('https://via.placeholder.com/1600x900?text=No+media')"; main.innerHTML = ''; return; }
+      const use = media[coverIdx] || media[0];
+      if (use && (use.endsWith('.mp4') || use.includes('video'))) {
+        main.innerHTML = `<video controls class="w-full h-full object-cover rounded"><source src="${use}" /></video>`;
+      } else {
+        main.style.backgroundImage = `url('${use}')`; main.innerHTML = '';
+      }
+      media.forEach((m, i) => {
+        const img = document.createElement('img'); img.src = m; img.className = 'thumb'; img.loading = 'lazy';
+        img.addEventListener('click', () => {
+          if (m.endsWith('.mp4') || m.includes('video')) {
+            main.innerHTML = `<video controls class="w-full h-full object-cover rounded"><source src="${m}" /></video>`;
+            main.style.backgroundImage = 'none';
+          } else {
+            main.innerHTML = '';
+            main.style.backgroundImage = `url('${m}')`;
+          }
+        });
+        thumbs.appendChild(img);
+      });
+    }
+
+    function buildRightColumn(g, id) {
+      const tabs = $('#priceTabs'); tabs.innerHTML = '';
+      const plans = g.plans || [];
+      if (!plans.length) {
+        tabs.innerHTML = `<div class="badge">No packages</div>`;
+        $('#selPlanName').textContent = '—'; $('#selPlanPrice').textContent = '₹0'; $('#selPlanDelivery').textContent = '—'; $('#selPlanRevisions').textContent = '—';
+        return;
+      }
+      plans.forEach((p, idx) => {
+        const btn = document.createElement('button'); btn.className = 'glass px-3 py-2 rounded font-semibold'; btn.textContent = p.name || `Plan ${idx+1}`;
+        btn.addEventListener('click', () => selectPlan(idx));
+        tabs.appendChild(btn);
+      });
+      // default select first
+      selectPlan(0);
+    }
+
+    function selectPlan(idx) {
+      if (!currentGig) return;
+      const plans = currentGig.plans || [];
+      const p = plans[idx] || plans[0];
+      activePlanIdx = idx;
+      $('#selPlanName').textContent = p.name || '—';
+      $('#selPlanPrice').textContent = '₹' + (p.price || 0);
+      $('#selPlanDelivery').textContent = (p.delivery || '—') + ' Days';
+      $('#selPlanRevisions').textContent = p.revisions || '—';
+      // extras
+      $('#selPlanExtras').innerHTML = '';
+      (p.extras || []).forEach(e => {
+        const row = document.createElement('div'); row.className='text-sm text-slate-300';
+        const state = e.state || 'none';
+        if (state === 'included') row.innerHTML = `✅ ${e.label}`;
+        else if (state === 'rejected') row.innerHTML = `✖ ${e.label}`;
+        else row.innerHTML = `➕ ${e.label} <span class="text-xs text-slate-400">(optional)</span>`;
+        $('#selPlanExtras').appendChild(row);
+      });
+      (p.custom || []).forEach(c => {
+        const r = document.createElement('div'); r.className='text-sm text-slate-300';
+        r.innerHTML = `+ ${c.label || c.title} • ₹${c.price || 0}`;
+        $('#selPlanExtras').appendChild(r);
+      });
+    }
+
+    // Order & contact button handlers
+    $('#orderNowBtn').addEventListener('click', () => {
+      if (!currentGig) return;
+      const gid = currentGigId;
+      const planIdx = activePlanIdx;
+      // pass plan index to continue page
+      location.href = `continue.html?id=${encodeURIComponent(gid)}&plan=${encodeURIComponent(planIdx)}`;
+    });
+
+    $('#contactBtn').addEventListener('click', () => {
+      if (!currentGig) return;
+      const uid = currentGig.createdByUid || '';
+      location.href = `message.html?uid=${encodeURIComponent(uid)}`;
+    });
+
+    // Related gigs (same seller)
+    async function loadRelated(uid, currentId) {
+      if (!uid) return;
+      try {
+        const q = query(collection(db, GIGS_COLLECTION), where('createdByUid','==', uid), where('status','==','published'), orderBy('createdAt','desc'), limit(6));
+        const snaps = await getDocs(q);
+        const wrap = $('#relatedList'); wrap.innerHTML = '';
+        snaps.forEach(s => {
+          if (s.id === currentId) return;
+          const d = s.data();
+          const card = document.createElement('a'); card.className = 'glass p-3 flex gap-3 items-center'; card.href = `view-details.html?id=${s.id}`;
+          card.innerHTML = `<img src="${(d.media && d.media[0])||'https://via.placeholder.com/160'}" class="w-20 h-12 object-cover rounded" /><div><div class='font-semibold'>${d.title}</div><div class='text-xs text-slate-300'>₹${d.price} • ${d.plans && d.plans[0] ? d.plans[0].delivery + 'd' : ''}</div></div>`;
+          wrap.appendChild(card);
+        });
+      } catch (e) {
+        console.warn('related gigs load failed', e);
+      }
+    }
+
+    // entry
+    window.addEventListener('load', () => {
+      if (!currentGigId) { $('#gTitle').textContent = 'No gig id provided in URL (?id=)'; return; }
+      loadGig(currentGigId);
+    });
+  </script>
+</body>
+</html>
