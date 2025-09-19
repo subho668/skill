@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
 
 <head>
@@ -11,7 +12,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-
   <style>
     :root {
       --bg1: #07102a;
@@ -322,6 +322,65 @@
       color: #ffcc66;
     }
 
+    /* ============================
+       TITLE FIX — natural wrapping
+       ============================ */
+    #pvTitle {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      min-height: 3.0em;
+      max-height: 3.0em;
+    }
+
+    /* ============================
+       DESCRIPTION (Quill editor) fix
+       ============================ */
+    #descriptionEditor {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.02);
+      /* responsive height (gives approx 4–5 inch on many screens) */
+      min-height: 240px;
+      max-height: 520px;
+      height: calc(38vh);
+      overflow: hidden;
+    }
+
+    /* Quill content behaviour */
+    #descriptionEditor .ql-editor {
+      min-height: 200px;
+      max-height: 480px;
+      height: 100%;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      /* preserve normal wrapping & new lines */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      padding: 12px;
+      box-sizing: border-box;
+      color: var(--ink);
+      background: transparent;
+    }
+
+    #descriptionEditor .ql-toolbar {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
     @media (max-width: 768px) {
       .plan-column {
         min-height: 260px
@@ -344,13 +403,24 @@
         width: 34px;
         height: 34px
       }
+
+      #pvTitle {
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.2;
+        min-height: 2.8em;
+        max-height: 2.8em;
+      }
+
+      #descriptionEditor {
+        height: 42vh;
+        min-height: 220px;
+      }
     }
   </style>
 </head>
 
-<body class="min-h-screen">
-
-  <!-- NAV -->
+<body class="min-h-screen"> <!-- NAV -->
   <nav class="glass sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="index.html" class="text-2xl font-extrabold text-emerald-400">Talent-Hub</a>
@@ -361,16 +431,12 @@
       </div>
     </div>
   </nav>
-
   <main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
     <!-- LEFT: form -->
     <section class="lg:col-span-2 glass p-5 space-y-4">
-
       <div class="flex items-center justify-between">
         <div>
-          <!-- <div class="text-xs text-slate-300 uppercase"></div> -->
           <h1 class="text-2xl font-extrabold">Create new gig</h1>
-          <!-- <div class="text-sm text-slate-300">Stepper on top — publish even if blanks (saved as "Not Provided")</div> -->
         </div>
         <div class="text-sm text-slate-300 hidden">Autosave: <span id="autosaveStatus">Idle</span></div>
       </div>
@@ -449,7 +515,7 @@
             </div>
             <div>
               <label class="block mb-1">Platform</label>
-              <select id="platform" class="input input-sm">
+              <select id="platform" class="input dark-select">
                 <option value="">Any</option>
                 <option>YouTube</option>
                 <option>Instagram</option>
@@ -661,7 +727,7 @@
           </div>
         </div>
         <div class="mt-2">
-          
+
           <a class="btn text-sm" href="category.html?name=logo-design">Edit profile</a>
         </div>
       </div>
@@ -672,7 +738,7 @@
           style="background-image:url('https://via.placeholder.com/1200x800?text=Preview')"></div>
         <div class="mt-3">
           <div class="text-slate-300 text-xs">Title</div>
-          <div id="pvTitle" class="font-extrabold text-lg truncate">—</div>
+          <div id="pvTitle" class="font-extrabold text-lg">—</div>
         </div>
         <div class="grid grid-cols-2 gap-2 mt-2">
           <div class="soft p-2">
@@ -709,11 +775,9 @@
         </ul>
       </div>
     </aside>
+
   </main>
-
-  <footer class="text-center py-6 text-slate-300">© 2025 Talent-Hub Pro — Final</footer>
-
-  <!-- FIREBASE + LOGIC -->
+  <footer class="text-center py-6 text-slate-300">© 2025 Talent-Hub Pro — Final</footer> <!-- FIREBASE + LOGIC -->
   <script type="module">
     // Firebase v10 modular
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1004,8 +1068,7 @@
     // FAQ dynamic
     $('#addFaqBtn').addEventListener('click', () => {
       const c = $('#faqContainer'); const box = document.createElement('div'); box.className = 'soft p-3';
-      box.innerHTML = `<input class="input faq-q mb-2 input-sm" placeholder="Question" /><textarea class="input faq-a" rows="2"></textarea><div class="mt-2"><button class="btn remove-faq" type="button">Remove</button></div>`;
-      c.appendChild(box); box.querySelector('.remove-faq').addEventListener('click', () => { box.remove(); autosaveNow('faq'); });
+      box.innerHTML = `<input class="input faq-q mb-2 input-sm" placeholder="Question" /><textarea class="input faq-a" rows="2"></textarea><div class="mt-2"><button class="btn remove-faq" type="button">Remove</button></div>`; c.appendChild(box); box.querySelector('.remove-faq').addEventListener('click', () => { box.remove(); autosaveNow('faq'); });
       autosaveNow('faq');
     });
 
@@ -1015,27 +1078,27 @@
       const box = document.createElement('div');
       box.className = 'requirement-item';
       box.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-          <select class="input req-type input-sm">
-            <option value="text">Text</option>
-            <option value="file">File</option>
-            <option value="choice">Multiple Choice</option>
-            <option value="url">URL</option>
-            <option value="date">Date</option>
-          </select>
-          <input class="input req-q input-sm" placeholder="Question or instruction" />
-          <div class="flex items-center gap-2">
-            <label class="text-xs">Required?</label>
-            <input type="checkbox" class="req-required" checked/>
-          </div>
-        </div>
-        <div class="mt-2 req-choices hidden">
-          <input class="input req-choices-input input-sm" placeholder="Comma separated choices" />
-        </div>
-        <div class="mt-2">
-          <button class="btn remove-req" type="button">Remove</button>
-        </div>
-      `;
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+      <select class="input req-type input-sm">
+        <option value="text">Text</option>
+        <option value="file">File</option>
+        <option value="choice">Multiple Choice</option>
+        <option value="url">URL</option>
+        <option value="date">Date</option>
+      </select>
+      <input class="input req-q input-sm" placeholder="Question or instruction" />
+      <div class="flex items-center gap-2">
+        <label class="text-xs">Required?</label>
+        <input type="checkbox" class="req-required" checked/>
+      </div>
+    </div>
+    <div class="mt-2 req-choices hidden">
+      <input class="input req-choices-input input-sm" placeholder="Comma separated choices" />
+    </div>
+    <div class="mt-2">
+      <button class="btn remove-req" type="button">Remove</button>
+    </div>
+  `;
       c.appendChild(box);
       const typeSel = box.querySelector('.req-type');
       const choicesWrap = box.querySelector('.req-choices');
@@ -1080,26 +1143,26 @@
         const box = document.createElement('div');
         box.className = 'requirement-item';
         box.innerHTML = `
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-            <select class="input req-type input-sm">
-              <option value="text" ${p.type === 'text' ? 'selected' : ''}>Text</option>
-              <option value="file" ${p.type === 'file' ? 'selected' : ''}>File</option>
-              <option value="choice" ${p.type === 'choice' ? 'selected' : ''}>Multiple Choice</option>
-              <option value="url" ${p.type === 'url' ? 'selected' : ''}>URL</option>
-            </select>
-            <input class="input req-q input-sm" placeholder="Question or instruction" value="${p.q}" />
-            <div class="flex items-center gap-2">
-              <label class="text-xs">Required?</label>
-              <input type="checkbox" class="req-required" ${p.required ? 'checked' : ''}/>
-            </div>
-          </div>
-          <div class="mt-2 req-choices hidden">
-            <input class="input req-choices-input input-sm" placeholder="Comma separated choices" />
-          </div>
-          <div class="mt-2">
-            <button class="btn remove-req" type="button">Remove</button>
-          </div>
-        `;
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <select class="input req-type input-sm">
+          <option value="text" ${p.type === 'text' ? 'selected' : ''}>Text</option>
+          <option value="file" ${p.type === 'file' ? 'selected' : ''}>File</option>
+          <option value="choice" ${p.type === 'choice' ? 'selected' : ''}>Multiple Choice</option>
+          <option value="url" ${p.type === 'url' ? 'selected' : ''}>URL</option>
+        </select>
+        <input class="input req-q input-sm" placeholder="Question or instruction" value="${p.q}" />
+        <div class="flex items-center gap-2">
+          <label class="text-xs">Required?</label>
+          <input type="checkbox" class="req-required" ${p.required ? 'checked' : ''}/>
+        </div>
+      </div>
+      <div class="mt-2 req-choices hidden">
+        <input class="input req-choices-input input-sm" placeholder="Comma separated choices" />
+      </div>
+      <div class="mt-2">
+        <button class="btn remove-req" type="button">Remove</button>
+      </div>
+    `;
         c.appendChild(box);
         const typeSel = box.querySelector('.req-type');
         const choicesWrap = box.querySelector('.req-choices');
@@ -1199,9 +1262,9 @@
         const actions = document.createElement('div');
         actions.className = 'media-actions';
         actions.innerHTML = `
-          <button data-idx='${idx}' class='btn text-xs set-cover' type="button">Cover</button>
-          <button data-idx='${idx}' class='btn text-xs remove-media' type="button">Remove</button>
-        `;
+      <button data-idx='${idx}' class='btn text-xs set-cover' type="button">Cover</button>
+      <button data-idx='${idx}' class='btn text-xs remove-media' type="button">Remove</button>
+    `;
         wrap.appendChild(actions);
 
         actions.querySelector('.remove-media').addEventListener('click', () => {
@@ -1249,10 +1312,9 @@
       if (mediaFiles.length === 0) { aiQuality.textContent = 'No media uploaded'; return; }
       const issues = [];
       mediaFiles.forEach(m => {
-        const f = m.file;
-        if (f.size < 4 * 1024) issues.push(`${f.name}: suspiciously tiny`);
-        if (f.type.startsWith('image/') && f.size > MAX_IMAGE_SIZE) issues.push(`${f.name}: >1MB`);
-        if (f.type.startsWith('video/') && f.size > MAX_VIDEO_SIZE) issues.push(`${f.name}: >30MB`);
+        if (m.file.size < 4 * 1024) issues.push(`${m.file.name}: suspiciously tiny`);
+        if (m.file.type.startsWith('image/') && m.file.size > MAX_IMAGE_SIZE) issues.push(`${m.file.name}: >1MB`);
+        if (m.file.type.startsWith('video/') && m.file.size > MAX_VIDEO_SIZE) issues.push(`${m.file.name}: >30MB`);
       });
       if (issues.length) aiQuality.textContent = issues.join(' | '); else aiQuality.textContent = `Good — ${mediaFiles.length} files, total ${(mediaFiles.reduce((s, m) => s + m.file.size, 0) / 1024 / 1024).toFixed(2)} MB`;
     }
@@ -1262,6 +1324,7 @@
     function getFirstPlanRevisions() { const first = document.querySelectorAll('.plan-column')[0]; if (!first) return '—'; const rev = first.querySelector('.plan-revisions'); if (rev && rev.value) return rev.value; return '—'; }
 
     function renderPreview() {
+      // Title: use textContent (keeps it plain text). CSS now allows wrapping naturally.
       pvTitle.textContent = titleEl.value.trim() || '—';
       const catText = (categoryEl.options[categoryEl.selectedIndex]?.text || '—');
       pvCat.textContent = (catText) + (subcatEl.value ? ` / ${subcatEl.value}` : '');
